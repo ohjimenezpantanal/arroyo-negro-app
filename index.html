@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Arroyo Negro · Portal</title>
+<style>
+:root {
+  --verde:#1A3A1A; --verde-m:#2E5C1E; --verde-l:#4A8A34;
+  --verde-bg:#E8F5E9; --rojo:#8B1A1A; --ambar:#7A4A00;
+  --azul:#0D2B5E; --azul-bg:#EBF2FF; --blanco:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--verde);min-height:100vh;padding:20px;}
+.logo{text-align:center;padding:30px 0 24px;}
+.logo-txt{font-family:'Courier New',monospace;font-size:13px;font-weight:700;
+  color:#4A8A34;letter-spacing:.2em;text-transform:uppercase;}
+.logo-sub{font-size:11px;color:#668866;font-family:'Courier New',monospace;
+  margin-top:4px;letter-spacing:.06em;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:400px;margin:0 auto;}
+.btn-card{background:var(--blanco);border-radius:12px;padding:18px 14px;
+  text-align:center;text-decoration:none;color:#1A1A1A;
+  border:2px solid transparent;transition:all .15s;display:block;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.btn-card:active{transform:scale(.97);}
+.btn-icon{font-size:28px;margin-bottom:8px;}
+.btn-title{font-size:14px;font-weight:700;margin-bottom:3px;}
+.btn-sub{font-size:11px;color:#666;line-height:1.3;}
+.btn-verde{border-color:var(--verde-l);}
+.btn-verde:active{background:var(--verde-bg);}
+.btn-rojo{border-color:var(--rojo);}
+.btn-rojo:active{background:#FFEBEE;}
+.btn-ambar{border-color:var(--ambar);}
+.btn-ambar:active{background:#FFF8EE;}
+.btn-azul{border-color:var(--azul);}
+.btn-azul:active{background:var(--azul-bg);}
+.btn-full{grid-column:1/-1;}
+.footer{text-align:center;margin-top:20px;font-family:'Courier New',monospace;
+  font-size:10px;color:#446644;letter-spacing:.06em;}
+.fecha{text-align:center;font-family:'Courier New',monospace;font-size:11px;
+  color:#668866;margin-bottom:20px;}
+</style>
+</head>
+<body>
+<div class="logo">
+  <div class="logo-txt">▲ ARROYO NEGRO</div>
+  <div class="logo-sub">SISTEMA DE CONTROL GANADERO · VÍA CHONE KM 15</div>
+</div>
+<div class="fecha" id="fechaHoy"></div>
+<div class="btn-grid">
+  <a href="reporte-diario.html" class="btn-card btn-verde btn-full">
+    <div class="btn-icon">📋</div>
+    <div class="btn-title">Reporte Diario</div>
+    <div class="btn-sub">Registrar actividades y estado del día</div>
+  </a>
+  <a href="pesaje.html" class="btn-card btn-ambar">
+    <div class="btn-icon">⚖️</div>
+    <div class="btn-title">Registrar Pesaje</div>
+    <div class="btn-sub">GDP automática por grupo</div>
+  </a>
+  <a href="potrero.html" class="btn-card btn-verde">
+    <div class="btn-icon">🌿</div>
+    <div class="btn-title">Cambio de Potrero</div>
+    <div class="btn-sub">Registrar movimiento de ganado</div>
+  </a>
+  <a href="https://docs.google.com/spreadsheets/d/15drNerKwx8xNvSUG3-P0k6wFiarEhgSYQh5aQ4M7F04" class="btn-card btn-azul" target="_blank">
+    <div class="btn-icon">📊</div>
+    <div class="btn-title">Ver Dashboard</div>
+    <div class="btn-sub">Google Sheets · Solo Oscar</div>
+  </a>
+</div>
+<div class="footer" style="margin-top:30px">ARROYO NEGRO · AGROINVERPAC · 2026</div>
+<script>
+const d=new Date();
+const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+document.getElementById('fechaHoy').textContent=
+  `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+</script>
+</body>
+</html>
