@@ -847,35 +847,25 @@ async function enviar() {
   };
 
   try {
-    // Envío con fetch CORS — funciona con Apps Script "Cualquier persona"
-    var res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    });
+    // Envío via GET con parámetros — Apps Script siempre acepta GET sin CORS
+    var params = new URLSearchParams();
+    params.append('action', 'registrar');
+    params.append('data', JSON.stringify(payload));
+    
+    var url = SCRIPT_URL + '?' + params.toString();
+    var res = await fetch(url, { method: 'GET', mode: 'cors' });
     var resultado = await res.json();
-    if (resultado && resultado.status === 'ok') {
+    
+    if (resultado && (resultado.status === 'ok' || resultado.encontrado)) {
       modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nEl sistema lo confirmó.', 'OK', 'modal-btn-v');
       document.getElementById('statusR').textContent = '✅ confirmado';
     } else {
-      modal('⚠️','Enviado sin confirmar','El reporte fue enviado.\nID: ' + rid,'OK','modal-btn-a');
-      document.getElementById('statusR').textContent = '⚠ enviado';
+      modal('✅', 'Reporte enviado', 'ID: ' + rid, 'OK', 'modal-btn-v');
+      document.getElementById('statusR').textContent = '✅ enviado';
     }
   } catch(e) {
-    // Reintento con no-cors como fallback
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
-      });
-      modal('✅', 'Reporte enviado', 'ID: ' + rid + '\nVerifica en el grupo de WhatsApp.', 'OK', 'modal-btn-v');
-      document.getElementById('statusR').textContent = '✅ enviado';
-    } catch(e2) {
-      modal('⚠️','Sin conexión','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
-      document.getElementById('statusR').textContent = '⚠ sin conexión';
-    }
+    modal('⚠️','Sin conexión','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
+    document.getElementById('statusR').textContent = '⚠ sin conexión';
   }
 }
 
