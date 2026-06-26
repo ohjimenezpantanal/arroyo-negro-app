@@ -8,230 +8,150 @@
 <title>Arroyo Negro · Reporte Diario</title>
 <style>
 :root {
-  --verde:    #1A3A1A;
-  --verde-m:  #2E5C1E;
-  --verde-l:  #4A8A34;
-  --verde-bg: #E8F5E9;
-  --rojo:     #8B1A1A;
-  --rojo-bg:  #FFEBEE;
-  --ambar:    #7A4A00;
-  --ambar-bg: #FFF8EE;
-  --azul:     #0D2B5E;
-  --azul-bg:  #EBF2FF;
-  --gris:     #F4F4F4;
-  --texto:    #1A1A1A;
-  --sub:      #666666;
-  --linea:    #DDDDDD;
-  --blanco:   #FFFFFF;
-  --mono:     'Courier New', monospace;
+  --v:    #1A3A1A; --vm:  #2E5C1E; --vl:  #4A8A34; --vbg: #E8F5E9;
+  --r:    #8B1A1A; --rbg: #FFEBEE;
+  --a:    #7A4A00; --abg: #FFF8EE;
+  --az:   #0D2B5E; --azbg:#EBF2FF;
+  --g:    #F4F4F4; --txt: #1A1A1A; --sub: #666; --lin: #DDDDDD; --w: #FFFFFF;
+  --oro:  #C8961E;
+  --mono: 'Courier New', monospace;
 }
-
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--verde);
-  min-height: 100vh;
-  color: var(--texto);
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--v);min-height:100vh;padding-bottom:80px}
 
 /* HEADER */
-.header {
-  background: var(--verde);
-  padding: 14px 16px 12px;
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 2px solid var(--verde-m);
-}
-.header-top { display:flex; justify-content:space-between; align-items:center; }
-.marca { font-family: var(--mono); font-size:12px; font-weight:700;
-  color: var(--verde-l); letter-spacing:.15em; text-transform:uppercase; }
-.fecha-tag { font-family:var(--mono); font-size:10px; color:#88AA88;
-  background:rgba(255,255,255,.06); padding:3px 9px; border-radius:4px;
-  border:1px solid rgba(255,255,255,.1); }
-.prog-bar { height:2px; background:rgba(255,255,255,.1); margin-top:10px; border-radius:1px; }
-.prog-fill { height:100%; background: linear-gradient(90deg, var(--verde-l), #C8961E);
-  border-radius:1px; transition:width .4s ease; width:0%; }
+.hdr{background:var(--v);padding:14px 16px 10px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--vm)}
+.hdr-top{display:flex;justify-content:space-between;align-items:center}
+.marca{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--vl);letter-spacing:.15em;text-transform:uppercase}
+.ftag{font-family:var(--mono);font-size:10px;color:#88AA88;background:rgba(255,255,255,.06);padding:3px 9px;border-radius:4px;border:1px solid rgba(255,255,255,.1)}
+
+/* SCORE HERO — el elemento más visible */
+.score-hero{background:var(--vm);margin:0;padding:14px 16px;border-bottom:2px solid var(--vl);position:sticky;top:52px;z-index:99}
+.score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:var(--mono);font-size:10px;color:#88AA88;text-transform:uppercase;letter-spacing:.1em}
+.score-num{font-family:var(--mono);font-size:32px;font-weight:700;color:#FFFFFF;line-height:1}
+.score-max{font-size:14px;color:#88AA88;font-weight:400}
+.score-estado{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px}
+.s-ex{background:#1B5E20;color:#A5D6A7}
+.s-ok{background:#4A3800;color:#FFD54F}
+.s-def{background:#4A0000;color:#EF9A9A}
+.prog-outer{height:12px;background:rgba(0,0,0,.3);border-radius:6px;overflow:hidden}
+.prog-inner{height:100%;border-radius:6px;transition:width .4s ease, background .4s ease}
+.score-detail{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10px;color:#668866}
 
 /* MAIN */
-main { padding:12px; max-width:500px; margin:0 auto; }
+main{padding:10px;max-width:500px;margin:0 auto}
 
-/* SECTION */
-.sec {
-  background:var(--blanco); border-radius:10px;
-  margin-bottom:10px; overflow:hidden;
-  border:1px solid var(--linea);
-  box-shadow:0 1px 4px rgba(0,0,0,.06);
-}
-.sec-hdr {
-  background:var(--verde); padding:10px 14px;
-  display:flex; align-items:center; gap:8px;
-}
-.sec-ico { font-size:15px; }
-.sec-title { font-family:var(--mono); font-size:10px; font-weight:700;
-  color:#B8D4A8; letter-spacing:.1em; text-transform:uppercase; }
-.sec-num { margin-left:auto; font-family:var(--mono); font-size:9px; color:#668866; }
-.sec-body { padding:13px 14px; }
+/* SECTIONS */
+.sec{background:var(--w);border-radius:10px;margin-bottom:10px;overflow:hidden;border:1px solid var(--lin);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.sec-hdr{background:var(--v);padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--vm)}
+.sec-ico{font-size:15px}
+.sec-title{font-family:var(--mono);font-size:10px;font-weight:700;color:#B8D4A8;letter-spacing:.1em;text-transform:uppercase}
+.sec-pts{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--oro)}
+.sec-body{padding:13px 14px}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+label.lbl{display:block;font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+select,input[type=time],input[type=number],input[type=text],textarea{
+  width:100%;padding:10px 12px;border:1.5px solid var(--lin);border-radius:7px;
+  font-size:15px;font-family:inherit;background:var(--w);color:var(--txt);
+  transition:border-color .15s;-webkit-appearance:none;appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--vl);box-shadow:0 0 0 3px rgba(74,138,52,.12)}
+textarea{min-height:64px;resize:vertical;line-height:1.5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 
-/* FIELDS */
-.field { margin-bottom:12px; }
-.field:last-child { margin-bottom:0; }
-label.lbl {
-  display:block; font-size:10px; font-weight:700; color:var(--sub);
-  letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px;
-  font-family:var(--mono);
-}
-select, input[type=time], input[type=number], input[type=text], textarea {
-  width:100%; padding:10px 12px;
-  border:1.5px solid var(--linea); border-radius:7px;
-  font-size:15px; font-family:inherit;
-  background:var(--blanco); color:var(--texto);
-  transition:border-color .15s;
-  -webkit-appearance:none; appearance:none;
-}
-select {
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 12px center; padding-right:32px;
-}
-select:focus, input:focus, textarea:focus {
-  outline:none; border-color:var(--verde-l);
-  box-shadow:0 0 0 3px rgba(74,138,52,.12);
-}
-textarea { min-height:64px; resize:vertical; line-height:1.5; }
+/* TOGGLE */
+.tog-grp{display:flex;gap:6px;flex-wrap:wrap}
+.tog{padding:8px 14px;border:1.5px solid var(--lin);border-radius:7px;background:var(--w);color:var(--txt);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;user-select:none}
+.tog:active{transform:scale(.97)}
+.tog.on-v{background:var(--vl);border-color:var(--vl);color:#fff}
+.tog.on-r{background:var(--r);border-color:var(--r);color:#fff}
+.tog.on-a{background:var(--a);border-color:var(--a);color:#fff}
 
-/* GRID */
-.g2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+/* ACTIVIDADES CON PUNTOS */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.act-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1.5px solid var(--lin);border-radius:7px;cursor:pointer;background:var(--w);font-size:13px;font-weight:500;user-select:none;transition:all .15s;position:relative}
+.act-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--vl);cursor:pointer;flex-shrink:0;margin:0;padding:0;border:none}
+.act-item.on{background:var(--vbg);border-color:var(--vl)}
+.act-ico{font-size:14px}
+.act-name{flex:1;font-size:12px}
+.act-pts-tag{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--vl);background:#E8F5E9;padding:1px 5px;border-radius:3px;margin-left:auto;flex-shrink:0}
+.act-item.on .act-pts-tag{background:var(--vl);color:#fff}
 
-/* TOGGLE BUTTONS */
-.tog-grp { display:flex; gap:6px; flex-wrap:wrap; }
-.tog {
-  padding:8px 14px; border:1.5px solid var(--linea); border-radius:7px;
-  background:var(--blanco); color:var(--texto); font-size:13px; font-weight:500;
-  cursor:pointer; transition:all .15s; font-family:inherit; user-select:none;
-}
-.tog:active { transform:scale(.97); }
-.tog.on-verde  { background:var(--verde-l); border-color:var(--verde-l); color:#fff; }
-.tog.on-rojo   { background:var(--rojo);   border-color:var(--rojo);   color:#fff; }
-.tog.on-ambar  { background:var(--ambar);  border-color:var(--ambar);  color:#fff; }
+/* CANTIDAD POR ACTIVIDAD */
+.qty-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--lin);font-size:13px;gap:8px}
+.qty-row:last-child{border-bottom:none}
+.qty-lbl{flex:1;font-weight:500;font-size:12px}
+.qty-pts-live{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--vl);min-width:40px;text-align:right}
+.qty-inp{width:60px;text-align:center;font-family:var(--mono);font-size:13px;padding:6px 8px}
+.qty-unit{font-size:11px;color:var(--sub);font-family:var(--mono);white-space:nowrap}
 
-/* CHECKLIST ACTIVIDADES */
-.act-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
-.act-item {
-  display:flex; align-items:center; gap:8px;
-  padding:9px 10px; border:1.5px solid var(--linea); border-radius:7px;
-  cursor:pointer; background:var(--blanco); font-size:13px; font-weight:500;
-  user-select:none; transition:all .15s;
-}
-.act-item input[type=checkbox] {
-  width:16px; height:16px; accent-color:var(--verde-l);
-  cursor:pointer; flex-shrink:0; margin:0; padding:0; border:none;
-}
-.act-item.on { background:var(--verde-bg); border-color:var(--verde-l); }
-.act-icon { font-size:14px; }
-
-/* TIEMPO ROWS */
-.t-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:7px 0; border-bottom:1px solid var(--linea); font-size:13px;
-}
-.t-row:last-child { border-bottom:none; }
-.t-lbl { flex:1; font-weight:500; }
-.t-tag {
-  font-size:10px; font-weight:700; padding:2px 7px; border-radius:3px;
-  margin-left:6px; font-family:var(--mono);
-}
-.pm-alto  { background:#FFE0E0; color:var(--rojo); }
-.pm-medio { background:var(--ambar-bg); color:var(--ambar); }
-.pm-bajo  { background:var(--verde-bg); color:var(--verde-m); }
-.t-inp { width:64px; text-align:center; font-family:var(--mono);
-  font-size:13px; padding:6px 8px; }
-.t-unit { font-size:11px; color:var(--sub); margin-left:5px; font-family:var(--mono); }
-
-/* EFICIENCIA */
-.eff-bg { height:10px; background:var(--linea); border-radius:5px; overflow:hidden; margin:6px 0 3px; }
-.eff-fill { height:100%; border-radius:5px; transition:width .5s ease; }
-.eff-labels { display:flex; justify-content:space-between; font-size:10px;
-  color:var(--sub); font-family:var(--mono); }
-
-/* GDP DISPLAY */
-.gdp-box {
-  font-family:var(--mono); font-size:26px; font-weight:700;
-  text-align:center; padding:14px; border-radius:8px; margin-top:8px;
-  transition:all .3s; display:none;
-}
-.gdp-ok   { background:var(--verde-bg); color:var(--verde-m); }
-.gdp-warn { background:var(--ambar-bg); color:var(--ambar); }
-.gdp-crit { background:var(--rojo-bg);  color:var(--rojo); }
+/* DESGLOSE DE PUNTOS */
+.pts-breakdown{background:var(--g);border-radius:8px;padding:10px 12px;margin-top:8px}
+.pts-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:.5px solid var(--lin)}
+.pts-row:last-child{border-bottom:none;font-weight:700;padding-top:6px;font-size:13px}
 
 /* ALERTS */
-.alrt {
-  padding:9px 12px; border-radius:6px; font-size:12px;
-  line-height:1.5; margin-top:6px; display:none;
-}
-.alrt.show { display:block; }
-.a-red   { background:var(--rojo-bg);  border:1px solid #FFCCCC; color:var(--rojo); }
-.a-amb   { background:var(--ambar-bg); border:1px solid #FFD89A; color:var(--ambar); }
-.a-grn   { background:var(--verde-bg); border:1px solid #B8D4A0; color:var(--verde-m); }
+.alrt{padding:9px 12px;border-radius:6px;font-size:12px;line-height:1.5;margin-top:6px;display:none}
+.alrt.show{display:block}
+.a-r{background:var(--rbg);border:1px solid #FFCCCC;color:var(--r)}
+.a-a{background:var(--abg);border:1px solid #FFD89A;color:var(--a)}
+.a-v{background:var(--vbg);border:1px solid #B8D4A0;color:var(--vm)}
+
+/* GDP */
+.gdp-box{font-family:var(--mono);font-size:26px;font-weight:700;text-align:center;padding:14px;border-radius:8px;margin-top:8px;transition:all .3s;display:none}
+.gdp-ok{background:var(--vbg);color:var(--vm)}
+.gdp-w{background:var(--abg);color:var(--a)}
+.gdp-c{background:var(--rbg);color:var(--r)}
 
 /* SUBMIT */
-.submit-wrap {
-  padding:14px; background:var(--verde); border-radius:10px; margin-bottom:20px;
-}
-.btn-submit {
-  width:100%; padding:15px; background:var(--verde-l); color:#fff;
-  border:none; border-radius:8px; font-size:16px; font-weight:700;
-  font-family:inherit; cursor:pointer; letter-spacing:.02em; transition:all .15s;
-}
-.btn-submit:active { transform:scale(.98); background:var(--verde-m); }
-.btn-submit:disabled { background:#888; cursor:not-allowed; }
-.submit-note { margin-top:8px; font-size:11px; color:#88AA88;
-  font-family:var(--mono); text-align:center; }
+.submit-wrap{padding:14px;background:var(--v);border-radius:10px;margin-bottom:16px}
+.btn-sub{width:100%;padding:15px;background:var(--vl);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s}
+.btn-sub:active{transform:scale(.98);background:var(--vm)}
+.btn-sub:disabled{background:#888;cursor:not-allowed}
+.sub-note{margin-top:8px;font-size:11px;color:#88AA88;font-family:var(--mono);text-align:center}
 
 /* PREVIEW */
-.preview { background:var(--verde); border-radius:10px; padding:14px;
-  margin-bottom:20px; display:none; }
-.preview.show { display:block; }
-.prev-title { font-family:var(--mono); font-size:10px; color:var(--verde-l);
-  letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; }
-.prev-text {
-  font-family:var(--mono); font-size:11.5px; color:#C8E8C0; line-height:1.9;
-  white-space:pre-wrap; background:rgba(0,0,0,.25); padding:12px;
-  border-radius:6px; margin-bottom:10px; max-height:300px; overflow-y:auto;
-}
-.btn-copy {
-  width:100%; padding:12px; background:#C8961E; color:var(--texto);
-  border:none; border-radius:7px; font-size:14px; font-weight:700;
-  cursor:pointer; font-family:inherit; transition:opacity .2s;
-}
-.btn-copy:active { opacity:.85; }
+.preview{background:var(--v);border-radius:10px;padding:14px;margin-bottom:20px;display:none}
+.preview.show{display:block}
+.prev-title{font-family:var(--mono);font-size:10px;color:var(--vl);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.prev-text{font-family:var(--mono);font-size:11.5px;color:#C8E8C0;line-height:1.9;white-space:pre-wrap;background:rgba(0,0,0,.25);padding:12px;border-radius:6px;margin-bottom:10px;max-height:300px;overflow-y:auto}
+.btn-copy{width:100%;padding:12px;background:var(--oro);color:var(--txt);border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 
-/* STATUS */
-.status-bar {
-  position:fixed; bottom:0; left:0; right:0;
-  background:var(--verde-m); padding:8px 16px;
-  font-family:var(--mono); font-size:11px; color:#B8D4A8;
-  display:flex; justify-content:space-between; z-index:200;
-  border-top:1px solid var(--verde-l);
-}
+/* STATUS BAR */
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:var(--vm);padding:8px 16px;font-family:var(--mono);font-size:11px;color:#B8D4A8;display:flex;justify-content:space-between;z-index:200;border-top:1px solid var(--vl)}
 
-@media(max-width:380px){
-  .act-grid { grid-template-columns:1fr; }
-  .g2 { grid-template-columns:1fr; }
-  .g3 { grid-template-columns:1fr 1fr; }
-}
+@media(max-width:380px){.act-grid{grid-template-columns:1fr}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-top">
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
     <div class="marca">▲ Arroyo Negro</div>
-    <div class="fecha-tag" id="fechaTag">cargando...</div>
+    <div class="ftag" id="fechaTag">cargando...</div>
   </div>
-  <div style="font-size:10px;color:#668866;font-family:var(--mono);margin-top:4px;letter-spacing:.04em">
-    REPORTE DE JORNADA · SISTEMA DE CONTROL GANADERO
+</div>
+
+<!-- SCORE HERO — siempre visible -->
+<div class="score-hero">
+  <div class="score-top">
+    <div>
+      <div class="score-label">Score de jornada</div>
+      <div><span class="score-num" id="scoreNum">0</span><span class="score-max">/100</span></div>
+    </div>
+    <div id="scoreEstado" class="score-estado s-def">Sin datos</div>
   </div>
-  <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  <div class="prog-outer">
+    <div class="prog-inner" id="progInner" style="width:0%;background:#4A4A4A"></div>
+  </div>
+  <div class="score-detail">
+    <span id="scoreDesglose">Marca actividades para sumar puntos</span>
+    <span id="scorePago">—</span>
+  </div>
 </div>
 
 <main>
@@ -241,12 +161,12 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
   <div class="sec-hdr">
     <span class="sec-ico">👤</span>
     <span class="sec-title">Identificación</span>
-    <span class="sec-num">1/6</span>
+    <span class="sec-pts" id="pts_id">+10 pts al completar</span>
   </div>
   <div class="sec-body">
     <div class="field">
       <label class="lbl">Trabajador</label>
-      <select id="trabajador" onchange="prog()">
+      <select id="trabajador" onchange="recalc()">
         <option value="">Seleccionar...</option>
         <option value="Héctor">Héctor (mayordomo)</option>
         <option value="Peón">Peón</option>
@@ -255,11 +175,11 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
     <div class="g2">
       <div class="field">
         <label class="lbl">Hora llegada</label>
-        <input type="time" id="horaLlegada" value="06:30" onchange="calcEff()">
+        <input type="time" id="horaLlegada" value="06:30" onchange="recalc()">
       </div>
       <div class="field">
         <label class="lbl">Hora salida</label>
-        <input type="time" id="horaSalida" onchange="calcEff()">
+        <input type="time" id="horaSalida" onchange="recalc()">
       </div>
     </div>
     <div class="alrt" id="alertJornada"></div>
@@ -271,51 +191,40 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
   <div class="sec-hdr">
     <span class="sec-ico">🐄</span>
     <span class="sec-title">Estado del Ganado</span>
-    <span class="sec-num">2/6</span>
+    <span class="sec-pts" id="pts_ganado">0 pts</span>
   </div>
   <div class="sec-body">
     <div class="g3">
-      <div class="field">
-        <label class="lbl">G1 bovinos</label>
-        <input type="number" id="g1" placeholder="30" min="0" max="50" onchange="prog()">
-      </div>
-      <div class="field">
-        <label class="lbl">G2 bovinos</label>
-        <input type="number" id="g2" placeholder="35" min="0" max="50">
-      </div>
-      <div class="field">
-        <label class="lbl">Búfalos</label>
-        <input type="number" id="buf" placeholder="10" min="0" max="20">
-      </div>
+      <div class="field"><label class="lbl">G1 bovinos</label>
+        <input type="number" id="g1" placeholder="30" min="0" max="50" onchange="recalc()"></div>
+      <div class="field"><label class="lbl">G2 bovinos</label>
+        <input type="number" id="g2" placeholder="35" min="0" max="50" onchange="recalc()"></div>
+      <div class="field"><label class="lbl">Búfalos</label>
+        <input type="number" id="buf" placeholder="10" min="0" max="20" onchange="recalc()"></div>
     </div>
     <div class="field">
       <label class="lbl">Novedad sanitaria</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'sanidad','NO','on-verde')">✅ Sin novedades</button>
-        <button class="tog" onclick="tog(this,'sanidad','SI','on-rojo')">🚨 Hay novedad</button>
+        <button class="tog" onclick="tog(this,'sanidad','NO','on-v')">✅ Sin novedades</button>
+        <button class="tog" onclick="tog(this,'sanidad','SI','on-r')">🚨 Hay novedad</button>
       </div>
     </div>
     <div id="novSanDiv" style="display:none;margin-top:8px">
       <textarea id="novSan" placeholder="Animal afectado, síntoma, acción tomada..."></textarea>
     </div>
-
     <div class="field" style="margin-top:10px">
       <label class="lbl">Pesaje realizado hoy</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'pesaje','NO','on-verde')">No se pesó</button>
-        <button class="tog" onclick="tog(this,'pesaje','SI','on-verde')">✅ Sí se pesó</button>
+        <button class="tog" onclick="tog(this,'pesaje','NO','on-v')">No se pesó</button>
+        <button class="tog" onclick="tog(this,'pesaje','SI','on-v')">✅ Sí se pesó (+20 pts)</button>
       </div>
     </div>
     <div id="pesajeDiv" style="display:none;margin-top:8px">
       <div class="g2">
-        <div class="field">
-          <label class="lbl">Peso prom. G1 (kg)</label>
-          <input type="number" id="pesoG1" placeholder="165" onchange="calcGDP()">
-        </div>
-        <div class="field">
-          <label class="lbl">Peso prom. G2 (kg)</label>
-          <input type="number" id="pesoG2" placeholder="360" onchange="calcGDP()">
-        </div>
+        <div class="field"><label class="lbl">Peso prom. G1 (kg)</label>
+          <input type="number" id="pesoG1" placeholder="165" onchange="calcGDP()"></div>
+        <div class="field"><label class="lbl">Peso prom. G2 (kg)</label>
+          <input type="number" id="pesoG2" placeholder="360" onchange="calcGDP()"></div>
       </div>
       <div class="gdp-box" id="gdpBox"></div>
     </div>
@@ -327,12 +236,12 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
   <div class="sec-hdr">
     <span class="sec-ico">🌿</span>
     <span class="sec-title">Potreros</span>
-    <span class="sec-num">3/6</span>
+    <span class="sec-pts" id="pts_pot">0 pts</span>
   </div>
   <div class="sec-body">
     <div class="field">
       <label class="lbl">Potrero activo hoy (bovinos)</label>
-      <select id="potreroActivo" onchange="prog()">
+      <select id="potreroActivo" onchange="recalc()">
         <option value="">Seleccionar...</option>
         <option disabled>── Buenos (P01–P16) ──</option>
         <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
@@ -340,25 +249,23 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
         <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
         <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
         <option disabled>── En recuperación (P17–P32) ──</option>
-        <option>P-17 ⚠</option><option>P-18 ⚠</option><option>P-19 ⚠</option><option>P-20 ⚠</option>
-        <option>P-21 ⚠</option><option>P-22 ⚠</option><option>P-23 ⚠</option><option>P-24 ⚠</option>
-        <option>P-25 ⚠</option><option>P-26 ⚠</option><option>P-27 ⚠</option><option>P-28 ⚠</option>
-        <option>P-29 ⚠</option><option>P-30 ⚠</option><option>P-31 ⚠</option><option>P-32 ⚠</option>
+        <option>P-17⚠</option><option>P-18⚠</option><option>P-19⚠</option><option>P-20⚠</option>
+        <option>P-21⚠</option><option>P-22⚠</option><option>P-23⚠</option><option>P-24⚠</option>
       </select>
     </div>
     <div class="field">
       <label class="lbl">Estado del pasto</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'pasto','BUENO','on-verde')">🟢 Bueno</button>
-        <button class="tog" onclick="tog(this,'pasto','REGULAR','on-ambar')">🟡 Regular</button>
-        <button class="tog" onclick="tog(this,'pasto','AGOTADO','on-rojo')">🔴 Agotado</button>
+        <button class="tog" onclick="tog(this,'pasto','BUENO','on-v')">🟢 Bueno</button>
+        <button class="tog" onclick="tog(this,'pasto','REGULAR','on-a')">🟡 Regular</button>
+        <button class="tog" onclick="tog(this,'pasto','AGOTADO','on-r')">🔴 Agotado</button>
       </div>
     </div>
     <div class="field">
-      <label class="lbl">¿Cambio de potrero hoy?</label>
+      <label class="lbl">¿Cambio de potrero hoy? (+20 pts)</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'cambio','NO','on-verde')">No</button>
-        <button class="tog" onclick="tog(this,'cambio','SI','on-ambar')">Sí → pasó a:</button>
+        <button class="tog" onclick="tog(this,'cambio','NO','on-v')">No</button>
+        <button class="tog" onclick="tog(this,'cambio','SI','on-a')">Sí → pasó a:</button>
       </div>
     </div>
     <div id="nuevoPotDiv" style="display:none;margin-top:6px">
@@ -371,91 +278,85 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
       </select>
     </div>
     <div class="g2" style="margin-top:10px">
-      <div class="field">
-        <label class="lbl">Sal mineral</label>
+      <div class="field"><label class="lbl">Sal mineral</label>
         <div class="tog-grp">
-          <button class="tog" onclick="tog(this,'sal','OK','on-verde')">✅ OK</button>
-          <button class="tog" onclick="tog(this,'sal','REPONER','on-rojo')">🚨 Reponer</button>
+          <button class="tog" onclick="tog(this,'sal','OK','on-v')">✅ OK</button>
+          <button class="tog" onclick="tog(this,'sal','REPONER','on-r')">🚨 Reponer</button>
         </div>
       </div>
-      <div class="field">
-        <label class="lbl">Bebederos / agua</label>
+      <div class="field"><label class="lbl">Agua / bebederos</label>
         <div class="tog-grp">
-          <button class="tog" onclick="tog(this,'agua','OK','on-verde')">✅ OK</button>
-          <button class="tog" onclick="tog(this,'agua','PROBLEMA','on-rojo')">🚨 Problema</button>
+          <button class="tog" onclick="tog(this,'agua','OK','on-v')">✅ OK</button>
+          <button class="tog" onclick="tog(this,'agua','PROBLEMA','on-r')">🚨 Problema</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 4. ACTIVIDADES -->
+<!-- 4. ACTIVIDADES CON PUNTOS -->
 <div class="sec">
   <div class="sec-hdr">
     <span class="sec-ico">⚒️</span>
     <span class="sec-title">Actividades del día</span>
-    <span class="sec-num">4/6</span>
+    <span class="sec-pts" id="pts_act">0 pts</span>
   </div>
   <div class="sec-body">
     <div class="field">
-      <label class="lbl">Marcar todo lo que hizo hoy</label>
+      <label class="lbl">Marcar todo lo que hizo hoy — cada actividad suma puntos</label>
       <div class="act-grid" id="actGrid">
-        <label class="act-item" onclick="togAct(this,'a_potrero')">
-          <input type="checkbox" id="a_potrero" onchange="calcEff()">
-          <span class="act-icon">🔄</span>Cambio potrero
-        </label>
         <label class="act-item" onclick="togAct(this,'a_chapea')">
-          <input type="checkbox" id="a_chapea" onchange="calcEff()">
-          <span class="act-icon">🌿</span>Chapea / maleza
+          <input type="checkbox" id="a_chapea" onchange="recalc()">
+          <span class="act-ico">🌿</span><span class="act-name">Chapea / maleza</span>
+          <span class="act-pts-tag">15/pot</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_cerca')">
-          <input type="checkbox" id="a_cerca" onchange="calcEff()">
-          <span class="act-icon">🪝</span>Cercas
+          <input type="checkbox" id="a_cerca" onchange="recalc()">
+          <span class="act-ico">🪝</span><span class="act-name">Cercas</span>
+          <span class="act-pts-tag">15/tramo</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_sanidad')">
-          <input type="checkbox" id="a_sanidad" onchange="calcEff()">
-          <span class="act-icon">💉</span>Sanidad
-        </label>
-        <label class="act-item" onclick="togAct(this,'a_pesaje')">
-          <input type="checkbox" id="a_pesaje" onchange="calcEff()">
-          <span class="act-icon">⚖️</span>Pesaje
-        </label>
-        <label class="act-item" onclick="togAct(this,'a_sal')">
-          <input type="checkbox" id="a_sal" onchange="calcEff()">
-          <span class="act-icon">🧂</span>Sal mineral
+          <input type="checkbox" id="a_sanidad" onchange="recalc()">
+          <span class="act-ico">💉</span><span class="act-name">Sanidad</span>
+          <span class="act-pts-tag">15/animal</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_herb')">
-          <input type="checkbox" id="a_herb" onchange="calcEff()">
-          <span class="act-icon">🧪</span>Herbicida
+          <input type="checkbox" id="a_herb" onchange="recalc()">
+          <span class="act-ico">🧪</span><span class="act-name">Herbicida</span>
+          <span class="act-pts-tag">15/pot</span>
+        </label>
+        <label class="act-item" onclick="togAct(this,'a_sal')">
+          <input type="checkbox" id="a_sal" onchange="recalc()">
+          <span class="act-ico">🧂</span><span class="act-name">Sal mineral</span>
+          <span class="act-pts-tag">10 pts</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_agua')">
-          <input type="checkbox" id="a_agua" onchange="calcEff()">
-          <span class="act-icon">💧</span>Bebederos
+          <input type="checkbox" id="a_agua" onchange="recalc()">
+          <span class="act-ico">💧</span><span class="act-name">Bebederos</span>
+          <span class="act-pts-tag">10 pts</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_recorrido')">
-          <input type="checkbox" id="a_recorrido" onchange="calcEff()">
-          <span class="act-icon">🚶</span>Recorrido gral.
+          <input type="checkbox" id="a_recorrido" onchange="recalc()">
+          <span class="act-ico">🚶</span><span class="act-name">Recorrido gral.</span>
+          <span class="act-pts-tag">5 pts</span>
         </label>
         <label class="act-item" onclick="togAct(this,'a_otro')">
-          <input type="checkbox" id="a_otro" onchange="calcEff()">
-          <span class="act-icon">➕</span>Otra actividad
+          <input type="checkbox" id="a_otro" onchange="recalc()">
+          <span class="act-ico">➕</span><span class="act-name">Otra actividad</span>
+          <span class="act-pts-tag">5 pts</span>
         </label>
       </div>
     </div>
-    <div class="field" style="margin-top:10px">
-      <label class="lbl">Horas por actividad</label>
-      <div id="tiempoContainer">
-        <p style="font-size:12px;color:var(--sub);font-family:var(--mono);padding:6px 0">
-          Marca actividades arriba para ver el desglose
-        </p>
-      </div>
+
+    <!-- Cantidad por actividad marcada -->
+    <div id="cantidadContainer" style="margin-top:12px"></div>
+
+    <!-- Desglose de puntos -->
+    <div id="ptsBreakdown" class="pts-breakdown" style="display:none">
+      <div id="ptsRows"></div>
     </div>
-    <div class="field">
-      <label class="lbl">Índice de productividad</label>
-      <div class="eff-bg"><div class="eff-fill" id="effFill" style="width:0%"></div></div>
-      <div class="eff-labels"><span>0%</span><span id="effPct" style="font-weight:700">—</span><span>100%</span></div>
-      <div class="alrt" id="alertEff"></div>
-    </div>
+
+    <div class="alrt" id="alertActs"></div>
   </div>
 </div>
 
@@ -464,367 +365,601 @@ textarea { min-height:64px; resize:vertical; line-height:1.5; }
   <div class="sec-hdr">
     <span class="sec-ico">🔧</span>
     <span class="sec-title">Infraestructura</span>
-    <span class="sec-num">5/6</span>
+    <span class="sec-pts" id="pts_infra">0 pts</span>
   </div>
   <div class="sec-body">
     <div class="field">
-      <label class="lbl">Cercas</label>
+      <label class="lbl">Cercas generales</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'cercas','OK','on-verde')">✅ OK</button>
-        <button class="tog" onclick="tog(this,'cercas','FALLA','on-rojo')">🚨 Falla</button>
+        <button class="tog" onclick="tog(this,'cercas','OK','on-v')">✅ OK</button>
+        <button class="tog" onclick="tog(this,'cercas','FALLA','on-r')">🚨 Falla</button>
       </div>
     </div>
     <div id="cercaDetDiv" style="display:none;margin-top:6px">
       <input type="text" id="cercaDet" placeholder="¿En qué potrero y tipo de falla?">
     </div>
     <div class="field" style="margin-top:10px">
-      <label class="lbl">Insumos que se agotan</label>
-      <textarea id="insumosAgotan" placeholder="Ej: quedan 2 kg sal mineral, se acabó Figamax..."></textarea>
+      <label class="lbl">Insumos que se agotan esta semana</label>
+      <textarea id="insumosAgotan" placeholder="Ej: quedan 2 kg sal mineral, poco Figamax..."></textarea>
     </div>
   </div>
 </div>
 
-<!-- 6. OBSERVACIONES -->
+<!-- 6. FOTO Y CIERRE -->
 <div class="sec">
   <div class="sec-hdr">
-    <span class="sec-ico">📝</span>
-    <span class="sec-title">Observaciones</span>
-    <span class="sec-num">6/6</span>
+    <span class="sec-ico">📸</span>
+    <span class="sec-title">Evidencia y observaciones</span>
+    <span class="sec-pts" id="pts_foto">0 pts</span>
   </div>
   <div class="sec-body">
     <div class="field">
-      <label class="lbl">Nota del día — lo que Oscar debe saber</label>
+      <label class="lbl">¿Tomaste foto de las actividades del día? (+5 pts)</label>
+      <div class="tog-grp">
+        <button class="tog" onclick="tog(this,'foto','SI','on-v')">✅ Sí, tengo foto</button>
+        <button class="tog" onclick="tog(this,'foto','NO','on-r')">No tomé foto</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label class="lbl">Observación del día — lo que Oscar debe saber</label>
       <textarea id="obs" placeholder="Cualquier novedad, problema o sugerencia..." style="min-height:70px"></textarea>
     </div>
     <div class="field">
       <label class="lbl">¿Necesitas decisión de Oscar?</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'decision','NO','on-verde')">No, todo controlado</button>
-        <button class="tog" onclick="tog(this,'decision','SI','on-ambar')">Sí, necesito respuesta</button>
+        <button class="tog" onclick="tog(this,'decision','NO','on-v')">No, todo controlado</button>
+        <button class="tog" onclick="tog(this,'decision','SI','on-a')">Sí, necesito respuesta</button>
       </div>
     </div>
     <div id="decisionDiv" style="display:none;margin-top:6px">
       <textarea id="decisionTxt" placeholder="¿Qué decide Oscar?"></textarea>
+    </div>
+    <div id="motivoTardeDiv" class="field" style="display:none;margin-top:10px">
+      <label class="lbl">⏰ Reporte tardío — motivo (obligatorio para mantener el bono)</label>
+      <div class="tog-grp" style="margin-bottom:8px">
+        <button class="tog" onclick="togMotivo(this,'GANADO_SUELTO')">🐄 Ganado suelto</button>
+        <button class="tog" onclick="togMotivo(this,'EMERGENCIA_CERCA')">🪝 Cerca rota urgente</button>
+        <button class="tog" onclick="togMotivo(this,'SANIDAD_URGENTE')">💉 Emergencia sanitaria</button>
+        <button class="tog" onclick="togMotivo(this,'CUADRILLA')">👷 Trabajo con cuadrilla</button>
+        <button class="tog" onclick="togMotivo(this,'OTRO')">➕ Otro motivo</button>
+      </div>
+      <textarea id="motivoTardeTxt" placeholder="Describir brevemente qué ocurrió..."></textarea>
     </div>
   </div>
 </div>
 
 <!-- SUBMIT -->
 <div class="submit-wrap">
-  <button class="btn-submit" id="btnSubmit" onclick="enviarReporte()">
-    📋 Generar y enviar reporte
+  <button class="btn-sub" id="btnSub" onclick="enviar()">
+    📋 Enviar reporte del día
   </button>
-  <div class="submit-note">Se genera el reporte · se guarda en el sistema · listo para WhatsApp</div>
+  <div class="sub-note" id="subNote">Score actual: <span id="subScore">0</span>/100 — completa más actividades para subir</div>
 </div>
 
 <!-- PREVIEW -->
 <div class="preview" id="previewBox">
-  <div class="prev-title">▲ REPORTE GENERADO — LISTO PARA ENVIAR</div>
+  <div class="prev-title">▲ REPORTE GENERADO</div>
   <div class="prev-text" id="prevText"></div>
-  <button class="btn-copy" id="btnCopy" onclick="copiar()">📋 Copiar y abrir WhatsApp</button>
+  <button class="btn-copy" onclick="copiar()">📋 Copiar y abrir WhatsApp</button>
 </div>
 
 </main>
 
 <div class="status-bar">
-  <span id="statusLeft">Arroyo Negro · Sistema de Control</span>
-  <span id="statusRight" id="statusRight">⬤ listo</span>
+  <span>Arroyo Negro · Sistema de Control</span>
+  <span id="statusR">⬤ listo</span>
 </div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────────────────────────
-// REEMPLAZAR con el URL del Web App deployment de Apps Script de Arroyo Negro
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
 
-// ── STATE ──────────────────────────────────────────────────────────────────
-const S = {
-  sanidad:'', pesaje:'', pasto:'', cambio:'',
-  sal:'', agua:'', cercas:'', decision:''
+// ── ESTADO ────────────────────────────────────────────────────────────────
+const S = { sanidad:'',pesaje:'',pasto:'',cambio:'',sal:'',agua:'',cercas:'',decision:'',foto:'',motivoTarde:'' };
+
+// ── DEFINICIÓN DE ACTIVIDADES Y PUNTOS ────────────────────────────────────
+const ACTS = {
+  a_chapea:   { label:'Chapea / maleza',      ptsUnit:15, unidad:'potreros', max:30, tipo:'cantidad' },
+  a_cerca:    { label:'Reparación cercas',    ptsUnit:15, unidad:'tramos',   max:30, tipo:'cantidad' },
+  a_sanidad:  { label:'Sanidad / tratamiento',ptsUnit:15, unidad:'animales', max:25, tipo:'cantidad' },
+  a_herb:     { label:'Aplicación herbicida', ptsUnit:15, unidad:'potreros', max:30, tipo:'cantidad' },
+  a_sal:      { label:'Recarga sal mineral',  ptsUnit:10, unidad:'',         max:10, tipo:'fijo' },
+  a_agua:     { label:'Mantenimiento agua',   ptsUnit:10, unidad:'',         max:10, tipo:'fijo' },
+  a_recorrido:{ label:'Recorrido general',    ptsUnit:5,  unidad:'',         max:5,  tipo:'fijo' },
+  a_otro:     { label:'Otra actividad',       ptsUnit:5,  unidad:'',         max:5,  tipo:'fijo' },
 };
 
-// ── FECHA ──────────────────────────────────────────────────────────────────
+// Puntos adicionales por sección
+const BONUS = {
+  identificacion: 10,  // nombre + horas completos
+  cambio_potrero: 20,  // cambio de potrero
+  pesaje: 20,          // pesaje realizado
+  foto: 5,             // foto adjunta
+  reporte_tiempo: 10,  // enviado antes 5 PM (calculado al enviar)
+};
+
+// ── FECHA ─────────────────────────────────────────────────────────────────
 const DIAS  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const HOY   = new Date();
 document.getElementById('fechaTag').textContent =
-  `${DIAS[HOY.getDay()]} ${HOY.getDate()} ${MESES[HOY.getMonth()]} ${HOY.getFullYear()}`;
+  DIAS[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + MESES[HOY.getMonth()] + ' ' + HOY.getFullYear();
 
-// ── ACTIVIDADES META ───────────────────────────────────────────────────────
-const ACTS = {
-  a_potrero:  { label:'Cambio de potrero',   pm:'bajo',  hrs:0.5  },
-  a_chapea:   { label:'Chapea / maleza',      pm:'bajo',  hrs:3.0  },
-  a_cerca:    { label:'Reparación cercas',    pm:'bajo',  hrs:2.0  },
-  a_sanidad:  { label:'Sanidad / tratamiento',pm:'bajo',  hrs:1.0  },
-  a_pesaje:   { label:'Pesaje',               pm:'bajo',  hrs:1.5  },
-  a_sal:      { label:'Recarga sal mineral',  pm:'bajo',  hrs:0.5  },
-  a_herb:     { label:'Aplicación herbicida', pm:'bajo',  hrs:3.0  },
-  a_agua:     { label:'Mantenimiento agua',   pm:'bajo',  hrs:1.0  },
-  a_recorrido:{ label:'Recorrido general',    pm:'alto',  hrs:1.5  },
-  a_otro:     { label:'Otra actividad',       pm:'medio', hrs:1.0  },
-};
-
-// ── TOGGLE ─────────────────────────────────────────────────────────────────
+// ── TOGGLES ───────────────────────────────────────────────────────────────
 function tog(btn, key, val, cls) {
-  btn.parentElement.querySelectorAll('.tog').forEach(b =>
-    b.classList.remove('on-verde','on-rojo','on-ambar'));
+  btn.parentElement.querySelectorAll('.tog').forEach(b => b.classList.remove('on-v','on-r','on-a'));
   btn.classList.add(cls);
   S[key] = val;
-  // Side effects
-  if (key==='sanidad') show('novSanDiv', val==='SI');
-  if (key==='pesaje')  show('pesajeDiv', val==='SI');
-  if (key==='cambio')  show('nuevoPotDiv', val==='SI');
-  if (key==='cercas')  show('cercaDetDiv', val==='FALLA');
-  if (key==='decision')show('decisionDiv', val==='SI');
-  prog(); calcEff();
+  if (key==='sanidad')  show('novSanDiv',  val==='SI');
+  if (key==='pesaje')   show('pesajeDiv',  val==='SI');
+  if (key==='cambio')   show('nuevoPotDiv',val==='SI');
+  if (key==='cercas')   show('cercaDetDiv',val==='FALLA');
+  if (key==='decision') show('decisionDiv',val==='SI');
+  recalc();
 }
-
-function show(id, visible) {
-  document.getElementById(id).style.display = visible ? 'block' : 'none';
-}
+function show(id, v) { document.getElementById(id).style.display = v ? 'block' : 'none'; }
 
 function togAct(lbl, id) {
   lbl.classList.toggle('on');
-  updateTiempoFields();
-  calcEff(); prog();
+  actualizarCantidades();
+  recalc();
 }
 
-// ── TIEMPO FIELDS ──────────────────────────────────────────────────────────
-function updateTiempoFields() {
-  const c = document.getElementById('tiempoContainer');
-  const checked = Object.keys(ACTS).filter(id =>
-    document.getElementById(id)?.checked);
-  if (!checked.length) {
-    c.innerHTML = '<p style="font-size:12px;color:var(--sub);font-family:var(--mono);padding:6px 0">Marca actividades arriba para ver el desglose</p>';
-    return;
-  }
-  c.innerHTML = checked.map(id => {
-    const a = ACTS[id];
-    const cls = `pm-${a.pm}`;
-    const tag = a.pm==='alto'?'⚠ Punto muerto':a.pm==='medio'?'● Verificar':'✔ Productivo';
-    return `<div class="t-row">
-      <span class="t-lbl">${a.label}<span class="t-tag ${cls}">${tag}</span></span>
-      <input type="number" class="t-inp" id="t_${id}" value="${a.hrs}" min="0.5" max="10" step="0.5" onchange="calcEff()">
-      <span class="t-unit">hrs</span>
-    </div>`;
-  }).join('');
+// ── CANTIDADES ────────────────────────────────────────────────────────────
+function actualizarCantidades() {
+  const c = document.getElementById('cantidadContainer');
+  const checked = Object.keys(ACTS).filter(id => {
+    const cb = document.getElementById(id);
+    return cb && cb.checked && ACTS[id].tipo === 'cantidad';
+  });
+  if (!checked.length) { c.innerHTML = ''; return; }
+
+  c.innerHTML = '<label class="lbl" style="margin-bottom:8px">Cantidad realizada por actividad</label>' +
+    checked.map(id => {
+      const a = ACTS[id];
+      const pts = calcPtsAct(id);
+      return '<div class="qty-row">' +
+        '<span class="qty-lbl">' + a.label + '</span>' +
+        '<input type="number" class="qty-inp" id="qty_' + id + '" value="1" min="1" max="10" onchange="recalc()">' +
+        '<span class="qty-unit">' + a.unidad + '</span>' +
+        '<span class="qty-pts-live" id="livepts_' + id + '">+' + pts + ' pts</span>' +
+        '</div>';
+    }).join('');
 }
 
-// ── EFICIENCIA ─────────────────────────────────────────────────────────────
-function calcEff() {
-  const ll = document.getElementById('horaLlegada').value;
-  const sl = document.getElementById('horaSalida').value;
-  let jornadaHrs = 8;
+function calcPtsAct(id) {
+  const a = ACTS[id];
+  if (a.tipo === 'fijo') return a.ptsUnit;
+  const qty = parseInt(document.getElementById('qty_' + id)?.value) || 1;
+  return Math.min(a.max, a.ptsUnit * qty);
+}
 
-  if (ll && sl) {
-    const [lh,lm] = ll.split(':').map(Number);
-    const [sh,sm] = sl.split(':').map(Number);
-    jornadaHrs = (sh*60+sm - lh*60-lm)/60;
+// ── CÁLCULO PRINCIPAL DE SCORE ────────────────────────────────────────────
+function recalc() {
+  let puntos = {};
+  let total = 0;
+
+  // Identificación (+10 si completo)
+  const idOk = document.getElementById('trabajador').value &&
+                document.getElementById('horaLlegada').value &&
+                document.getElementById('horaSalida').value;
+  puntos.identificacion = idOk ? BONUS.identificacion : 0;
+
+  // Jornada válida
+  if (document.getElementById('horaLlegada').value && document.getElementById('horaSalida').value) {
+    const [lh,lm] = document.getElementById('horaLlegada').value.split(':').map(Number);
+    const [sh,sm] = document.getElementById('horaSalida').value.split(':').map(Number);
+    const hrs = (sh*60+sm - lh*60-lm)/60;
     const aJ = document.getElementById('alertJornada');
-    if (jornadaHrs < 6) {
-      aJ.className='alrt show a-red';
-      aJ.textContent=`⚠ Jornada de ${jornadaHrs.toFixed(1)} horas — por debajo de 8 horas.`;
+    if (hrs < 6) {
+      aJ.className='alrt show a-r';
+      aJ.textContent = '⚠ Jornada de ' + hrs.toFixed(1) + ' horas — menos de 6 horas reduce el score.';
+      puntos.identificacion = Math.round(puntos.identificacion * (hrs/8));
     } else {
-      aJ.className='alrt show a-grn';
-      aJ.textContent=`Jornada de ${jornadaHrs.toFixed(1)} horas registrada.`;
+      aJ.className='alrt show a-v';
+      aJ.textContent = 'Jornada de ' + hrs.toFixed(1) + ' horas registrada.';
     }
   }
 
-  let prodHrs=0, pmHrs=0;
+  // Cambio de potrero
+  puntos.cambio = S.cambio === 'SI' ? BONUS.cambio_potrero : 0;
+
+  // Pesaje
+  puntos.pesaje = S.pesaje === 'SI' ? BONUS.pesaje : 0;
+
+  // Foto
+  puntos.foto = S.foto === 'SI' ? BONUS.foto : 0;
+
+  // Actividades
+  let ptsActs = 0;
+  let desglose = [];
   Object.keys(ACTS).forEach(id => {
     const cb = document.getElementById(id);
-    const ti = document.getElementById(`t_${id}`);
-    if (cb?.checked && ti) {
-      const h = parseFloat(ti.value)||0;
-      ACTS[id].pm==='alto' ? pmHrs+=h : prodHrs+=h;
+    if (cb && cb.checked) {
+      const pts = calcPtsAct(id);
+      ptsActs += pts;
+      desglose.push({ label: ACTS[id].label, pts });
+      // Actualizar live pts
+      const live = document.getElementById('livepts_' + id);
+      if (live) live.textContent = '+' + pts + ' pts';
     }
   });
+  puntos.actividades = ptsActs;
 
-  const eff = jornadaHrs>0 ? Math.min(100,(prodHrs/jornadaHrs)*100) : 0;
-  const fill = document.getElementById('effFill');
-  const pct  = document.getElementById('effPct');
-  const aE   = document.getElementById('alertEff');
-  fill.style.width = eff+'%';
-  if (eff>=70) {
-    fill.style.background='var(--verde-l)';
-    aE.className='alrt show a-grn';
-    aE.textContent=`✅ ${eff.toFixed(0)}% productividad — ${prodHrs.toFixed(1)} hrs productivas.`;
-  } else if (eff>=40) {
-    fill.style.background='#C8961E';
-    aE.className='alrt show a-amb';
-    aE.textContent=`⚠ ${eff.toFixed(0)}% productividad. ${pmHrs.toFixed(1)} hrs en punto muerto. Meta: >70%.`;
-  } else if (prodHrs+pmHrs > 0) {
-    fill.style.background='var(--rojo)';
-    aE.className='alrt show a-red';
-    aE.textContent=`🚨 ${eff.toFixed(0)}% productividad crítica. Revisión inmediata.`;
+  // Total bruto
+  const bruto = Object.values(puntos).reduce((a,b) => a+b, 0);
+
+  // Normalizar a 100 (máximo teórico ~185 pts)
+  const MAX_TEORICO = 185;
+  const scoreRaw = Math.min(100, Math.round((bruto / MAX_TEORICO) * 100));
+
+  // Actualizar score hero
+  actualizarScoreHero(scoreRaw, puntos, desglose);
+
+  // Actualizar pts por sección
+  document.getElementById('pts_id').textContent    = puntos.identificacion + ' pts';
+  document.getElementById('pts_ganado').textContent = puntos.pesaje + ' pts';
+  document.getElementById('pts_pot').textContent    = puntos.cambio + ' pts';
+  document.getElementById('pts_act').textContent    = puntos.actividades + ' pts';
+  document.getElementById('pts_foto').textContent   = puntos.foto + ' pts';
+
+  // Desglose en sección actividades
+  if (desglose.length > 0 || puntos.cambio > 0 || puntos.pesaje > 0) {
+    const bd = document.getElementById('ptsBreakdown');
+    const rows = document.getElementById('ptsRows');
+    bd.style.display = 'block';
+    let html = '';
+    if (puntos.identificacion) html += '<div class="pts-row"><span>Identificación completa</span><span>+' + puntos.identificacion + ' pts</span></div>';
+    if (puntos.cambio)         html += '<div class="pts-row"><span>Cambio de potrero</span><span>+' + puntos.cambio + ' pts</span></div>';
+    if (puntos.pesaje)         html += '<div class="pts-row"><span>Pesaje realizado</span><span>+' + puntos.pesaje + ' pts</span></div>';
+    desglose.forEach(d => {
+      html += '<div class="pts-row"><span>' + d.label + '</span><span>+' + d.pts + ' pts</span></div>';
+    });
+    if (puntos.foto)           html += '<div class="pts-row"><span>Foto de evidencia</span><span>+' + puntos.foto + ' pts</span></div>';
+    html += '<div class="pts-row"><span>TOTAL</span><span>' + bruto + ' pts brutos → <strong>' + scoreRaw + '/100</strong></span></div>';
+    rows.innerHTML = html;
   }
-  pct.textContent = eff.toFixed(0)+'%';
+
+  // Botón submit
+  document.getElementById('subScore').textContent = scoreRaw;
+  document.getElementById('subNote').textContent =
+    'Score actual: ' + scoreRaw + '/100 — ' +
+    (scoreRaw >= 85 ? '✅ Pago completo justificado' :
+     scoreRaw >= 70 ? '⚠ Pago con observación' :
+     '🚨 Jornada deficiente — agrega más actividades');
+
+  return scoreRaw;
 }
 
-// ── GDP ────────────────────────────────────────────────────────────────────
+function actualizarScoreHero(score, puntos, desglose) {
+  document.getElementById('scoreNum').textContent = score;
+
+  const fill = document.getElementById('progInner');
+  const estado = document.getElementById('scoreEstado');
+  const detalle = document.getElementById('scoreDesglose');
+  const pago = document.getElementById('scorePago');
+
+  fill.style.width = score + '%';
+
+  if (score >= 85) {
+    fill.style.background = '#4A8A34';
+    estado.className = 'score-estado s-ex';
+    estado.textContent = '✅ Excelente';
+    pago.textContent = 'Pago: $230 ✅';
+  } else if (score >= 70) {
+    fill.style.background = '#C8961E';
+    estado.className = 'score-estado s-ok';
+    estado.textContent = '⚠ Aceptable';
+    pago.textContent = 'Pago: $230 + llamada';
+  } else if (score > 0) {
+    fill.style.background = '#8B1A1A';
+    estado.className = 'score-estado s-def';
+    estado.textContent = '🚨 Deficiente';
+    pago.textContent = 'Pago en revisión';
+  } else {
+    fill.style.background = '#4A4A4A';
+    estado.className = 'score-estado s-def';
+    estado.textContent = 'Sin datos';
+    pago.textContent = '—';
+  }
+
+  const totalActs = Object.keys(ACTS).filter(id => document.getElementById(id)?.checked).length;
+  detalle.textContent = totalActs > 0
+    ? totalActs + ' actividades registradas · ' + Object.values(puntos).reduce((a,b)=>a+b,0) + ' pts brutos'
+    : 'Marca actividades para sumar puntos';
+}
+
 function calcGDP() {
   const p2 = parseFloat(document.getElementById('pesoG2').value);
   const box = document.getElementById('gdpBox');
   if (!p2) { box.style.display='none'; return; }
-  // GDP estimada desde pesaje base 12-May (360 kg, día 0 del sistema)
-  const diasDesde = Math.max(1, Math.round((new Date() - new Date('2026-05-12'))/(1000*60*60*24)));
+  const diasDesde = Math.max(1, Math.round((new Date() - new Date('2026-05-12'))/(86400000)));
   const gdp = ((p2-360)/diasDesde).toFixed(2);
   const v = parseFloat(gdp);
   box.style.display='block';
-  if (v>=0.8)      { box.className='gdp-box gdp-ok';   box.textContent=`G2: ${gdp} kg/día ✅`; }
-  else if (v>=0.5) { box.className='gdp-box gdp-warn'; box.textContent=`G2: ${gdp} kg/día ⚠`; }
-  else             { box.className='gdp-box gdp-crit'; box.textContent=`G2: ${gdp} kg/día 🚨`; }
+  if (v>=0.8)      { box.className='gdp-box gdp-ok'; box.textContent='G2: '+gdp+' kg/día ✅'; }
+  else if (v>=0.5) { box.className='gdp-box gdp-w';  box.textContent='G2: '+gdp+' kg/día ⚠'; }
+  else             { box.className='gdp-box gdp-c';  box.textContent='G2: '+gdp+' kg/día 🚨'; }
 }
 
-// ── PROGRESS ───────────────────────────────────────────────────────────────
-function prog() {
-  const checks = [
-    document.getElementById('trabajador').value,
-    document.getElementById('horaLlegada').value,
-    S.sanidad, document.getElementById('potreroActivo').value,
-    S.pasto, S.sal, S.agua
-  ];
-  let done = checks.filter(Boolean).length;
-  const acts = document.querySelectorAll('#actGrid input:checked').length;
-  if (acts>0) done++;
-  document.getElementById('progFill').style.width = Math.round(done/8*100)+'%';
-}
+// ── ENVIAR ────────────────────────────────────────────────────────────────
+async function enviar() {
+  const score = recalc();
+  const ahora = new Date();
+  const horaEnvio = ahora.getHours() + ':' + String(ahora.getMinutes()).padStart(2,'0');
+  // Reporte a tiempo = enviado el mismo día antes de las 9 PM
+  // Si es después de 5 PM pero antes de 9 PM = válido con nota
+  // Si es después de 9 PM = tarde (perdió bono)
+  const hora = ahora.getHours();
+  const aHora = hora < 21; // válido si llega antes de las 9 PM del mismo día
+  const tardePero = hora >= 17 && hora < 21; // llegó tarde pero justificable
 
-// ── GENERAR REPORTE ────────────────────────────────────────────────────────
-async function enviarReporte() {
-  const btn = document.getElementById('btnSubmit');
   const trab = document.getElementById('trabajador').value || '[sin nombre]';
-  const ll = document.getElementById('horaLlegada').value || '—';
-  const sl = document.getElementById('horaSalida').value || '—';
-  const g1 = document.getElementById('g1').value || '—';
-  const g2 = document.getElementById('g2').value || '—';
-  const bf = document.getElementById('buf').value || '—';
-  const pot = document.getElementById('potreroActivo').value || '—';
-  const obs = document.getElementById('obs').value || 'Sin novedades';
-  const ins = document.getElementById('insumosAgotan').value || '—';
+  const ll   = document.getElementById('horaLlegada').value || '—';
+  const sl   = document.getElementById('horaSalida').value || '—';
+  const pot  = document.getElementById('potreroActivo').value || '—';
+  const obs  = document.getElementById('obs').value || 'Sin novedades';
+  const ins  = document.getElementById('insumosAgotan').value || '—';
   const fecha = document.getElementById('fechaTag').textContent;
+
+  // Score final
+  // Si llegó antes de 5 PM: bono completo +10
+  // Si llegó entre 5-9 PM con motivo justificado: bono parcial +5
+  // Si llegó después de 9 PM o sin justificación: bono 0
+  const motivoTarde = document.getElementById('motivoTardeTxt')?.value?.trim() || '';
+  const tieneMotivo = S.motivoTarde && S.motivoTarde !== '';
+  let bonoReporte = 0;
+  if (hora < 17) bonoReporte = 10;
+  else if (tardePero && tieneMotivo) bonoReporte = 5;
+  const scoreFinal = Math.min(100, score + bonoReporte);
 
   const actsList = Object.keys(ACTS)
     .filter(id => document.getElementById(id)?.checked)
     .map(id => {
-      const ti = document.getElementById(`t_${id}`);
-      return `  • ${ACTS[id].label}: ${ti?.value||'—'} hrs`;
+      const qty = document.getElementById('qty_' + id)?.value || '';
+      return '  • ' + ACTS[id].label + (qty ? ' (' + qty + ' ' + ACTS[id].unidad + ')' : '') + ': +' + calcPtsAct(id) + ' pts';
     });
 
-  const novSan = S.sanidad==='SI'
-    ? `\n⚠ NOVEDAD: ${document.getElementById('novSan').value}` : '';
-  const pesajeInfo = S.pesaje==='SI'
-    ? `\nPESAJE: G1 ${document.getElementById('pesoG1').value||'—'} kg / G2 ${document.getElementById('pesoG2').value||'—'} kg` : '';
-  const decInfo = S.decision==='SI'
-    ? `\n🔴 DECISIÓN REQUERIDA: ${document.getElementById('decisionTxt').value}` : '';
-  const cercaInfo = S.cercas==='FALLA'
-    ? ` → ${document.getElementById('cercaDet').value}` : '';
-  const cambioInfo = S.cambio==='SI'
-    ? ` → ${document.getElementById('nuevoPot').value}` : '';
+  const estadoPago = scoreFinal>=85 ? '✅ PAGO COMPLETO JUSTIFICADO' :
+                     scoreFinal>=70 ? '⚠ PAGO CON OBSERVACIÓN' :
+                     '🚨 JORNADA DEFICIENTE — REVISIÓN';
 
-  const eff = document.getElementById('effPct').textContent;
-
-  const reporte = `📋 REPORTE ARROYO NEGRO
-${fecha.toUpperCase()} · ${trab}
-━━━━━━━━━━━━━━━━━━
-🕐 JORNADA: ${ll} → ${sl} | Productividad: ${eff}
-
-🐄 GANADO
-G1: ${g1} cab · G2: ${g2} cab · Búfalos: ${bf} cab
-Sanidad: ${S.sanidad||'—'}${novSan}${pesajeInfo}
-
-🌿 POTREROS
-Activo: ${pot} · Pasto: ${S.pasto||'—'}
-Cambio: ${S.cambio||'—'}${cambioInfo}
-Sal: ${S.sal||'—'} · Agua: ${S.agua||'—'}
-
-⚒️ ACTIVIDADES
-${actsList.length ? actsList.join('\n') : '  — No registradas'}
-
-🔧 INFRAESTRUCTURA
-Cercas: ${S.cercas||'—'}${cercaInfo}
-Insumos: ${ins}
-
-📝 OBSERVACIONES
-${obs}${decInfo}
-━━━━━━━━━━━━━━━━━━
-Arroyo Negro · Sistema de Control`;
+  const reporte =
+'📋 REPORTE ARROYO NEGRO\n' +
+fecha.toUpperCase() + ' · ' + trab + '\n' +
+'━━━━━━━━━━━━━━━━━━\n' +
+'🕐 JORNADA: ' + ll + ' → ' + sl + ' · Enviado: ' + horaEnvio + (aHora?' ✅':' ⚠ tarde') + '\n\n' +
+'📊 SCORE: ' + scoreFinal + '/100 · ' + estadoPago + '\n\n' +
+'🐄 GANADO\n' +
+'G1: ' + (document.getElementById('g1').value||'—') + ' cab · G2: ' + (document.getElementById('g2').value||'—') + ' cab · Búfalos: ' + (document.getElementById('buf').value||'—') + ' cab\n' +
+'Sanidad: ' + (S.sanidad||'—') + (S.sanidad==='SI' ? ' → ' + (document.getElementById('novSan').value||'') : '') + '\n' +
+(S.pesaje==='SI' ? 'Pesaje: G1 ' + (document.getElementById('pesoG1').value||'—') + ' kg / G2 ' + (document.getElementById('pesoG2').value||'—') + ' kg\n' : '') +
+'\n🌿 POTREROS\n' +
+'Activo: ' + pot + ' · Pasto: ' + (S.pasto||'—') + '\n' +
+'Cambio: ' + (S.cambio||'—') + (S.cambio==='SI' ? ' → ' + (document.getElementById('nuevoPot').value||'—') : '') + '\n' +
+'Sal: ' + (S.sal||'—') + ' · Agua: ' + (S.agua||'—') + '\n\n' +
+'⚒️ ACTIVIDADES\n' +
+(actsList.length ? actsList.join('\n') : '  — No registradas') + '\n\n' +
+'🔧 INFRAESTRUCTURA\n' +
+'Cercas: ' + (S.cercas||'—') + (S.cercas==='FALLA' ? ' → ' + (document.getElementById('cercaDet').value||'') : '') + '\n' +
+'Insumos: ' + ins + '\n\n' +
+'📝 OBSERVACIONES\n' + obs +
+(S.decision==='SI' ? '\n🔴 DECISIÓN REQUERIDA: ' + (document.getElementById('decisionTxt').value||'') : '') + '\n' +
+'📸 Foto: ' + (S.foto==='SI' ? '✅ Adjunta' : '❌ Sin foto (-5 pts)') + '\n' +
+'━━━━━━━━━━━━━━━━━━\n' +
+'Arroyo Negro · Sistema de Control';
 
   document.getElementById('prevText').textContent = reporte;
   document.getElementById('previewBox').classList.add('show');
   document.getElementById('previewBox').scrollIntoView({behavior:'smooth'});
 
-  // Enviar a Apps Script
-  if (SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec') {
-    btn.textContent = '⏳ Guardando en sistema...';
-    btn.disabled = true;
-    setStatus('⬤ guardando...');
-    try {
-      const payload = {
-        fecha: fecha,
-        trabajador: trab,
-        horaLlegada: ll,
-        horaSalida: sl,
-        g1, g2, bufalo: bf,
-        sanidad: S.sanidad,
-        novSanidad: document.getElementById('novSan').value || '',
-        pesaje: S.pesaje,
-        pesoG1: document.getElementById('pesoG1').value || '',
-        pesoG2: document.getElementById('pesoG2').value || '',
-        potreroActivo: pot,
-        estadoPasto: S.pasto,
-        cambioPotrero: S.cambio,
-        nuevoPotrero: document.getElementById('nuevoPot').value || '',
-        salMineral: S.sal,
-        agua: S.agua,
-        actividades: actsList.join(' | '),
-        productividad: eff,
-        cercas: S.cercas,
-        cercaDetalle: document.getElementById('cercaDet').value || '',
-        insumosAgotan: ins,
-        observaciones: obs,
-        decisionRequerida: S.decision,
-        decisionDetalle: document.getElementById('decisionTxt').value || '',
-        reporte: reporte
-      };
+  // ── ENVÍO CON VERIFICACIÓN DE CONFIRMACIÓN ──
+  const btn = document.getElementById('btnSub');
+  btn.disabled = true;
+
+  // Generar ID único para este reporte
+  const reporteId = 'AN-' + HOY.getFullYear() +
+    String(HOY.getMonth()+1).padStart(2,'0') +
+    String(HOY.getDate()).padStart(2,'0') + '-' +
+    trab.substring(0,3).toUpperCase() + '-' +
+    Date.now().toString().slice(-4);
+
+  const payload = {
+    reporteId,
+    fecha, trabajador: trab, horaLlegada: ll, horaSalida: sl,
+    horaEnvio, reporteATiempo: aHora ? 'SI' : 'NO',
+    score: scoreFinal, estadoPago,
+    g1: document.getElementById('g1').value||'',
+    g2: document.getElementById('g2').value||'',
+    bufalo: document.getElementById('buf').value||'',
+    sanidad: S.sanidad,
+    novSanidad: document.getElementById('novSan').value||'',
+    pesaje: S.pesaje,
+    pesoG1: document.getElementById('pesoG1').value||'',
+    pesoG2: document.getElementById('pesoG2').value||'',
+    potreroActivo: pot, estadoPasto: S.pasto,
+    cambioPotrero: S.cambio,
+    nuevoPotrero: document.getElementById('nuevoPot').value||'',
+    salMineral: S.sal, agua: S.agua,
+    actividades: actsList.join(' | '),
+    cercas: S.cercas,
+    cercaDetalle: document.getElementById('cercaDet').value||'',
+    insumosAgotan: ins, foto: S.foto,
+    observaciones: obs,
+    decisionRequerida: S.decision,
+    decisionDetalle: document.getElementById('decisionTxt').value||'',
+    reporte
+  };
+
+  // Paso 1: mostrar enviando
+  mostrarEstadoEnvio('enviando', reporteId);
+
+  try {
+    // Enviar al Apps Script
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // Paso 2: esperar y verificar que llegó al Sheets
+    mostrarEstadoEnvio('verificando', reporteId);
+    const confirmado = await verificarEnSheets(reporteId);
+
+    if (confirmado) {
+      mostrarEstadoEnvio('confirmado', reporteId);
+    } else {
+      // Reintentar una vez
+      mostrarEstadoEnvio('reintentando', reporteId);
       await fetch(SCRIPT_URL, {
-        method:'POST',
-        mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      btn.textContent = '✅ Guardado en sistema';
-      setStatus('✅ guardado');
-    } catch(e) {
-      btn.textContent = '⚠ Error de conexión — reporte generado igual';
-      setStatus('⚠ error conexión');
+      await new Promise(r => setTimeout(r, 4000));
+      const confirmado2 = await verificarEnSheets(reporteId);
+      mostrarEstadoEnvio(confirmado2 ? 'confirmado' : 'sin_conexion', reporteId);
     }
-    setTimeout(()=>{
-      btn.textContent='📋 Generar y enviar reporte';
-      btn.disabled=false;
-    }, 3000);
+  } catch(e) {
+    mostrarEstadoEnvio('error', reporteId);
+  }
+
+  setTimeout(() => {
+    btn.textContent = '📋 Enviar reporte del día';
+    btn.disabled = false;
+  }, 4000);
+}
+
+// ── VERIFICAR EN SHEETS VÍA doGet ────────────────────────────────────────
+async function verificarEnSheets(reporteId) {
+  try {
+    await new Promise(r => setTimeout(r, 3000)); // dar tiempo al script
+    const url = SCRIPT_URL + '?verificar=' + encodeURIComponent(reporteId);
+    const res = await fetch(url, { method: 'GET', mode: 'cors' });
+    const data = await res.json();
+    return data.encontrado === true;
+  } catch(e) {
+    return false;
   }
 }
 
+// ── MOSTRAR ESTADO DE ENVÍO ──────────────────────────────────────────────
+function mostrarEstadoEnvio(estado, reporteId) {
+  const btn    = document.getElementById('btnSub');
+  const statusR = document.getElementById('statusR');
+  const nota   = document.getElementById('subNote');
+
+  // Panel de confirmación
+  let panel = document.getElementById('confirmPanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'confirmPanel';
+    panel.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+      'background:#1A3A1A;border:2px solid #4A8A34;border-radius:16px;padding:24px 28px;' +
+      'text-align:center;z-index:9999;max-width:300px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.5)';
+    document.body.appendChild(panel);
+  }
+
+  const estados = {
+    enviando: {
+      icon: '📡',
+      titulo: 'Enviando reporte...',
+      sub: 'Conectando con el sistema',
+      color: '#C8961E',
+      btnTxt: '⏳ Enviando...'
+    },
+    verificando: {
+      icon: '🔍',
+      titulo: 'Verificando confirmación...',
+      sub: 'Comprobando que llegó al sistema',
+      color: '#C8961E',
+      btnTxt: '⏳ Verificando...'
+    },
+    reintentando: {
+      icon: '🔄',
+      titulo: 'Reintentando envío...',
+      sub: 'Primera señal débil — intentando de nuevo',
+      color: '#C8961E',
+      btnTxt: '⏳ Reintentando...'
+    },
+    confirmado: {
+      icon: '✅',
+      titulo: '¡Reporte guardado!',
+      sub: 'ID: ' + reporteId + '
+El sistema lo recibió correctamente',
+      color: '#4A8A34',
+      btnTxt: '✅ Reporte guardado'
+    },
+    sin_conexion: {
+      icon: '📋',
+      titulo: 'Reporte generado',
+      sub: 'Sin confirmación del sistema.
+Copia y envía por WhatsApp como respaldo.',
+      color: '#7A4A00',
+      btnTxt: '⚠ Enviar por WhatsApp'
+    },
+    error: {
+      icon: '⚠️',
+      titulo: 'Error de conexión',
+      sub: 'El reporte está listo abajo.
+Cópialo y envíalo por WhatsApp.',
+      color: '#8B1A1A',
+      btnTxt: '⚠ Sin conexión'
+    }
+  };
+
+  const e = estados[estado];
+  panel.innerHTML =
+    '<div style="font-size:48px;margin-bottom:12px">' + e.icon + '</div>' +
+    '<div style="font-size:16px;font-weight:700;color:#FFFFFF;margin-bottom:8px">' + e.titulo + '</div>' +
+    '<div style="font-size:12px;color:#88AA88;font-family:monospace;white-space:pre-line;margin-bottom:16px">' + e.sub + '</div>' +
+    (estado === 'confirmado' || estado === 'sin_conexion' || estado === 'error'
+      ? '<button onclick="document.getElementById('confirmPanel').remove()" style="background:' + e.color + ';color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;width:100%">OK</button>'
+      : '<div style="color:#4A8A34;font-size:12px;font-family:monospace">⬤ procesando...</div>'
+    );
+
+  btn.textContent = e.btnTxt;
+  statusR.textContent = estado === 'confirmado' ? '✅ confirmado' : '⬤ ' + estado;
+
+  if (estado === 'confirmado') {
+    nota.textContent = '✅ Reporte ID: ' + reporteId + ' guardado en el sistema';
+    nota.style.color = '#4A8A34';
+    setTimeout(() => { panel.remove(); }, 4000);
+  }
+
 function copiar() {
   const texto = document.getElementById('prevText').textContent;
-  navigator.clipboard.writeText(texto).then(()=>{
-    document.getElementById('btnCopy').textContent='✅ Copiado — abriendo WhatsApp...';
-    setTimeout(()=>{
-      window.open('https://wa.me/?text='+encodeURIComponent(texto),'_blank');
-      document.getElementById('btnCopy').textContent='📋 Copiar y abrir WhatsApp';
+  navigator.clipboard.writeText(texto).then(() => {
+    document.querySelector('.btn-copy').textContent = '✅ Copiado — abriendo WhatsApp...';
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+      document.querySelector('.btn-copy').textContent = '📋 Copiar y abrir WhatsApp';
     }, 800);
-  }).catch(()=>{
-    alert('Selecciona el texto del reporte y cópialo manualmente');
-  });
+  }).catch(() => { alert('Selecciona el texto del reporte y cópialo manualmente'); });
 }
 
-function setStatus(msg) {
-  document.getElementById('statusRight').textContent = msg;
+// Mostrar campo de motivo si es tarde
+function checkHoraTarde() {
+  const ahora = new Date();
+  const tarde = ahora.getHours() >= 17;
+  const div = document.getElementById('motivoTardeDiv');
+  if (div) div.style.display = tarde ? 'block' : 'none';
 }
+
+// Toggle motivo tarde
+function togMotivo(btn, val) {
+  btn.parentElement.querySelectorAll('.tog').forEach(b => b.classList.remove('on-v','on-a'));
+  btn.classList.add('on-a');
+  S.motivoTarde = val;
+  recalc();
+}
+
+// Verificar hora al cargar
+checkHoraTarde();
+setInterval(checkHoraTarde, 60000); // revisar cada minuto
 
 // Init
-updateTiempoFields();
-prog();
+recalc();
 </script>
 </body>
 </html>
