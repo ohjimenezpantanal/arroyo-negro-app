@@ -674,8 +674,8 @@ function recalc() {
   // Botón
   document.getElementById('subScore').textContent = score;
   document.getElementById('subNota').textContent =
-    'Score: ' + score + '/100 — ' +
-    (score>=85 ? '✅ Pago completo justificado' : score>=70 ? '⚠ Pago con observación' : '🚨 Jornada deficiente');
+    'Score: ' + score + '/100  ·  ' +
+    (score>=85 ? '✅ Pago completo justificado' : score>=70 ? '⚠ Pago con observación' : '🚨 Agrega más actividades');
 
   return score;
 }
@@ -847,29 +847,35 @@ async function enviar() {
   };
 
   try {
-    // Método: formulario oculto con iframe — 100% compatible con Apps Script doPost
-    var enviado = await enviarConFormulario(payload);
-
-    if (enviado) {
-      // Esperar y verificar
-      document.getElementById('modalTit').textContent = 'Verificando...';
-      document.getElementById('modalSub').textContent = 'Comprobando que llegó al sistema';
-      await esperar(4000);
-      var confirmado = await verificar(rid);
-      if (confirmado) {
-        modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nEl sistema lo confirmó.', 'OK', 'modal-btn-v');
-        document.getElementById('statusR').textContent = '✅ confirmado';
-      } else {
-        modal('✅', 'Reporte enviado', 'Enviado correctamente.\nID: ' + rid, 'OK', 'modal-btn-v');
-        document.getElementById('statusR').textContent = '✅ enviado';
-      }
+    // Envío con fetch CORS — funciona con Apps Script "Cualquier persona"
+    var res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    var resultado = await res.json();
+    if (resultado && resultado.status === 'ok') {
+      modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nEl sistema lo confirmó.', 'OK', 'modal-btn-v');
+      document.getElementById('statusR').textContent = '✅ confirmado';
     } else {
-      modal('⚠️','Error de conexión','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
-      document.getElementById('statusR').textContent = '⚠ error';
+      modal('⚠️','Enviado sin confirmar','El reporte fue enviado.\nID: ' + rid,'OK','modal-btn-a');
+      document.getElementById('statusR').textContent = '⚠ enviado';
     }
   } catch(e) {
-    modal('⚠️','Error','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
-    document.getElementById('statusR').textContent = '⚠ error';
+    // Reintento con no-cors como fallback
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+      modal('✅', 'Reporte enviado', 'ID: ' + rid + '\nVerifica en el grupo de WhatsApp.', 'OK', 'modal-btn-v');
+      document.getElementById('statusR').textContent = '✅ enviado';
+    } catch(e2) {
+      modal('⚠️','Sin conexión','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
+      document.getElementById('statusR').textContent = '⚠ sin conexión';
+    }
   }
 }
 
