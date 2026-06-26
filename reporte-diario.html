@@ -488,20 +488,19 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
 
-// ── ESTADO ────────────────────────────────────────────────────────────────
 var S = {};
-
-// ── ACTIVIDADES SELECCIONADAS ─────────────────────────────────────────────
 var actsSeleccionadas = {};
-
-// ── FECHA ─────────────────────────────────────────────────────────────────
 var HOY = new Date();
 var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 var MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+// ── TODO dentro de DOMContentLoaded ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+
 document.getElementById('fechaTag').textContent =
   DIAS[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + MESES[HOY.getMonth()] + ' ' + HOY.getFullYear();
 
-// ── TOGGLE BUTTONS — sistema nuevo ───────────────────────────────────────
+// ── TOGGLE BUTTONS ────────────────────────────────────────────────────────
 document.querySelectorAll('.tg').forEach(function(btn) {
   btn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -912,6 +911,8 @@ function mostrar(id, v) {
 
 // Init
 recalc();
+
+}); // end DOMContentLoaded
 </script>
 </body>
 </html>
