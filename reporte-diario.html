@@ -69,6 +69,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 .tog.on-v{background:var(--vl);border-color:var(--vl);color:#fff}
 .tog.on-r{background:var(--r);border-color:var(--r);color:#fff}
 .tog.on-a{background:var(--a);border-color:var(--a);color:#fff}
+/* Force touch events on mobile */
+.tog, .act-item { -webkit-touch-callout:none; touch-action:manipulation; }
 
 /* ACTIVIDADES CON PUNTOS */
 .act-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -205,8 +207,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">Novedad sanitaria</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'sanidad','NO','on-v')">✅ Sin novedades</button>
-        <button class="tog" onclick="tog(this,'sanidad','SI','on-r')">🚨 Hay novedad</button>
+        <button type="button" class="tog" onclick="return tog(this,'sanidad','NO','on-v')">✅ Sin novedades</button>
+        <button type="button" class="tog" onclick="return tog(this,'sanidad','SI','on-r')">🚨 Hay novedad</button>
       </div>
     </div>
     <div id="novSanDiv" style="display:none;margin-top:8px">
@@ -215,8 +217,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field" style="margin-top:10px">
       <label class="lbl">Pesaje realizado hoy</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'pesaje','NO','on-v')">No se pesó</button>
-        <button class="tog" onclick="tog(this,'pesaje','SI','on-v')">✅ Sí se pesó (+20 pts)</button>
+        <button type="button" class="tog" onclick="return tog(this,'pesaje','NO','on-v')">No se pesó</button>
+        <button type="button" class="tog" onclick="return tog(this,'pesaje','SI','on-v')">✅ Sí se pesó (+20 pts)</button>
       </div>
     </div>
     <div id="pesajeDiv" style="display:none;margin-top:8px">
@@ -256,16 +258,16 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">Estado del pasto</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'pasto','BUENO','on-v')">🟢 Bueno</button>
-        <button class="tog" onclick="tog(this,'pasto','REGULAR','on-a')">🟡 Regular</button>
-        <button class="tog" onclick="tog(this,'pasto','AGOTADO','on-r')">🔴 Agotado</button>
+        <button type="button" class="tog" onclick="return tog(this,'pasto','BUENO','on-v')">🟢 Bueno</button>
+        <button type="button" class="tog" onclick="return tog(this,'pasto','REGULAR','on-a')">🟡 Regular</button>
+        <button type="button" class="tog" onclick="return tog(this,'pasto','AGOTADO','on-r')">🔴 Agotado</button>
       </div>
     </div>
     <div class="field">
       <label class="lbl">¿Cambio de potrero hoy? (+20 pts)</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'cambio','NO','on-v')">No</button>
-        <button class="tog" onclick="tog(this,'cambio','SI','on-a')">Sí → pasó a:</button>
+        <button type="button" class="tog" onclick="return tog(this,'cambio','NO','on-v')">No</button>
+        <button type="button" class="tog" onclick="return tog(this,'cambio','SI','on-a')">Sí → pasó a:</button>
       </div>
     </div>
     <div id="nuevoPotDiv" style="display:none;margin-top:6px">
@@ -280,14 +282,14 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="g2" style="margin-top:10px">
       <div class="field"><label class="lbl">Sal mineral</label>
         <div class="tog-grp">
-          <button class="tog" onclick="tog(this,'sal','OK','on-v')">✅ OK</button>
-          <button class="tog" onclick="tog(this,'sal','REPONER','on-r')">🚨 Reponer</button>
+          <button type="button" class="tog" onclick="return tog(this,'sal','OK','on-v')">✅ OK</button>
+          <button type="button" class="tog" onclick="return tog(this,'sal','REPONER','on-r')">🚨 Reponer</button>
         </div>
       </div>
       <div class="field"><label class="lbl">Agua / bebederos</label>
         <div class="tog-grp">
-          <button class="tog" onclick="tog(this,'agua','OK','on-v')">✅ OK</button>
-          <button class="tog" onclick="tog(this,'agua','PROBLEMA','on-r')">🚨 Problema</button>
+          <button type="button" class="tog" onclick="return tog(this,'agua','OK','on-v')">✅ OK</button>
+          <button type="button" class="tog" onclick="return tog(this,'agua','PROBLEMA','on-r')">🚨 Problema</button>
         </div>
       </div>
     </div>
@@ -305,42 +307,42 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">Marcar todo lo que hizo hoy — cada actividad suma puntos</label>
       <div class="act-grid" id="actGrid">
-        <label class="act-item" onclick="togAct(this,'a_chapea')">
+        <label class="act-item" data-act="a_chapea">
           <input type="checkbox" id="a_chapea" onchange="recalc()">
           <span class="act-ico">🌿</span><span class="act-name">Chapea / maleza</span>
           <span class="act-pts-tag">15/pot</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_cerca')">
+        <label class="act-item" data-act="a_cerca">
           <input type="checkbox" id="a_cerca" onchange="recalc()">
           <span class="act-ico">🪝</span><span class="act-name">Cercas</span>
           <span class="act-pts-tag">15/tramo</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_sanidad')">
+        <label class="act-item" data-act="a_sanidad">
           <input type="checkbox" id="a_sanidad" onchange="recalc()">
           <span class="act-ico">💉</span><span class="act-name">Sanidad</span>
           <span class="act-pts-tag">15/animal</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_herb')">
+        <label class="act-item" data-act="a_herb">
           <input type="checkbox" id="a_herb" onchange="recalc()">
           <span class="act-ico">🧪</span><span class="act-name">Herbicida</span>
           <span class="act-pts-tag">15/pot</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_sal')">
+        <label class="act-item" data-act="a_sal">
           <input type="checkbox" id="a_sal" onchange="recalc()">
           <span class="act-ico">🧂</span><span class="act-name">Sal mineral</span>
           <span class="act-pts-tag">10 pts</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_agua')">
+        <label class="act-item" data-act="a_agua">
           <input type="checkbox" id="a_agua" onchange="recalc()">
           <span class="act-ico">💧</span><span class="act-name">Bebederos</span>
           <span class="act-pts-tag">10 pts</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_recorrido')">
+        <label class="act-item" data-act="a_recorrido">
           <input type="checkbox" id="a_recorrido" onchange="recalc()">
           <span class="act-ico">🚶</span><span class="act-name">Recorrido gral.</span>
           <span class="act-pts-tag">5 pts</span>
         </label>
-        <label class="act-item" onclick="togAct(this,'a_otro')">
+        <label class="act-item" data-act="a_otro">
           <input type="checkbox" id="a_otro" onchange="recalc()">
           <span class="act-ico">➕</span><span class="act-name">Otra actividad</span>
           <span class="act-pts-tag">5 pts</span>
@@ -371,8 +373,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">Cercas generales</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'cercas','OK','on-v')">✅ OK</button>
-        <button class="tog" onclick="tog(this,'cercas','FALLA','on-r')">🚨 Falla</button>
+        <button type="button" class="tog" onclick="return tog(this,'cercas','OK','on-v')">✅ OK</button>
+        <button type="button" class="tog" onclick="return tog(this,'cercas','FALLA','on-r')">🚨 Falla</button>
       </div>
     </div>
     <div id="cercaDetDiv" style="display:none;margin-top:6px">
@@ -396,8 +398,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">¿Tomaste foto de las actividades del día? (+5 pts)</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'foto','SI','on-v')">✅ Sí, tengo foto</button>
-        <button class="tog" onclick="tog(this,'foto','NO','on-r')">No tomé foto</button>
+        <button type="button" class="tog" onclick="return tog(this,'foto','SI','on-v')">✅ Sí, tengo foto</button>
+        <button type="button" class="tog" onclick="return tog(this,'foto','NO','on-r')">No tomé foto</button>
       </div>
     </div>
     <div class="field" style="margin-top:10px">
@@ -407,8 +409,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="field">
       <label class="lbl">¿Necesitas decisión de Oscar?</label>
       <div class="tog-grp">
-        <button class="tog" onclick="tog(this,'decision','NO','on-v')">No, todo controlado</button>
-        <button class="tog" onclick="tog(this,'decision','SI','on-a')">Sí, necesito respuesta</button>
+        <button type="button" class="tog" onclick="return tog(this,'decision','NO','on-v')">No, todo controlado</button>
+        <button type="button" class="tog" onclick="return tog(this,'decision','SI','on-a')">Sí, necesito respuesta</button>
       </div>
     </div>
     <div id="decisionDiv" style="display:none;margin-top:6px">
@@ -417,11 +419,11 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div id="motivoTardeDiv" class="field" style="display:none;margin-top:10px">
       <label class="lbl">⏰ Reporte tardío — motivo (obligatorio para mantener el bono)</label>
       <div class="tog-grp" style="margin-bottom:8px">
-        <button class="tog" onclick="togMotivo(this,'GANADO_SUELTO')">🐄 Ganado suelto</button>
-        <button class="tog" onclick="togMotivo(this,'EMERGENCIA_CERCA')">🪝 Cerca rota urgente</button>
-        <button class="tog" onclick="togMotivo(this,'SANIDAD_URGENTE')">💉 Emergencia sanitaria</button>
-        <button class="tog" onclick="togMotivo(this,'CUADRILLA')">👷 Trabajo con cuadrilla</button>
-        <button class="tog" onclick="togMotivo(this,'OTRO')">➕ Otro motivo</button>
+        <button type="button" class="tog" onclick="return togMotivo(this,'GANADO_SUELTO')">🐄 Ganado suelto</button>
+        <button type="button" class="tog" onclick="return togMotivo(this,'EMERGENCIA_CERCA')">🪝 Cerca rota urgente</button>
+        <button type="button" class="tog" onclick="return togMotivo(this,'SANIDAD_URGENTE')">💉 Emergencia sanitaria</button>
+        <button type="button" class="tog" onclick="return togMotivo(this,'CUADRILLA')">👷 Trabajo con cuadrilla</button>
+        <button type="button" class="tog" onclick="return togMotivo(this,'OTRO')">➕ Otro motivo</button>
       </div>
       <textarea id="motivoTardeTxt" placeholder="Describir brevemente qué ocurrió..."></textarea>
     </div>
@@ -486,22 +488,51 @@ document.getElementById('fechaTag').textContent =
 
 // ── TOGGLES ───────────────────────────────────────────────────────────────
 function tog(btn, key, val, cls) {
-  btn.parentElement.querySelectorAll('.tog').forEach(b => b.classList.remove('on-v','on-r','on-a'));
+  // Prevenir comportamiento por defecto del botón
+  if (event) { event.preventDefault(); event.stopPropagation(); }
+  
+  // Quitar clase activa de todos los botones del grupo
+  const grupo = btn.closest('.tog-grp');
+  if (grupo) {
+    grupo.querySelectorAll('.tog').forEach(function(b) {
+      b.classList.remove('on-v','on-r','on-a');
+    });
+  }
+  
+  // Activar este botón
   btn.classList.add(cls);
   S[key] = val;
-  if (key==='sanidad')  show('novSanDiv',  val==='SI');
-  if (key==='pesaje')   show('pesajeDiv',  val==='SI');
-  if (key==='cambio')   show('nuevoPotDiv',val==='SI');
-  if (key==='cercas')   show('cercaDetDiv',val==='FALLA');
-  if (key==='decision') show('decisionDiv',val==='SI');
+  
+  // Efectos secundarios
+  if (key==='sanidad')     show('novSanDiv',   val==='SI');
+  if (key==='pesaje')      show('pesajeDiv',   val==='SI');
+  if (key==='cambio')      show('nuevoPotDiv', val==='SI');
+  if (key==='cercas')      show('cercaDetDiv', val==='FALLA');
+  if (key==='decision')    show('decisionDiv', val==='SI');
+  
   recalc();
+  return false;
 }
-function show(id, v) { document.getElementById(id).style.display = v ? 'block' : 'none'; }
+
+function show(id, v) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = v ? 'block' : 'none';
+}
 
 function togAct(lbl, id) {
-  lbl.classList.toggle('on');
+  if (event) { event.preventDefault(); event.stopPropagation(); }
+  var cb = document.getElementById(id);
+  if (cb) {
+    cb.checked = !cb.checked;
+    if (cb.checked) {
+      lbl.classList.add('on');
+    } else {
+      lbl.classList.remove('on');
+    }
+  }
   actualizarCantidades();
   recalc();
+  return false;
 }
 
 // ── CANTIDADES ────────────────────────────────────────────────────────────
@@ -948,11 +979,37 @@ function checkHoraTarde() {
 
 // Toggle motivo tarde
 function togMotivo(btn, val) {
-  btn.parentElement.querySelectorAll('.tog').forEach(b => b.classList.remove('on-v','on-a'));
+  if (event) { event.preventDefault(); event.stopPropagation(); }
+  var grupo = btn.closest('.tog-grp');
+  if (grupo) {
+    grupo.querySelectorAll('.tog').forEach(function(b) {
+      b.classList.remove('on-v','on-a');
+    });
+  }
   btn.classList.add('on-a');
   S.motivoTarde = val;
   recalc();
+  return false;
 }
+
+// Event delegation para act-items (más robusto en móvil)
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.act-item').forEach(function(lbl) {
+    lbl.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var actId = lbl.getAttribute('data-act');
+      if (!actId) return;
+      var cb = document.getElementById(actId);
+      if (cb) {
+        cb.checked = !cb.checked;
+        lbl.classList.toggle('on', cb.checked);
+      }
+      actualizarCantidades();
+      recalc();
+    });
+  });
+});
 
 // Verificar hora al cargar
 checkHoraTarde();
