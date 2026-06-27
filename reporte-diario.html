@@ -457,7 +457,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 
 <!-- SUBMIT -->
 <div class="sub-wrap">
-  <button class="btn-sub" id="btnSub">📋 Enviar reporte del día</button>
+  <button class="btn-sub" id="btnSub" type="button" onclick="enviar()">📋 Enviar reporte del día</button>
   <div class="sub-nota" id="subNota">Score: <span id="subScore">0</span>/100</div>
 </div>
 
@@ -736,226 +736,105 @@ document.getElementById('pesoG2').addEventListener('input', function() {
   if (el) el.addEventListener('change', recalc);
 });
 
-// ── MODAL ─────────────────────────────────────────────────────────────────
-function modal(ico, tit, sub, btnTxt, btnCls) {
-  document.getElementById('modalIco').innerHTML = ico;
-  document.getElementById('modalTit').textContent = tit;
-  document.getElementById('modalSub').textContent = sub;
-  var btn = document.getElementById('modalBtn');
-  if (btnTxt) {
-    btn.textContent = btnTxt;
-    btn.className = 'modal-btn ' + (btnCls||'modal-btn-v');
-    btn.style.display = 'block';
-    btn.onclick = function() { document.getElementById('modal').classList.remove('show'); };
-  } else {
-    btn.style.display = 'none';
-  }
-  document.getElementById('modal').classList.add('show');
-}
+async function esperar(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
 
-// ── ENVIAR ────────────────────────────────────────────────────────────────
-document.getElementById('btnSub').addEventListener('click', function() { enviar(); });
-
-async function enviar() {
-  var score = recalc();
-  var ahora = new Date();
-  var hora  = ahora.getHours();
-  var horaEnvio = hora + ':' + String(ahora.getMinutes()).padStart(2,'0');
-  var aHora = hora < 17;
-  var tardePero = hora >= 17 && hora < 21;
-  var tieneMotivo = S['motivo'] && S['motivo'] !== '';
-  var bono = hora < 17 ? 10 : (tardePero && tieneMotivo ? 5 : 0);
-  var scoreFinal = Math.min(100, score + bono);
-
-  var trab  = document.getElementById('trabajador').value || '[sin nombre]';
-  var ll    = document.getElementById('horaLlegada').value || '—';
-  var sl    = document.getElementById('horaSalida').value || '—';
-  var pot   = document.getElementById('potreroActivo').value || '—';
-  var obs   = document.getElementById('obs').value || 'Sin novedades';
-  var ins   = document.getElementById('insumos').value || '—';
-  var fecha = document.getElementById('fechaTag').textContent;
-
-  var estadoPago = scoreFinal>=85 ? '✅ PAGO COMPLETO' :
-                   scoreFinal>=70 ? '⚠ CON OBSERVACIÓN' : '🚨 EN REVISIÓN';
-
-  var actsList = Object.keys(actsSeleccionadas).map(function(id) {
-    var a = actsSeleccionadas[id];
-    var p = Math.min(a.max, a.pts * a.qty);
-    return '  • ' + a.nom + (a.un ? ' (' + a.qty + ' ' + a.un + ')' : '') + ': +' + p + ' pts';
-  });
-
-  var reporte =
-    '📋 REPORTE ARROYO NEGRO\n' +
-    fecha.toUpperCase() + ' · ' + trab + '\n' +
-    '━━━━━━━━━━━━━━━━━━\n' +
-    '🕐 ' + ll + ' → ' + sl + ' · Enviado: ' + horaEnvio + (aHora?' ✅':tardePero&&tieneMotivo?' ⏰ ('+S['motivo']+')':' 🚨 tarde') + '\n' +
-    '📊 SCORE: ' + scoreFinal + '/100 · ' + estadoPago + '\n\n' +
-    '🐄 GANADO\n' +
-    'G1: ' + (document.getElementById('g1').value||'—') + ' · G2: ' + (document.getElementById('g2').value||'—') + ' · Búfalos: ' + (document.getElementById('buf').value||'—') + '\n' +
-    'Sanidad: ' + (S['sanidad']||'—') + (S['sanidad']==='SI'?' → '+(document.getElementById('novSan').value||''):'') + '\n' +
-    (S['pesaje']==='SI'?'Pesaje: G1 '+(document.getElementById('pesoG1').value||'—')+' kg · G2 '+(document.getElementById('pesoG2').value||'—')+' kg\n':'') +
-    '\n🌿 POTREROS\n' +
-    'Activo: ' + pot + ' · Pasto: ' + (S['pasto']||'—') + '\n' +
-    'Cambio: ' + (S['cambio']||'—') + (S['cambio']==='SI'?' → '+(document.getElementById('nuevoPot').value||'—'):'') + '\n' +
-    'Sal: ' + (S['sal']||'—') + ' · Agua: ' + (S['agua']||'—') + '\n\n' +
-    '⚒️ ACTIVIDADES\n' + (actsList.length ? actsList.join('\n') : '  — Ninguna registrada') + '\n\n' +
-    '🔧 INFRAESTRUCTURA\n' +
-    'Cercas: ' + (S['cercas']||'—') + (S['cercas']==='FALLA'?' → '+(document.getElementById('cercaDet').value||''):'') + '\n' +
-    'Insumos: ' + ins + '\n\n' +
-    '📝 ' + obs + '\n' +
-    (S['decision']==='SI'?'🔴 DECISIÓN: '+(document.getElementById('decisionTxt').value||'')+'\n':'') +
-    '📸 Foto: ' + (S['foto']==='SI'?'✅':'❌') + '\n' +
-    '━━━━━━━━━━━━━━━━━━\n' +
-    'Arroyo Negro · Sistema de Control';
-
-  // Mostrar reporte
-  document.getElementById('prevTxt').textContent = reporte;
-  document.getElementById('prevBox').classList.add('show');
-  document.getElementById('prevBox').scrollIntoView({behavior:'smooth'});
-
-  // Generar ID único
-  var rid = 'AN-' + HOY.getFullYear() +
-    String(HOY.getMonth()+1).padStart(2,'0') +
-    String(HOY.getDate()).padStart(2,'0') + '-' +
-    trab.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-4);
-
-  // Mostrar modal enviando
-  modal('<div class="spin">📡</div>', 'Enviando reporte...', 'Conectando con el sistema', null);
-
-  var payload = {
-    reporteId: rid, fecha: fecha, trabajador: trab,
-    horaLlegada: ll, horaSalida: sl, horaEnvio: horaEnvio,
-    reporteATiempo: aHora?'SI':'NO', score: scoreFinal, estadoPago: estadoPago,
-    g1: document.getElementById('g1').value||'',
-    g2: document.getElementById('g2').value||'',
-    bufalo: document.getElementById('buf').value||'',
-    sanidad: S['sanidad']||'', novSanidad: document.getElementById('novSan').value||'',
-    pesaje: S['pesaje']||'',
-    pesoG1: document.getElementById('pesoG1').value||'',
-    pesoG2: document.getElementById('pesoG2').value||'',
-    potreroActivo: pot, estadoPasto: S['pasto']||'',
-    cambioPotrero: S['cambio']||'', nuevoPotrero: document.getElementById('nuevoPot').value||'',
-    salMineral: S['sal']||'', agua: S['agua']||'',
-    actividades: actsList.join(' | '),
-    cercas: S['cercas']||'', cercaDetalle: document.getElementById('cercaDet').value||'',
-    insumosAgotan: ins, foto: S['foto']||'',
-    motivoTarde: S['motivo']||'',
-    observaciones: obs,
-    decisionRequerida: S['decision']||'',
-    decisionDetalle: document.getElementById('decisionTxt').value||'',
-    reporte: reporte
-  };
-
+// Exponer enviar() globalmente desde dentro del closure
+// para que onclick="enviar()" funcione y tenga acceso a recalc()
+window.enviar = async function() {
+  var btn = document.getElementById('btnSub');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
   try {
-    // GET funciona garantizado — igual que la URL de prueba que confirmó escritura en Sheets
+    var score = recalc();
+    var ahora = new Date();
+    var hora = ahora.getHours();
+    var horaEnvio = hora + ':' + String(ahora.getMinutes()).padStart(2,'0');
+    var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
+    var scoreFinal = Math.min(100, score + bono);
+    var trab = document.getElementById('trabajador').value || 'sin nombre';
+    var ll   = document.getElementById('horaLlegada').value || '';
+    var sl   = document.getElementById('horaSalida').value || '';
+    var pot  = document.getElementById('potreroActivo').value || '';
+    var obs  = document.getElementById('obs').value || '';
+    var ins  = document.getElementById('insumos').value || '';
+    var fecha = document.getElementById('fechaTag').textContent;
+    var estadoPago = scoreFinal>=85 ? 'PAGO COMPLETO' : scoreFinal>=70 ? 'CON OBSERVACION' : 'EN REVISION';
+    var actsList = Object.keys(actsSeleccionadas).map(function(id) {
+      var a = actsSeleccionadas[id];
+      return a.nom + (a.un ? ' (' + a.qty + ' ' + a.un + ')' : '') + ': +' + Math.min(a.max, a.pts * a.qty) + ' pts';
+    });
+    var rid = 'AN-' + ahora.getFullYear() +
+      String(ahora.getMonth()+1).padStart(2,'0') +
+      String(ahora.getDate()).padStart(2,'0') + '-' +
+      trab.substring(0,3).toUpperCase() + '-' +
+      Date.now().toString().slice(-4);
+    var payload = {
+      reporteId:rid, fecha:fecha, trabajador:trab,
+      horaLlegada:ll, horaSalida:sl, horaEnvio:horaEnvio,
+      reporteATiempo:hora<17?'SI':'NO', score:scoreFinal, estadoPago:estadoPago,
+      g1:document.getElementById('g1').value||'',
+      g2:document.getElementById('g2').value||'',
+      bufalo:document.getElementById('buf').value||'',
+      sanidad:S['sanidad']||'',
+      novSanidad:document.getElementById('novSan').value||'',
+      pesaje:S['pesaje']||'',
+      pesoG1:document.getElementById('pesoG1').value||'',
+      pesoG2:document.getElementById('pesoG2').value||'',
+      potreroActivo:pot, estadoPasto:S['pasto']||'',
+      cambioPotrero:S['cambio']||'',
+      nuevoPotrero:document.getElementById('nuevoPot').value||'',
+      salMineral:S['sal']||'', agua:S['agua']||'',
+      actividades:actsList.join(' | '),
+      cercas:S['cercas']||'',
+      cercaDetalle:document.getElementById('cercaDet').value||'',
+      insumosAgotan:ins, foto:S['foto']||'',
+      motivoTarde:S['motivo']||'', observaciones:obs,
+      decisionRequerida:S['decision']||'',
+      decisionDetalle:document.getElementById('decisionTxt').value||''
+    };
+
+    // Mostrar reporte texto
+    var reporteTxt = 'REPORTE ARROYO NEGRO\n' + fecha + ' - ' + trab +
+      '\nScore: ' + scoreFinal + '/100 - ' + estadoPago +
+      '\nG1:' + (payload.g1||'?') + ' G2:' + (payload.g2||'?') +
+      '\nPotrero: ' + pot + ' Pasto: ' + (S['pasto']||'?') +
+      '\nActividades: ' + (actsList.join(', ')||'ninguna') +
+      '\nObs: ' + obs;
+    payload.reporte = reporteTxt;
+    document.getElementById('prevTxt').textContent = reporteTxt;
+    document.getElementById('prevBox').classList.add('show');
+
+    window.modal('📡', 'Enviando...', 'Guardando en el sistema', null);
+
     var url = SCRIPT_URL + '?action=registrar&data=' + encodeURIComponent(JSON.stringify(payload));
     var res = await fetch(url);
     var json = await res.json();
-    if (json && (json.status === 'ok' || json.ok)) {
-      modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nConfirmado en el sistema.', 'OK', 'modal-btn-v');
-      document.getElementById('statusR').textContent = '✅ confirmado';
-    } else {
-      modal('⚠️', 'Respuesta inesperada', JSON.stringify(json), 'OK', 'modal-btn-a');
-      document.getElementById('statusR').textContent = '⚠ revisar';
-    }
-  } catch(e) {
-    modal('⚠️','Error: ' + e.message,'Copia el reporte y envía por WhatsApp.','OK','modal-btn-a');
-    document.getElementById('statusR').textContent = '⚠ error';
+    window.modal('✅', '¡Guardado!', 'ID: ' + rid, 'OK', 'modal-btn-v');
+
+  } catch(err) {
+    window.modal('⚠️', 'Error', err.message || 'desconocido', 'OK', 'modal-btn-a');
   }
-}
+  btn.textContent = '📋 Enviar reporte del día';
+  btn.disabled = false;
+};
 
-// Envío via formulario oculto + iframe — método más confiable para Apps Script
-function enviarConFormulario(payload) {
-  return new Promise(function(resolve) {
-    // Crear iframe oculto para recibir la respuesta
-    var iframeId = 'iframe_submit_' + Date.now();
-    var iframe = document.createElement('iframe');
-    iframe.name = iframeId;
-    iframe.id = iframeId;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    // Crear formulario oculto
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = iframeId;
-    form.style.display = 'none';
-
-    // Agregar payload como campo JSON
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'payload';
-    input.value = JSON.stringify(payload);
-    form.appendChild(input);
-
-    // Campo adicional para identificar el tipo
-    var inputTipo = document.createElement('input');
-    inputTipo.type = 'hidden';
-    inputTipo.name = 'tipo';
-    inputTipo.value = 'reporte_diario';
-    form.appendChild(inputTipo);
-
-    document.body.appendChild(form);
-
-    // Timeout de éxito — si el iframe carga, el servidor recibió
-    var timeout = setTimeout(function() {
-      limpiar();
-      resolve(true); // asumir éxito si no hay error en 8 seg
-    }, 8000);
-
-    iframe.onload = function() {
-      clearTimeout(timeout);
-      limpiar();
-      resolve(true);
-    };
-
-    iframe.onerror = function() {
-      clearTimeout(timeout);
-      limpiar();
-      resolve(false);
-    };
-
-    form.submit();
-
-    function limpiar() {
-      setTimeout(function() {
-        if (form.parentNode) form.parentNode.removeChild(form);
-        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-      }, 2000);
-    }
-  });
-}
-
-async function verificar(rid) {
-  await esperar(3000);
-  try {
-    var res = await fetch(SCRIPT_URL + '?verificar=' + encodeURIComponent(rid), {method:'GET'});
-    var data = await res.json();
-    return data.encontrado === true;
-  } catch(e) { return false; }
-}
-
-function esperar(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
-
-document.getElementById('btnWA').addEventListener('click', function() {
-  var txt = document.getElementById('prevTxt').textContent;
-  navigator.clipboard.writeText(txt).then(function() {
-    document.getElementById('btnWA').textContent = '✅ Copiado — abriendo WhatsApp...';
-    setTimeout(function() {
-      window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
-      document.getElementById('btnWA').textContent = '📋 Copiar y abrir WhatsApp';
-    }, 800);
-  }).catch(function() { alert('Selecciona el texto y cópialo manualmente'); });
-});
-
-function mostrar(id, v) {
-  var el = document.getElementById(id);
-  if (el) el.style.display = v ? 'block' : 'none';
-}
-
-// Init
-recalc();
+// Exponer modal globalmente también
+window.modal = function(ico, tit, sub, btnTxt, btnCls) {
+  var m = document.getElementById('modal');
+  document.getElementById('modalIco').textContent = ico;
+  document.getElementById('modalTit').textContent = tit;
+  document.getElementById('modalSub').textContent = sub;
+  var b = document.getElementById('modalBtn');
+  if (btnTxt) {
+    b.textContent = btnTxt;
+    b.className = 'modal-btn ' + (btnCls||'modal-btn-v');
+    b.style.display = 'block';
+    b.onclick = function() { m.classList.remove('show'); };
+  } else {
+    b.style.display = 'none';
+  }
+  m.classList.add('show');
+};
 
 }); // end DOMContentLoaded
 </script>
