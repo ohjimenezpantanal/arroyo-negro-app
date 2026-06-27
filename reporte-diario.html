@@ -495,6 +495,12 @@ var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'
 var MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
 // ── TODO dentro de DOMContentLoaded ──────────────────────────────────────
+// mostrar/ocultar elementos
+function mostrar(id, v) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = v ? 'block' : 'none';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
 document.getElementById('fechaTag').textContent =
@@ -606,12 +612,12 @@ function recalc() {
     var hrs = (parseInt(parts2[0])*60+parseInt(parts2[1]) - parseInt(parts1[0])*60-parseInt(parts1[1]))/60;
     var aJ = document.getElementById('alrtJornada');
     if (hrs < 6) {
-      aJ.className='alrt show alrt-r';
+      if(aJ){aJ.className='alrt show alrt-r';
       aJ.textContent='⚠ Jornada de ' + hrs.toFixed(1) + ' horas — menos de 6 horas afecta el score.';
-      pts.id = Math.round(pts.id * hrs/8);
+      pts.id = Math.round(pts.id * hrs/8);}
     } else {
-      aJ.className='alrt show alrt-v';
-      aJ.textContent='Jornada de ' + hrs.toFixed(1) + ' horas registrada.';
+      if(aJ){aJ.className='alrt show alrt-v';
+      aJ.textContent='Jornada de ' + hrs.toFixed(1) + ' horas registrada.';}
     }
   }
 
@@ -646,11 +652,11 @@ function recalc() {
   actualizarScoreHero(score, bruto, pts);
 
   // Pts por sección
-  document.getElementById('cp_id').textContent    = pts.id + ' pts';
-  document.getElementById('cp_ganado').textContent = pts.pesaje + ' pts';
-  document.getElementById('cp_pot').textContent    = pts.cambio + ' pts';
-  document.getElementById('cp_act').textContent    = pts.acts + ' pts';
-  document.getElementById('cp_foto').textContent   = (pts.foto + pts.tiempo) + ' pts';
+  var _e=document.getElementById('cp_id');if(_e)_e.textContent    = pts.id + ' pts';
+  var _e2=document.getElementById('cp_ganado');if(_e2)_e2.textContent = pts.pesaje + ' pts';
+  var _e3=document.getElementById('cp_pot');if(_e3)_e3.textContent    = pts.cambio + ' pts';
+  var _e4=document.getElementById('cp_act');if(_e4)_e4.textContent    = pts.acts + ' pts';
+  var _e5=document.getElementById('cp_foto');if(_e5)_e5.textContent   = (pts.foto + pts.tiempo) + ' pts';
 
   // Desglose
   var ids = Object.keys(actsSeleccionadas);
@@ -667,18 +673,19 @@ function recalc() {
     if (pts.foto)   html += '<div class="des-row"><span>Foto de evidencia</span><span>+' + pts.foto + '</span></div>';
     if (pts.tiempo) html += '<div class="des-row"><span>Reporte a tiempo</span><span>+' + pts.tiempo + '</span></div>';
     html += '<div class="des-row"><span>TOTAL</span><span>' + bruto + ' brutos → <strong>' + score + '/100</strong></span></div>';
-    document.getElementById('desBlk').innerHTML = html;
+    var _e8=document.getElementById('desBlk');if(_e8)_e8.innerHTML = html;
     document.getElementById('desDiv').style.display = 'block';
   }
 
   // Botón
-  document.getElementById('subScore').textContent = score;
-  document.getElementById('subNota').textContent =
+  var _e6=document.getElementById('subScore');if(_e6)_e6.textContent = score;
+  var _e7=document.getElementById('subNota');if(_e7)_e7.textContent =
     'Score: ' + score + '/100  ·  ' +
     (score>=85 ? '✅ Pago completo justificado' : score>=70 ? '⚠ Pago con observación' : '🚨 Agrega más actividades');
 
   return score;
 }
+window.recalc = recalc;
 
 function actualizarScoreHero(score, bruto, pts) {
   document.getElementById('sNum').textContent = score;
@@ -801,8 +808,8 @@ window.enviar = async function() {
       '\nActividades: ' + (actsList.join(', ')||'ninguna') +
       '\nObs: ' + obs;
     payload.reporte = reporteTxt;
-    document.getElementById('prevTxt').textContent = reporteTxt;
-    document.getElementById('prevBox').classList.add('show');
+    var pt = document.getElementById('prevTxt'); if(pt) pt.textContent = reporteTxt;
+    var pb = document.getElementById('prevBox'); if(pb) pb.classList.add('show');
 
     window.modal('📡', 'Enviando...', 'Guardando en el sistema', null);
 
@@ -821,19 +828,21 @@ window.enviar = async function() {
 // Exponer modal globalmente también
 window.modal = function(ico, tit, sub, btnTxt, btnCls) {
   var m = document.getElementById('modal');
-  var mIco = document.getElementById('modalIco'); if(mIco) mIco.innerHTML = ico;
+  var mIco = document.getElementById('modalIco'); if(mIco) { try { mIco.innerHTML = ico; } catch(e) { mIco.textContent = ico; } }
   var mTit = document.getElementById('modalTit'); if(mTit) mTit.textContent = tit;
   var mSub = document.getElementById('modalSub'); if(mSub) mSub.textContent = sub;
   var b = document.getElementById('modalBtn');
-  if (btnTxt) {
-    b.textContent = btnTxt;
-    b.className = 'modal-btn ' + (btnCls||'modal-btn-v');
-    b.style.display = 'block';
-    b.onclick = function() { m.classList.remove('show'); };
-  } else {
-    b.style.display = 'none';
+  if (b) {
+    if (btnTxt) {
+      b.textContent = btnTxt;
+      b.className = 'modal-btn ' + (btnCls||'modal-btn-v');
+      b.style.display = 'block';
+      b.onclick = function() { if(m) m.classList.remove('show'); };
+    } else {
+      b.style.display = 'none';
+    }
   }
-  m.classList.add('show');
+  if (m) m.classList.add('show');
 };
 
 }); // end DOMContentLoaded
