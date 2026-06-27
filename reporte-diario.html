@@ -847,22 +847,20 @@ async function enviar() {
   };
 
   try {
-    // Mismo método que Pantanal — sin mode, sin headers extra
-    var res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
+    // GET funciona garantizado — igual que la URL de prueba que confirmó escritura en Sheets
+    var url = SCRIPT_URL + '?action=registrar&data=' + encodeURIComponent(JSON.stringify(payload));
+    var res = await fetch(url);
     var json = await res.json();
-    if (json && json.ok) {
+    if (json && (json.status === 'ok' || json.ok)) {
       modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nConfirmado en el sistema.', 'OK', 'modal-btn-v');
       document.getElementById('statusR').textContent = '✅ confirmado';
     } else {
-      modal('✅', 'Reporte enviado', 'ID: ' + rid, 'OK', 'modal-btn-v');
-      document.getElementById('statusR').textContent = '✅ enviado';
+      modal('⚠️', 'Respuesta inesperada', JSON.stringify(json), 'OK', 'modal-btn-a');
+      document.getElementById('statusR').textContent = '⚠ revisar';
     }
   } catch(e) {
-    modal('⚠️','Sin conexión','El reporte está listo abajo.\nCópialo y envíalo por WhatsApp.','OK','modal-btn-a');
-    document.getElementById('statusR').textContent = '⚠ sin conexión';
+    modal('⚠️','Error: ' + e.message,'Copia el reporte y envía por WhatsApp.','OK','modal-btn-a');
+    document.getElementById('statusR').textContent = '⚠ error';
   }
 }
 
