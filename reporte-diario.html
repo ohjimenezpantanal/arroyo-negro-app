@@ -821,9 +821,9 @@ window.enviar = async function() {
 // Exponer modal globalmente también
 window.modal = function(ico, tit, sub, btnTxt, btnCls) {
   var m = document.getElementById('modal');
-  document.getElementById('modalIco').textContent = ico;
-  document.getElementById('modalTit').textContent = tit;
-  document.getElementById('modalSub').textContent = sub;
+  var mIco = document.getElementById('modalIco'); if(mIco) mIco.innerHTML = ico;
+  var mTit = document.getElementById('modalTit'); if(mTit) mTit.textContent = tit;
+  var mSub = document.getElementById('modalSub'); if(mSub) mSub.textContent = sub;
   var b = document.getElementById('modalBtn');
   if (btnTxt) {
     b.textContent = btnTxt;
