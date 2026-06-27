@@ -847,17 +847,14 @@ async function enviar() {
   };
 
   try {
-    // Envío via GET con parámetros — Apps Script siempre acepta GET sin CORS
-    var params = new URLSearchParams();
-    params.append('action', 'registrar');
-    params.append('data', JSON.stringify(payload));
-    
-    var url = SCRIPT_URL + '?' + params.toString();
-    var res = await fetch(url, { method: 'GET', mode: 'cors' });
-    var resultado = await res.json();
-    
-    if (resultado && (resultado.status === 'ok' || resultado.encontrado)) {
-      modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nEl sistema lo confirmó.', 'OK', 'modal-btn-v');
+    // Mismo método que Pantanal — sin mode, sin headers extra
+    var res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    var json = await res.json();
+    if (json && json.ok) {
+      modal('✅', '¡Reporte guardado!', 'ID: ' + rid + '\nConfirmado en el sistema.', 'OK', 'modal-btn-v');
       document.getElementById('statusR').textContent = '✅ confirmado';
     } else {
       modal('✅', 'Reporte enviado', 'ID: ' + rid, 'OK', 'modal-btn-v');
@@ -935,7 +932,7 @@ function enviarConFormulario(payload) {
 async function verificar(rid) {
   await esperar(3000);
   try {
-    var res = await fetch(SCRIPT_URL + '?verificar=' + encodeURIComponent(rid), {method:'GET',mode:'cors'});
+    var res = await fetch(SCRIPT_URL + '?verificar=' + encodeURIComponent(rid), {method:'GET'});
     var data = await res.json();
     return data.encontrado === true;
   } catch(e) { return false; }
