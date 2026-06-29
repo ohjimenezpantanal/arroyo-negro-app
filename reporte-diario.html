@@ -207,6 +207,10 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
   <div class="card-body">
     <div class="fld">
+      <label class="lbl">Fecha del reporte</label>
+      <input type="date" id="fechaManual">
+    </div>
+    <div class="fld">
       <label class="lbl">Trabajador</label>
       <select id="trabajador">
         <option value="">Seleccionar...</option>
@@ -240,6 +244,14 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <span class="card-pts" id="cp_gan">0 pts</span>
   </div>
   <div class="card-body">
+    <div class="fld">
+      <label class="lbl">¿Hoy te toca el conteo de ganado?</label>
+      <div class="tg-grp" id="grp_turno">
+        <button type="button" class="tg" data-grp="turno" data-val="SI" data-cls="sv">✅ Sí, me toca hoy</button>
+        <button type="button" class="tg" data-grp="turno" data-val="NO" data-cls="sr">❌ No, hoy no me toca</button>
+      </div>
+    </div>
+    <div id="conteoDiv" style="display:none;margin-top:10px">
     <div class="g3">
       <div class="fld"><label class="lbl">G1 bovinos</label>
         <input type="number" id="g1" placeholder="30" min="0" max="60"></div>
@@ -273,6 +285,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
           <input type="number" id="pesoG2" placeholder="360"></div>
       </div>
     </div>
+    </div><!-- cierre conteoDiv -->
   </div>
 </div>
 
@@ -495,6 +508,15 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fechaTag').textContent =
     DIAS[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + MESES[HOY.getMonth()] + ' ' + HOY.getFullYear();
 
+  // Fecha manual — default hoy
+  var fechaInp = document.getElementById('fechaManual');
+  if (fechaInp) {
+    var yy = HOY.getFullYear();
+    var mm = String(HOY.getMonth()+1).padStart(2,'0');
+    var dd = String(HOY.getDate()).padStart(2,'0');
+    fechaInp.value = yy + '-' + mm + '-' + dd;
+  }
+
   // Toggles
   document.querySelectorAll('.tg').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
@@ -508,6 +530,7 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.classList.add(cls);
       S[grp] = val;
       mostrar('novSanDiv',  grp==='sanidad'  && val==='SI');
+      mostrar('conteoDiv',  grp==='turno'    && val==='SI');
       mostrar('pesajeDiv',  grp==='pesaje'   && val==='SI');
       mostrar('cercaDetDiv',grp==='cercas'   && val==='FALLA');
       mostrar('decisionDiv',grp==='decision' && val==='SI');
@@ -531,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
         delete actsData[id];
         el.classList.remove('sel');
       } else {
-        actsData[id] = { nom:nom, cod:cod, potrero:'', hInicio:'', hFin:'', horas:0 };
+        actsData[id] = { nom:nom, cod:cod, instancias:[{potrero:'',hInicio:'',hFin:'',horas:0}] };
         el.classList.add('sel');
       }
       renderDetalles();
@@ -554,52 +577,86 @@ for (var p = 1; p <= 32; p++) {
   POTREROS.push('P-' + (p < 10 ? '0'+p : p));
 }
 
-// Renderizar detalles por actividad
+// Renderizar detalles por actividad — con soporte multi-potrero
 function renderDetalles() {
   var cont = document.getElementById('actDetalles');
   var ids = Object.keys(actsData);
-
-  if (!ids.length) {
-    cont.innerHTML = '';
-    mostrar('resumenDiv', false);
-    return;
-  }
+  if (!ids.length) { cont.innerHTML = ''; mostrar('resumenDiv', false); return; }
 
   cont.innerHTML = ids.map(function(id) {
     var a = actsData[id];
-    var opts = POTREROS.map(function(p) {
-      var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
-      return '<option value="' + p + '"' + (a.potrero===p?' selected':'') + '>' + p + warn + '</option>';
-    }).join('');
-
-    var hrsText = a.horas > 0 ? a.horas.toFixed(1) + ' hrs' : '-- hrs';
+    var insts = a.instancias;
     var pct = calcPct(id);
     var valor = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+
+    var instsHtml = insts.map(function(inst, idx) {
+      var opts = POTREROS.map(function(p) {
+        var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+        return '<option value="' + p + '"' + (inst.potrero===p?' selected':'') + '>' + p + warn + '</option>';
+      }).join('');
+      var hrsText = inst.horas > 0 ? inst.horas.toFixed(1) + ' hrs' : '-- hrs';
+      return '<div style="background:rgba(255,255,255,.7);border-radius:6px;padding:8px;margin-bottom:6px;border:1px solid #ddd">' +
+        (insts.length > 1 ? '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:10px;font-family:monospace;color:#888">POTRERO ' + (idx+1) + '</span>' + (idx > 0 ? '<button type="button" onclick="remInst(\'' + id + '\',' + idx + ')" style="background:#FFEBEE;border:1px solid #FFCCCC;color:#8B1A1A;border-radius:4px;padding:2px 8px;font-size:10px;cursor:pointer">✕ quitar</button>' : '') + '</div>' : '') +
+        '<div class="mini-row"><span class="mini-lbl">Potrero:</span>' +
+          '<select class="mini-inp" id="pot_' + id + '_' + idx + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
+            '<option value="">Seleccionar...</option>' + opts +
+          '</select>' +
+        '</div>' +
+        '<div class="mini-row"><span class="mini-lbl">De:</span>' +
+          '<input type="time" class="mini-inp" id="hi_' + id + '_' + idx + '" value="' + inst.hInicio + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
+          '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+          '<input type="time" class="mini-inp" id="hf_' + id + '_' + idx + '" value="' + inst.hFin + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
+          '<span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--vl);min-width:52px;text-align:right">' + hrsText + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
 
     return '<div class="act-detalle" id="det_' + id + '">' +
       '<div class="act-det-tit">' +
         '<span>' + a.nom + '</span>' +
         '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '<span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--vl);margin-left:auto">' + valor + '</span>' +
       '</div>' +
-      '<div class="mini-row">' +
-        '<span class="mini-lbl">Potrero:</span>' +
-        '<select class="mini-inp" id="pot_' + id + '" onchange="updAct(\'' + id + '\')">' +
-          '<option value="">Seleccionar...</option>' + opts +
-        '</select>' +
-      '</div>' +
-      '<div class="mini-row">' +
-        '<span class="mini-lbl">De:</span>' +
-        '<input type="time" class="mini-inp" id="hi_' + id + '" value="' + a.hInicio + '" onchange="updAct(\'' + id + '\')">' +
-        '<span class="mini-lbl" style="text-align:center;min-width:30px">A:</span>' +
-        '<input type="time" class="mini-inp" id="hf_' + id + '" value="' + a.hFin + '" onchange="updAct(\'' + id + '\')">' +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">' +
-        '<span id="hrs_' + id + '" class="hrs-display">' + hrsText + '</span>' +
-        '<span style="font-family:monospace;font-size:13px;font-weight:700;color:var(--vl)">' + valor + '</span>' +
-      '</div>' +
+      instsHtml +
+      '<button type="button" onclick="addInst(\'' + id + '\')" style="width:100%;padding:7px;background:var(--vbg);border:1.5px dashed var(--vl);border-radius:6px;color:var(--vl);font-size:12px;font-weight:700;cursor:pointer;margin-top:2px;touch-action:manipulation">+ Agregar otro potrero</button>' +
     '</div>';
   }).join('');
 }
+
+function addInst(id) {
+  if (!actsData[id]) return;
+  actsData[id].instancias.push({potrero:'', hInicio:'', hFin:'', horas:0});
+  renderDetalles();
+  recalc();
+}
+
+function remInst(id, idx) {
+  if (!actsData[id] || actsData[id].instancias.length <= 1) return;
+  actsData[id].instancias.splice(idx, 1);
+  renderDetalles();
+  recalc();
+}
+
+function updInst(id, idx) {
+  var pot = document.getElementById('pot_' + id + '_' + idx);
+  var hi  = document.getElementById('hi_'  + id + '_' + idx);
+  var hf  = document.getElementById('hf_'  + id + '_' + idx);
+  if (!pot || !hi || !hf || !actsData[id]) return;
+  var inst = actsData[id].instancias[idx];
+  inst.potrero = pot.value;
+  inst.hInicio = hi.value;
+  inst.hFin    = hf.value;
+  inst.horas   = 0;
+  if (hi.value && hf.value) {
+    var p1 = hi.value.split(':').map(Number);
+    var p2 = hf.value.split(':').map(Number);
+    var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+    inst.horas = h > 0 ? parseFloat(h.toFixed(1)) : 0;
+  }
+  renderDetalles();
+  recalc();
+}
+
 
 function codColor(cod) {
   var colors = {
@@ -638,9 +695,12 @@ function updAct(id) {
 }
 
 function calcPct(id) {
-  var totalHrs = Object.values(actsData).reduce(function(s,a) { return s + a.horas; }, 0);
+  var totalHrs = Object.values(actsData).reduce(function(s,a) {
+    return s + a.instancias.reduce(function(s2,inst){return s2+inst.horas;},0);
+  }, 0);
   if (!totalHrs || !actsData[id]) return 0;
-  return actsData[id].horas / totalHrs;
+  var actHrs = actsData[id].instancias.reduce(function(s,inst){return s+inst.horas;},0);
+  return actHrs / totalHrs;
 }
 
 function actualizarValoresEnDetalles() {
@@ -658,7 +718,9 @@ function actualizarValoresEnDetalles() {
 
 function renderResumen() {
   var ids = Object.keys(actsData);
-  var totalHrs = Object.values(actsData).reduce(function(s,a){return s+a.horas;},0);
+  var totalHrs = Object.values(actsData).reduce(function(s,a){
+    return s + a.instancias.reduce(function(s2,inst){return s2+inst.horas;},0);
+  },0);
   var totalVal = 0;
 
   if (!ids.length || !totalHrs) { mostrar('resumenDiv', false); return; }
@@ -669,9 +731,11 @@ function renderResumen() {
     var val = pct * VALOR_DIARIO;
     totalVal += val;
     var isPM = a.cod === 'CI-OPE';
+    var hrsAct = a.instancias.reduce(function(s,inst){return s+inst.horas;},0);
+    var nPots = a.instancias.filter(function(i){return i.potrero;}).length;
     return '<div class="res-row">' +
-      '<span class="' + (isPM?'res-pm':'') + '">' + a.nom.substring(0,22) + '</span>' +
-      '<span style="color:var(--sub);font-size:10px">' + a.horas.toFixed(1) + 'h · ' + (pct*100).toFixed(0) + '%</span>' +
+      '<span class="' + (isPM?'res-pm':'') + '">' + a.nom.substring(0,20) + (nPots>1?' ('+nPots+'P)':'') + '</span>' +
+      '<span style="color:var(--sub);font-size:10px">' + hrsAct.toFixed(1) + 'h · ' + (pct*100).toFixed(0) + '%</span>' +
       '<span class="res-val ' + (isPM?'res-pm':'') + '">' + (isPM?'⚠ ':'') + '$' + val.toFixed(2) + '</span>' +
     '</div>';
   }).join('');
@@ -721,14 +785,17 @@ function recalc() {
   var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
   pts.tiempo = bono;
   // Actividades
-  var totalHrs = Object.values(actsData).reduce(function(s,a){return s+a.horas;},0);
+  var totalHrs = Object.values(actsData).reduce(function(s,a){
+    return s + a.instancias.reduce(function(s2,inst){return s2+inst.horas;},0);
+  },0);
   var actsPts = 0;
   Object.values(actsData).forEach(function(a) {
-    if (a.horas > 0) {
-      var pct = a.horas / totalHrs;
-      if (a.cod !== 'CI-OPE') actsPts += pct * 60; // max 60 pts de actividades
+    var hrsAct = a.instancias.reduce(function(s,inst){return s+inst.horas;},0);
+    if (hrsAct > 0) {
+      var pct = hrsAct / totalHrs;
+      if (a.cod !== 'CI-OPE') actsPts += pct * 60;
     } else if (Object.keys(actsData).length > 0) {
-      actsPts += 5; // pts mínimos por registrar
+      actsPts += 5;
     }
   });
   pts.acts = Math.min(60, actsPts);
@@ -786,25 +853,37 @@ window.enviar = function() {
 
   var ll    = document.getElementById('horaLlegada').value || '';
   var sl    = document.getElementById('horaSalida').value || '';
-  var fecha = document.getElementById('fechaTag').textContent;
+  // Usar fecha manual si fue cambiada, sino la del tag
+  var fechaInpVal = document.getElementById('fechaManual') ? document.getElementById('fechaManual').value : '';
+  var fecha;
+  if (fechaInpVal) {
+    var fp = fechaInpVal.split('-');
+    var fd = new Date(parseInt(fp[0]), parseInt(fp[1])-1, parseInt(fp[2]));
+    fecha = DIAS[fd.getDay()] + ' ' + fd.getDate() + ' ' + MESES[fd.getMonth()] + ' ' + fd.getFullYear();
+  } else {
+    fecha = document.getElementById('fechaTag').textContent;
+  }
   var obs   = document.getElementById('obs').value || '';
   var ins   = document.getElementById('insumos').value || '';
 
-  // Construir lista de actividades estructurada
-  var acts = Object.keys(actsData).map(function(id) {
+  // Construir lista de actividades — una entrada por instancia (potrero)
+  var acts = [];
+  Object.keys(actsData).forEach(function(id) {
     var a = actsData[id];
-    return {
-      actividad: a.nom,
-      codigoCosto: a.cod,
-      potrero: a.potrero,
-      horaInicio: a.hInicio,
-      horaFin: a.hFin,
-      horas: a.horas
-    };
+    a.instancias.forEach(function(inst) {
+      acts.push({
+        actividad: a.nom,
+        codigoCosto: a.cod,
+        potrero: inst.potrero,
+        horaInicio: inst.hInicio,
+        horaFin: inst.hFin,
+        horas: inst.horas
+      });
+    });
   });
 
   // Total horas para prorrateo
-  var totalHrs = acts.reduce(function(s,a){return s+a.horas;},0);
+  var totalHrs = acts.reduce(function(s,a){return s+(a.horas||0);},0);
 
   // Calcular prorrateo para cada actividad
   acts.forEach(function(a) {
