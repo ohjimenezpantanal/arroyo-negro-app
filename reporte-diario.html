@@ -326,22 +326,6 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
         <button type="button" class="tg" data-grp="pasto" data-val="AGOTADO_MALEZA" data-cls="sr">🔴 Agotado / maleza</button>
       </div>
     </div>
-    <div class="g2" style="margin-top:10px">
-      <div class="fld">
-        <label class="lbl">Sal mineral</label>
-        <div class="tg-grp" id="grp_sal">
-          <button type="button" class="tg" data-grp="sal" data-val="OK" data-cls="sv">✅ OK</button>
-          <button type="button" class="tg" data-grp="sal" data-val="REPONER" data-cls="sr">🚨 Reponer</button>
-        </div>
-      </div>
-      <div class="fld">
-        <label class="lbl">Agua / bebederos</label>
-        <div class="tg-grp" id="grp_agua">
-          <button type="button" class="tg" data-grp="agua" data-val="OK" data-cls="sv">✅ OK</button>
-          <button type="button" class="tg" data-grp="agua" data-val="PROBLEMA" data-cls="sr">🚨 Problema</button>
-        </div>
-      </div>
-    </div>
     <div class="fld" style="margin-top:10px">
       <label class="lbl">Estado de cercas</label>
       <div class="tg-grp" id="grp_cercas">
@@ -395,6 +379,16 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
   <div class="card-body">
     <div class="fld">
+      <label class="lbl">Agua / bebederos</label>
+      <div class="tg-grp" id="grp_agua">
+        <button type="button" class="tg" data-grp="agua" data-val="OK" data-cls="sv">✅ OK</button>
+        <button type="button" class="tg" data-grp="agua" data-val="PROBLEMA" data-cls="sr">🚨 Problema</button>
+      </div>
+    </div>
+    <div id="aguaDetDiv" style="display:none;margin-top:6px">
+      <input type="text" id="aguaDet" placeholder="¿En qué potrero y cuál es el problema?">
+    </div>
+    <div class="fld" style="margin-top:12px">
       <label class="lbl">¿Las cercas están bien hoy?</label>
       <div class="tg-grp" id="grp_cercas2">
         <button type="button" class="tg" data-grp="cercas2" data-val="OK" data-cls="sv">✅ Todas OK</button>
@@ -439,6 +433,9 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <div class="act" data-id="melaza" data-nom="Suministro melaza" data-cod="CD-SUPL">
         <span class="act-ico">🍯</span><span class="act-nom">Melaza</span><span class="act-cod">CD-SUPL</span>
       </div>
+      <div class="act" data-id="salgrano" data-nom="Suministro sal en grano" data-cod="CD-SUPL">
+        <span class="act-ico">🪨</span><span class="act-nom">Sal en grano</span><span class="act-cod">CD-SUPL</span>
+      </div>
       <div class="act" data-id="urea" data-nom="Mezcla urea / azufre" data-cod="CD-SUPL">
         <span class="act-ico">⚗️</span><span class="act-nom">Urea / azufre</span><span class="act-cod">CD-SUPL</span>
       </div>
@@ -448,8 +445,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <div class="act" data-id="desparasit" data-nom="Desparasitación" data-cod="CD-SAN">
         <span class="act-ico">🩺</span><span class="act-nom">Desparasitación</span><span class="act-cod">CD-SAN</span>
       </div>
-      <div class="act" data-id="vitaminas" data-nom="Vitaminación" data-cod="CD-SAN">
-        <span class="act-ico">💊</span><span class="act-nom">Vitaminación</span><span class="act-cod">CD-SAN</span>
+      <div class="act" data-id="vitaminas" data-nom="Aplicación de vitaminas" data-cod="CD-SAN">
+        <span class="act-ico">💊</span><span class="act-nom">Aplicación vitaminas</span><span class="act-cod">CD-SAN</span>
       </div>
       <div class="act" data-id="cambiopot" data-nom="Cambio de potrero" data-cod="CD-MAN">
         <span class="act-ico">🔄</span><span class="act-nom">Cambio potrero</span><span class="act-cod">CD-MAN</span>
@@ -504,12 +501,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
         <button type="button" class="tg" data-grp="foto" data-val="NO" data-cls="sr">❌ No tomé foto</button>
       </div>
     </div>
-    <div id="seccionInsumos">
-    <div class="fld" style="margin-top:10px">
-      <label class="lbl">Insumos que se agotan</label>
-      <textarea id="insumos" placeholder="Ej: quedan 2 kg de sal mineral, se acabó la melaza..."></textarea>
-    </div>
-    </div>
+
     <div class="fld">
       <label class="lbl">Observación — lo que Oscar debe saber</label>
       <textarea id="obs" placeholder="Novedades, problemas, sugerencias..." style="min-height:70px"></textarea>
@@ -616,7 +608,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (grp === 'trabajo') {
         mostrar('ausenciaDiv', val === 'NO');
         mostrar('seccionGanado',   val === 'SI');
-        mostrar('seccionPotreros', val === 'SI' && document.getElementById('trabajador').value === 'Héctor Zambrano');
+        var esHect = document.getElementById('trabajador').value === 'Héctor Zambrano';
+        mostrar('seccionPotreros',       val === 'SI' && esHect);
+        mostrar('seccionSuplementacion', val === 'SI' && esHect);
         mostrar('seccionCercas',   val === 'SI');
         mostrar('seccionActividades', val === 'SI');
         mostrar('seccionCierre',   val === 'SI');
@@ -626,6 +620,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (grp === 'turno')    mostrar('conteoDiv',   val === 'SI');
       if (grp === 'pesaje')   mostrar('pesajeDiv',   val === 'SI');
       if (grp === 'cercas')   mostrar('cercaDetDiv',  val === 'FALLA');
+      if (grp === 'agua') mostrar('aguaDetDiv', val === 'PROBLEMA');
+      if (grp === 'suplemento') mostrar('suplDetalleDiv', val === 'SI');
+      if (grp === 'agotando') mostrar('agotandoDiv', val === 'SI');
       if (grp === 'cercas2') {
         mostrar('cercaDetDiv2', val === 'FALLA');
         if (val === 'FALLA') { cercaFallasData = [{potrero:'',tipo:'',detalle:''}]; renderCercaFallas(); }
@@ -640,9 +637,9 @@ document.addEventListener('DOMContentLoaded', function() {
     mostrar('otroDiv', this.value === '__otro__');
     var esHector = this.value === 'Héctor Zambrano';
     var trabajo = S['trabajo'] === 'SI';
-    // Solo Héctor ve estado de potreros e insumos (y solo si trabajó)
-    mostrar('seccionPotreros', esHector && trabajo);
-    mostrar('seccionInsumos',  esHector && trabajo);
+    mostrar('seccionPotreros',       esHector && trabajo);
+    mostrar('seccionSuplementacion', esHector && trabajo);
+    mostrar('seccionInsumos',        esHector && trabajo);
     recalc();
   });
 
@@ -662,6 +659,80 @@ document.addEventListener('DOMContentLoaded', function() {
       renderDetalles();
       recalc();
     });
+  });
+
+  // Event delegation para sub-formulario de pasto de corte
+  document.addEventListener('click', function(e) {
+    var btn2 = e.target.closest('.corral-sel-btn');
+    if (btn2) {
+      var cid   = btn2.getAttribute('data-cid');
+      var campo = btn2.getAttribute('data-campo');
+      var val   = btn2.getAttribute('data-val');
+      if (actsData[cid]) { actsData[cid].instancias[0][campo] = val; renderDetalles(); recalc(); }
+    }
+    var btn = e.target.closest('.pasto-btn');
+    if (btn) {
+      var pid   = btn.getAttribute('data-pastoid');
+      var campo = btn.getAttribute('data-campo');
+      var val   = btn.getAttribute('data-val');
+      if (actsData[pid]) { actsData[pid].instancias[0][campo] = val; renderDetalles(); recalc(); }
+    }
+  });
+  document.addEventListener('change', function(e) {
+    var el = e.target;
+    if (el.classList.contains('pasto-cant')) {
+      var pid = el.getAttribute('data-pastoid');
+      if (actsData[pid]) { actsData[pid].instancias[0].cantKg = el.value; }
+    }
+    if (el.classList.contains('pasto-destpot')) {
+      var pid = el.getAttribute('data-pastoid');
+      if (actsData[pid]) { actsData[pid].instancias[0].destPotrero = el.value; }
+    }
+    if (el.classList.contains('corral-sel')) {
+      var cid   = el.getAttribute('data-cid');
+      var campo = el.getAttribute('data-campo');
+      if (actsData[cid]) { actsData[cid].instancias[0][campo] = el.value; renderDetalles(); recalc(); }
+    }
+    if (el.classList.contains('corral-txt')) {
+      var cid   = el.getAttribute('data-cid');
+      var campo = el.getAttribute('data-campo');
+      if (actsData[cid]) actsData[cid].instancias[0][campo] = el.value;
+    }
+    if (el.classList.contains('corral-num')) {
+      var cid   = el.getAttribute('data-cid');
+      var campo = el.getAttribute('data-campo');
+      if (actsData[cid]) actsData[cid].instancias[0][campo] = el.value;
+    }
+    if (el.classList.contains('corral-time')) {
+      var cid   = el.getAttribute('data-cid');
+      var campo = el.getAttribute('data-campo');
+      if (actsData[cid]) {
+        var inst = actsData[cid].instancias[0];
+        inst[campo] = el.value;
+        if (inst.hInicio && inst.hFin) {
+          var p1 = inst.hInicio.split(':').map(Number);
+          var p2 = inst.hFin.split(':').map(Number);
+          var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+          inst.horas = h > 0 ? parseFloat(h.toFixed(1)) : 0;
+        }
+        renderDetalles(); recalc();
+      }
+    }
+    if (el.classList.contains('pasto-time')) {
+      var pid   = el.getAttribute('data-pastoid');
+      var campo = el.getAttribute('data-campo');
+      if (actsData[pid]) {
+        var inst = actsData[pid].instancias[0];
+        inst[campo] = el.value;
+        if (inst.hInicio && inst.hFin) {
+          var p1 = inst.hInicio.split(':').map(Number);
+          var p2 = inst.hFin.split(':').map(Number);
+          var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+          inst.horas = h > 0 ? parseFloat(h.toFixed(1)) : 0;
+        }
+        renderDetalles(); recalc();
+      }
+    }
   });
 
   // Listeners generales
@@ -692,6 +763,53 @@ function renderDetalles() {
     var insts = a.instancias;
     var pct = calcPct(id);
     var valor = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+
+    // Actividades especiales con sub-formulario propio
+    if (id === 'implante' || id === 'vitaminas' || id === 'pesaje' || id === 'desparasit') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getCorralHtml(id) +
+      '</div>';
+    }
+    if (id === 'arreo') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getArreoHtml(id) +
+      '</div>';
+    }
+    if (id === 'recorrido') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getRecorridoHtml(id) +
+      '</div>';
+    }
+    if (id === 'otra') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getOtraHtml(id) +
+      '</div>';
+    }
+    if (id === 'cortepasto' || id === 'picado') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getPastoCorteHtml(id) +
+      '</div>';
+    }
 
     var instsHtml = insts.map(function(inst, idx) {
       var listaPotreros = (a.cod === 'CD-SUPL' || a.cod === 'CD-NUT') ? UBICACIONES_SUPL : POTREROS;
@@ -728,6 +846,322 @@ function renderDetalles() {
     '</div>';
   }).join('');
 }
+
+// Actividades en Corral Principal o con lógica especial
+var ACTS_CORRAL  = ['implante','vitaminas','pesaje','desparasit'];
+var ACTS_ARREO   = ['arreo'];
+var UBICACIONES  = ['Corral Principal','Módulo de Suplementación'].concat(POTREROS);
+
+function getCorralHtml(id) {
+  var inst  = actsData[id] ? actsData[id].instancias[0] : {};
+  var hInicio = inst.hInicio || '';
+  var hFin    = inst.hFin    || '';
+  var horas   = inst.horas   || 0;
+  var pct     = calcPct(id);
+  var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var grupoOpts = ['G1','G2','Búfalos','Todos'].map(function(g) {
+    return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
+  }).join('');
+
+  var campos = '';
+
+  if (id === 'implante') {
+    campos =
+      '<div style="margin-bottom:10px">' +
+        '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+          '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+            '<option value="">Seleccionar...</option>' + grupoOpts +
+          '</select></div>' +
+        '<div class="mini-row"><span class="mini-lbl">Animales:</span>' +
+          '<input type="number" class="mini-inp corral-num" data-cid="' + id + '" data-campo="nAnimales" ' +
+            'value="' + (inst.nAnimales||'') + '" placeholder="¿Cuántos animales?" min="0" style="font-size:16px;font-weight:700">' +
+        '</div>' +
+      '</div>';
+  }
+
+  if (id === 'vitaminas') {
+    var vitOpts = ['Complejo B','ADE (vitaminas A, D, E)','Hematofos','Otro'].map(function(v) {
+      return '<option value="' + v + '"' + (inst.tipoVit===v?' selected':'') + '>' + v + '</option>';
+    }).join('');
+    campos =
+      '<div style="margin-bottom:10px">' +
+        '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+          '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+            '<option value="">Seleccionar...</option>' + grupoOpts +
+          '</select></div>' +
+        '<div class="mini-row"><span class="mini-lbl">Animales:</span>' +
+          '<input type="number" class="mini-inp corral-num" data-cid="' + id + '" data-campo="nAnimales" ' +
+            'value="' + (inst.nAnimales||'') + '" placeholder="¿Cuántos animales?" min="0" style="font-size:16px;font-weight:700">' +
+        '</div>' +
+        '<div class="mini-row"><span class="mini-lbl">Producto:</span>' +
+          '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="tipoVit">' +
+            '<option value="">Seleccionar...</option>' + vitOpts +
+          '</select></div>' +
+      '</div>';
+  }
+
+  if (id === 'pesaje') {
+    campos =
+      '<div style="margin-bottom:10px">' +
+        '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+          '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+            '<option value="">Seleccionar...</option>' + grupoOpts +
+          '</select></div>' +
+      '</div>';
+  }
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+    '<div style="font-size:10px;font-family:monospace;color:#88AA88;margin-bottom:10px;padding:6px 8px;background:rgba(0,0,0,.2);border-radius:5px">' +
+    '📍 Ubicación: Corral Principal (fijo)</div>' +
+    campos +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
+    '<div class="mini-row">' +
+      '<span class="mini-lbl">De:</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+    '</div>' +
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
+      (inst.grupo ? '🐄 ' + inst.grupo + (inst.nAnimales?' · '+inst.nAnimales+' animales':'') + (inst.tipoVit?' · '+inst.tipoVit:'') + (inst.producto?' · '+inst.producto:'') + '<br>' : '') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function getArreoHtml(id) {
+  var inst    = actsData[id] ? actsData[id].instancias[0] : {};
+  var hInicio = inst.hInicio || '';
+  var hFin    = inst.hFin    || '';
+  var horas   = inst.horas   || 0;
+  var pct     = calcPct(id);
+  var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var ubOpts = UBICACIONES.map(function(u) {
+    var warn = (u.indexOf('P-') === 0 && parseInt(u.split('-')[1]) >= 17) ? ' ⚠' : '';
+    return '<option value="' + u + '">' + u + warn + '</option>';
+  }).join('');
+
+  var origenOpts = '<option value="">Origen...</option>' + ubOpts;
+  var destinoOpts = '<option value="">Destino...</option>' + ubOpts;
+
+  // Set selected
+  origenOpts  = origenOpts.replace('"' + inst.origen  + '">', '"' + (inst.origen||'')  + '" selected>');
+  destinoOpts = destinoOpts.replace('"' + inst.destino + '">', '"' + (inst.destino||'') + '" selected>');
+
+  var grupoOpts = ['G1','G2','Búfalos','Todos'].map(function(g) {
+    return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
+  }).join('');
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Ruta del arreo</div>' +
+      '<div class="mini-row"><span class="mini-lbl">Origen:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="origen">' + origenOpts + '</select></div>' +
+      '<div class="mini-row"><span class="mini-lbl">Destino:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="destino">' + destinoOpts + '</select></div>' +
+      '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+          '<option value="">Seleccionar...</option>' + grupoOpts + '</select></div>' +
+    '</div>' +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
+    '<div class="mini-row">' +
+      '<span class="mini-lbl">De:</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+    '</div>' +
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
+      (inst.origen && inst.destino ? '🐂 ' + (inst.grupo||'Ganado') + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🐂 Define origen y destino<br>') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function getRecorridoHtml(id) {
+  var inst    = actsData[id] ? actsData[id].instancias[0] : {};
+  var hInicio = inst.hInicio  || '';
+  var hFin    = inst.hFin     || '';
+  var horas   = inst.horas    || 0;
+  var zona    = inst.zona     || '';
+  var lindero = inst.lindero  || '';
+  var pct     = calcPct(id);
+  var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var zonas = ['Potrero específico','Lindero','Todo el predio','Vías internas'];
+  var zonasHtml = zonas.map(function(z) {
+    var sel = zona === z;
+    return '<button type="button" data-cid="' + id + '" data-campo="zona" data-val="' + z + '" ' +
+      'class="corral-sel-btn" style="padding:8px 10px;border:1.5px solid ' + (sel?'#7A4A00':'#ddd') + ';' +
+      'background:' + (sel?'#7A4A00':'white') + ';color:' + (sel?'white':'#333') + ';' +
+      'border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation">' + z + '</button>';
+  }).join('');
+
+  var potOpts = POTREROS.map(function(p) {
+    var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+    return '<option value="' + p + '"' + (inst.potrero===p?' selected':'') + '>' + p + warn + '</option>';
+  }).join('');
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Zona del recorrido</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:5px" id="zona_' + id + '">' + zonasHtml + '</div>' +
+    '</div>' +
+    (zona === 'Potrero específico' ?
+      '<div class="mini-row" style="margin-bottom:10px"><span class="mini-lbl">Potrero:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="potrero">' +
+          '<option value="">Seleccionar...</option>' + potOpts +
+        '</select></div>' : '') +
+    (zona === 'Lindero' ?
+      '<div style="margin-bottom:10px">' +
+        '<div style="font-size:10px;font-family:monospace;color:#888;margin-bottom:5px">¿Cuál lindero?</div>' +
+        '<input type="text" class="mini-inp corral-txt" data-cid="' + id + '" data-campo="lindero" ' +
+          'value="' + lindero + '" placeholder="Ej: con vecino Chavarría por el lado de la caña..." style="font-size:13px">' +
+      '</div>' : '') +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
+    '<div class="mini-row">' +
+      '<span class="mini-lbl">De:</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+    '</div>' +
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
+      (zona ? '🚶 ' + zona + (lindero?' · '+lindero:'') + (inst.potrero&&zona==='Potrero específico'?' · '+inst.potrero:'') + '<br>' : '') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function getOtraHtml(id) {
+  var inst    = actsData[id] ? actsData[id].instancias[0] : {};
+  var hInicio = inst.hInicio || '';
+  var hFin    = inst.hFin    || '';
+  var horas   = inst.horas   || 0;
+  var pct     = calcPct(id);
+  var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var ubOpts = ['Corral Principal','Módulo de Suplementación'].concat(POTREROS).concat(['Otro']).map(function(u) {
+    var warn = (u.indexOf('P-') === 0 && parseInt(u.split('-')[1]) >= 17) ? ' ⚠' : '';
+    return '<option value="' + u + '"' + (inst.ubicacion===u?' selected':'') + '>' + u + warn + '</option>';
+  }).join('');
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Descripción de la actividad</div>' +
+      '<input type="text" class="mini-inp corral-txt" data-cid="' + id + '" data-campo="descripcion" ' +
+        'value="' + (inst.descripcion||'') + '" placeholder="¿Qué hiciste?" style="font-size:14px;margin-bottom:8px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:4px">Ubicación</div>' +
+      '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="ubicacion">' +
+        '<option value="">Seleccionar ubicación...</option>' + ubOpts +
+      '</select>' +
+      (inst.ubicacion === 'Otro' ?
+        '<input type="text" class="mini-inp corral-txt" data-cid="' + id + '" data-campo="ubicacionOtro" ' +
+          'value="' + (inst.ubicacionOtro||'') + '" placeholder="Especificar ubicación..." style="margin-top:6px">' : '') +
+    '</div>' +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
+    '<div class="mini-row">' +
+      '<span class="mini-lbl">De:</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+    '</div>' +
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
+      (inst.descripcion ? '📋 ' + inst.descripcion + '<br>' : '') +
+      (inst.ubicacion ? '📍 ' + inst.ubicacion + (inst.ubicacionOtro?' ('+inst.ubicacionOtro+')':'') + '<br>' : '') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function getPastoCorteHtml(id) {
+  var inst = actsData[id] ? actsData[id].instancias[0] : {};
+  var tipos = ['King grass morado','Botón de oro','Clon 51','Cuba 22','Caña de azúcar','Mezcla','Otro'];
+  var destinos = [
+    {val:'Corral Principal',          ico:'🏠'},
+    {val:'Módulo de Suplementación',  ico:'🧂'},
+    {val:'Ensilar',                   ico:'🏺'},
+    {val:'Potrero específico',        ico:'🌿'},
+  ];
+  var tipoPasto = inst.tipoPasto   || '';
+  var cantKg    = inst.cantKg      || '';
+  var destino   = inst.destino     || '';
+  var destPot   = inst.destPotrero || '';
+  var hInicio   = inst.hInicio     || '';
+  var hFin      = inst.hFin        || '';
+  var horas     = inst.horas       || 0;
+  var pct       = calcPct(id);
+  var valor     = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc   = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var tiposHtml = tipos.map(function(t) {
+    var sel = tipoPasto === t;
+    return '<button type="button" data-pastoid="' + id + '" data-campo="tipoPasto" data-val="' + t + '" ' +
+      'class="pasto-btn" style="padding:8px 10px;border:1.5px solid ' + (sel?'#4A8A34':'#ddd') + ';' +
+      'background:' + (sel?'#4A8A34':'white') + ';color:' + (sel?'white':'#333') + ';' +
+      'border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation">' +
+      t + '</button>';
+  }).join('');
+
+  var destHtml = destinos.map(function(d) {
+    var sel = destino === d.val;
+    return '<button type="button" data-pastoid="' + id + '" data-campo="destino" data-val="' + d.val + '" ' +
+      'class="pasto-btn" style="padding:8px;border:1.5px solid ' + (sel?'#0D2B5E':'#ddd') + ';' +
+      'background:' + (sel?'#0D2B5E':'white') + ';color:' + (sel?'white':'#333') + ';' +
+      'border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:center">' +
+      d.ico + ' ' + d.val + '</button>';
+  }).join('');
+
+  var optsPotreros = POTREROS.map(function(p) {
+    var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+    return '<option value="' + p + '"' + (destPot===p?' selected':'') + '>' + p + warn + '</option>';
+  }).join('');
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+
+    '<div style="font-size:10px;font-family:monospace;color:#88AA88;margin-bottom:10px;padding:6px 8px;background:rgba(0,0,0,.2);border-radius:5px">' +
+    '📍 Origen: Lote Pasto de Corte (fijo)</div>' +
+
+    '<div style="margin-bottom:12px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">1. Tipo de pasto cortado</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:5px" id="tipos_' + id + '">' + tiposHtml + '</div>' +
+    '</div>' +
+
+    '<div style="margin-bottom:12px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">2. Cantidad picada estimada (kg)</div>' +
+      '<input type="number" class="mini-inp pasto-cant" data-pastoid="' + id + '" value="' + cantKg + '" placeholder="ej: 250" min="0" style="font-size:16px;font-weight:700">' +
+    '</div>' +
+
+    '<div style="margin-bottom:12px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">3. Destino del producto</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px" id="dest_' + id + '">' + destHtml + '</div>' +
+      (destino === 'Potrero específico' ?
+        '<select class="mini-inp pasto-destpot" data-pastoid="' + id + '">' +
+          '<option value="">¿A qué potrero?</option>' + optsPotreros +
+        '</select>' : '') +
+    '</div>' +
+
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">4. Horario de la actividad</div>' +
+      '<div class="mini-row">' +
+        '<span class="mini-lbl">De:</span>' +
+        '<input type="time" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+        '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+        '<input type="time" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9">' +
+      (tipoPasto ? '🌾 ' + tipoPasto + (cantKg ? ' · ' + cantKg + ' kg' : '') + '<br>' : '🌾 Selecciona tipo de pasto<br>') +
+      (destino ? '📍 ' + destino + (destPot?' ('+destPot+')':'') + '<br>' : '📍 Selecciona destino<br>') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
 
 function getSubtipoHtml(id, cod) {
   var opciones = '';
@@ -1091,16 +1525,70 @@ window.enviar = function() {
     var subtipoEl = document.getElementById('subtipo_' + id);
     var subtipo = subtipoEl ? subtipoEl.value : '';
     a.instancias.forEach(function(inst) {
-      acts.push({
+      var actEntry = {
         actividad: a.nom + (subtipo ? ' · ' + subtipo : ''),
         actividadBase: a.nom,
         subtipo: subtipo,
         codigoCosto: a.cod,
-        potrero: inst.potrero,
+        potrero: inst.potrero || '',
         horaInicio: inst.hInicio,
         horaFin: inst.hFin,
         horas: inst.horas
-      });
+      };
+      // Datos especiales corral
+      if (ACTS_CORRAL.indexOf(id) >= 0) {
+        actEntry.potrero         = 'Corral Principal';
+        actEntry.grupo           = inst.grupo       || '';
+        actEntry.nAnimales       = inst.nAnimales   || '';
+        actEntry.tipoVitamina    = inst.tipoVit     || '';
+      }
+      // Datos recorrido general
+      if (id === 'recorrido') {
+        actEntry.potrero = inst.zona === 'Potrero específico' ? (inst.potrero||'') :
+                           inst.zona === 'Lindero' ? 'Lindero' : (inst.zona||'');
+        actEntry.zonaRecorrido = inst.zona    || '';
+        actEntry.linderoDetalle = inst.lindero || '';
+      }
+      // Datos otra actividad
+      if (id === 'otra') {
+        actEntry.actividad = 'Otra: ' + (inst.descripcion||'sin descripción');
+        actEntry.potrero   = inst.ubicacion === 'Otro' ? (inst.ubicacionOtro||'Otro') : (inst.ubicacion||'');
+      }
+      // Datos especiales arreo
+      if (ACTS_ARREO.indexOf(id) >= 0) {
+        actEntry.potrero         = (inst.origen || '') + ' → ' + (inst.destino || '');
+        actEntry.origenArreo     = inst.origen  || '';
+        actEntry.destinoArreo    = inst.destino || '';
+        actEntry.grupo           = inst.grupo   || '';
+      }
+      // Datos especiales de pasto de corte
+      if (id === 'recorrido') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getRecorridoHtml(id) +
+      '</div>';
+    }
+    if (id === 'otra') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getOtraHtml(id) +
+      '</div>';
+    }
+    if (id === 'cortepasto' || id === 'picado') {
+        actEntry.potrero = 'Lote Pasto de Corte';
+        actEntry.tipoPasto    = inst.tipoPasto    || '';
+        actEntry.cantidadKg   = inst.cantKg       || '';
+        actEntry.destino      = inst.destino      || '';
+        actEntry.destinoPotrero = inst.destPotrero || '';
+        actEntry.actividad    = a.nom + (inst.tipoPasto ? ' · ' + inst.tipoPasto : '');
+      }
+      acts.push(actEntry);
     });
   });
 
@@ -1156,6 +1644,15 @@ window.enviar = function() {
     decisionRequerida: S['decision'] || '',
     decisionDetalle: document.getElementById('decisionTxt').value || '',
     trabajoHoy: S['trabajo'] || 'SI',
+    suplementoHoy: S['suplemento'] || '',
+    cantSalMineral:   document.getElementById('cantSalMineral')?.value || '',
+    cantSalGrano:     document.getElementById('cantSalGrano')?.value || '',
+    cantMelaza:       document.getElementById('cantMelaza')?.value || '',
+    cantUrea:         document.getElementById('cantUrea')?.value || '',
+    cantAzufre:       document.getElementById('cantAzufre')?.value || '',
+    cantPastoPicado:  document.getElementById('cantPastoPicado')?.value || '',
+    otroSuplemento:   document.getElementById('otroSuplemento')?.value || '',
+    insumosAgotando:  document.getElementById('insumosAgotando')?.value || '',
     ausenciaMotivo: S['trabajo'] === 'NO' ? (S['ausencia'] || '') : '',
     ausenciaDetalle: S['trabajo'] === 'NO' ? (document.getElementById('ausenciaDetalle')?.value || '') : '',
     // Cercas (todos reportan) — multi-ubicación
