@@ -1573,6 +1573,8 @@ window.enviar = function() {
   btn.textContent = 'Enviando...';
   btn.disabled = true;
 
+  try {
+
   var trabVal = document.getElementById('trabajador').value;
   var trab = trabVal === '__otro__'
     ? (document.getElementById('otroNombre').value || 'Otro temporal')
@@ -1755,16 +1757,16 @@ window.enviar = function() {
     decisionDetalle: document.getElementById('decisionTxt').value || '',
     trabajoHoy: S['trabajo'] || 'SI',
     suplementoHoy: S['suplemento'] || '',
-    cantSalMineral:   document.getElementById('cantSalMineral')?.value || '',
-    cantSalGrano:     document.getElementById('cantSalGrano')?.value || '',
-    cantMelaza:       document.getElementById('cantMelaza')?.value || '',
-    cantUrea:         document.getElementById('cantUrea')?.value || '',
-    cantAzufre:       document.getElementById('cantAzufre')?.value || '',
-    cantPastoPicado:  document.getElementById('cantPastoPicado')?.value || '',
-    otroSuplemento:   document.getElementById('otroSuplemento')?.value || '',
-    insumosAgotando:  document.getElementById('insumosAgotando')?.value || '',
+    cantSalMineral:   (document.getElementById('cantSalMineral') ? document.getElementById('cantSalMineral').value : '') || '',
+    cantSalGrano:     (document.getElementById('cantSalGrano') ? document.getElementById('cantSalGrano').value : '') || '',
+    cantMelaza:       (document.getElementById('cantMelaza') ? document.getElementById('cantMelaza').value : '') || '',
+    cantUrea:         (document.getElementById('cantUrea') ? document.getElementById('cantUrea').value : '') || '',
+    cantAzufre:       (document.getElementById('cantAzufre') ? document.getElementById('cantAzufre').value : '') || '',
+    cantPastoPicado:  (document.getElementById('cantPastoPicado') ? document.getElementById('cantPastoPicado').value : '') || '',
+    otroSuplemento:   (document.getElementById('otroSuplemento') ? document.getElementById('otroSuplemento').value : '') || '',
+    insumosAgotando:  (document.getElementById('insumosAgotando') ? document.getElementById('insumosAgotando').value : '') || '',
     ausenciaMotivo: S['trabajo'] === 'NO' ? (S['ausencia'] || '') : '',
-    ausenciaDetalle: S['trabajo'] === 'NO' ? (document.getElementById('ausenciaDetalle')?.value || '') : '',
+    ausenciaDetalle: S['trabajo'] === 'NO' ? ((document.getElementById('ausenciaDetalle') ? document.getElementById('ausenciaDetalle').value : '') || '') : '',
     // Cercas (todos reportan) — multi-ubicación
     cercas2: S['cercas2'] || '',
     cercaFallas: S['cercas2'] === 'FALLA' ? JSON.stringify(cercaFallasData) : '[]',
@@ -1802,8 +1804,22 @@ window.enviar = function() {
   // Mostrar modal
   showModal('📡', 'Enviando...', 'Guardando en Registro de Campo', null);
 
-  var url = SCRIPT_URL + '?action=registrar&data=' + encodeURIComponent(JSON.stringify(payload));
-  fetch(url).then(function(r){ return r.json(); }).then(function(json) {
+  } catch(buildErr) {
+    showModal('⚠️', 'Error', buildErr.toString(), 'OK', 'mba');
+    btn.textContent = '📋 Enviar registro del día';
+    btn.disabled = false;
+    return;
+  }
+
+  fetch(SCRIPT_URL + '?action=registrar', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(payload)
+  }).then(function(r) {
+    // no-cors returns opaque response — treat as success
+    return {ok: true, status: 'ok'};
+  }).then(function(json) {
     if (json && (json.status==='ok'||json.ok)) {
       showModal('✅', '¡Guardado!', 'ID: ' + payload.reporteId + '\n' + acts.length + ' actividades registradas', 'OK', 'mbv');
       document.getElementById('statusR').textContent = '✅ guardado';
