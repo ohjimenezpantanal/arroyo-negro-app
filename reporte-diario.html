@@ -222,13 +222,30 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div id="otroDiv" style="display:none;margin-top:8px">
       <input type="text" id="otroNombre" placeholder="Escribir nombre completo del trabajador temporal">
     </div>
+    <div class="fld" style="margin-top:10px">
+      <label class="lbl">¿Trabajaste hoy?</label>
+      <div class="tg-grp" id="grp_trabajo">
+        <button type="button" class="tg" data-grp="trabajo" data-val="SI" data-cls="sv">✅ Sí trabajé</button>
+        <button type="button" class="tg" data-grp="trabajo" data-val="NO" data-cls="sr">❌ No trabajé hoy</button>
+      </div>
+    </div>
+    <div id="ausenciaDiv" style="display:none;margin-top:8px">
+      <label class="lbl">Motivo de ausencia</label>
+      <div class="tg-grp" id="grp_ausencia" style="margin-bottom:8px">
+        <button type="button" class="tg" data-grp="ausencia" data-val="PERMISO" data-cls="sa">📋 Permiso</button>
+        <button type="button" class="tg" data-grp="ausencia" data-val="ENFERMEDAD" data-cls="sr">🤒 Enfermedad</button>
+        <button type="button" class="tg" data-grp="ausencia" data-val="CALAMIDAD" data-cls="sr">🏠 Calamidad</button>
+        <button type="button" class="tg" data-grp="ausencia" data-val="OTRO" data-cls="sa">➕ Otro</button>
+      </div>
+      <input type="text" id="ausenciaDetalle" placeholder="Detalle del motivo (opcional)...">
+    </div>
     <div class="g2">
       <div class="fld">
-        <label class="lbl">Hora llegada</label>
+        <label class="lbl">Inicio de actividades</label>
         <input type="time" id="horaLlegada" value="06:30">
       </div>
       <div class="fld">
-        <label class="lbl">Hora salida</label>
+        <label class="lbl">Fin de actividades</label>
         <input type="time" id="horaSalida">
       </div>
     </div>
@@ -237,6 +254,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 </div>
 
 <!-- 2. ESTADO DEL GANADO -->
+<div id="seccionGanado" style="display:none">
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">🐄</span>
@@ -289,7 +307,10 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
 </div>
 
-<!-- 3. POTREROS -->
+</div><!-- cierre seccionGanado -->
+
+<!-- 3. POTREROS — solo Héctor -->
+<div id="seccionPotreros" style="display:none">
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">🌿</span>
@@ -300,9 +321,9 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="fld">
       <label class="lbl">Estado del pasto hoy</label>
       <div class="tg-grp" id="grp_pasto">
-        <button type="button" class="tg" data-grp="pasto" data-val="BUENO" data-cls="sv">🟢 Bueno</button>
-        <button type="button" class="tg" data-grp="pasto" data-val="REGULAR" data-cls="sa">🟡 Regular</button>
-        <button type="button" class="tg" data-grp="pasto" data-val="AGOTADO" data-cls="sr">🔴 Agotado</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="CON_PASTO" data-cls="sv">🟢 Con pasto</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="PASTO_BAJO" data-cls="sa">🟡 Pasto bajo</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="AGOTADO_MALEZA" data-cls="sr">🔴 Agotado / maleza</button>
       </div>
     </div>
     <div class="g2" style="margin-top:10px">
@@ -329,12 +350,68 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       </div>
     </div>
     <div id="cercaDetDiv" style="display:none;margin-top:6px">
-      <input type="text" id="cercaDet" placeholder="¿En qué potrero y tipo de falla?">
+      <div class="g2" style="margin-bottom:8px">
+        <div class="fld">
+          <label class="lbl">¿En qué potrero?</label>
+          <select id="cercaPotreroFalla">
+            <option value="">Seleccionar...</option>
+            <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
+            <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
+            <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
+            <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
+            <option>P-17⚠</option><option>P-18⚠</option><option>P-19⚠</option><option>P-20⚠</option>
+            <option>P-21⚠</option><option>P-22⚠</option><option>P-23⚠</option><option>P-24⚠</option>
+            <option>P-25⚠</option><option>P-26⚠</option><option>P-27⚠</option><option>P-28⚠</option>
+            <option>P-29⚠</option><option>P-30⚠</option><option>P-31⚠</option><option>P-32⚠</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label class="lbl">Tipo de falla</label>
+          <select id="cercaTipoFalla">
+            <option value="">Seleccionar...</option>
+            <option>Alambre cortado</option>
+            <option>Poste caído</option>
+            <option>Puerta rota</option>
+            <option>Alambre suelto / flojo</option>
+            <option>Animal rompió la cerca</option>
+            <option>Cerca incompleta</option>
+            <option>Otra falla</option>
+          </select>
+        </div>
+      </div>
+      <input type="text" id="cercaDet" placeholder="Descripción adicional del problema...">
+    </div>
+  </div>
+</div>
+</div><!-- cierre seccionPotreros -->
+
+<div id="seccionCercas" style="display:none">
+<!-- CERCAS — ambos trabajadores reportan — multi-ubicación -->
+<div class="card">
+  <div class="card-hdr">
+    <span class="card-ico">🪝</span>
+    <span class="card-tit">Estado de Cercas</span>
+    <span class="card-pts" id="cp_cercas">0 pts</span>
+  </div>
+  <div class="card-body">
+    <div class="fld">
+      <label class="lbl">¿Las cercas están bien hoy?</label>
+      <div class="tg-grp" id="grp_cercas2">
+        <button type="button" class="tg" data-grp="cercas2" data-val="OK" data-cls="sv">✅ Todas OK</button>
+        <button type="button" class="tg" data-grp="cercas2" data-val="FALLA" data-cls="sr">🚨 Hay falla</button>
+      </div>
+    </div>
+    <div id="cercaDetDiv2" style="display:none;margin-top:10px">
+      <div id="cercaFallas"></div>
+      <button type="button" onclick="addCercaFalla()" style="width:100%;padding:8px;background:var(--rbg);border:1.5px dashed var(--r);border-radius:6px;color:var(--r);font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;touch-action:manipulation">+ Agregar otra falla</button>
     </div>
   </div>
 </div>
 
+</div><!-- cierre seccionCercas -->
+
 <!-- 4. ACTIVIDADES CON POTRERO Y HORAS -->
+<div id="seccionActividades" style="display:none">
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">⚒️</span>
@@ -409,7 +486,10 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
 </div>
 
+</div><!-- cierre seccionActividades -->
+
 <!-- 5. CIERRE -->
+<div id="seccionCierre" style="display:none">
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">📝</span>
@@ -424,9 +504,11 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
         <button type="button" class="tg" data-grp="foto" data-val="NO" data-cls="sr">❌ No tomé foto</button>
       </div>
     </div>
+    <div id="seccionInsumos">
     <div class="fld" style="margin-top:10px">
       <label class="lbl">Insumos que se agotan</label>
       <textarea id="insumos" placeholder="Ej: quedan 2 kg de sal mineral, se acabó la melaza..."></textarea>
+    </div>
     </div>
     <div class="fld">
       <label class="lbl">Observación — lo que Oscar debe saber</label>
@@ -453,6 +535,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     </div>
   </div>
 </div>
+
+</div><!-- cierre seccionCierre -->
 
 <!-- SUBMIT -->
 <div class="sub-wrap">
@@ -529,18 +613,36 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       btn.classList.add(cls);
       S[grp] = val;
-      mostrar('novSanDiv',  grp==='sanidad'  && val==='SI');
-      mostrar('conteoDiv',  grp==='turno'    && val==='SI');
-      mostrar('pesajeDiv',  grp==='pesaje'   && val==='SI');
-      mostrar('cercaDetDiv',grp==='cercas'   && val==='FALLA');
-      mostrar('decisionDiv',grp==='decision' && val==='SI');
+      if (grp === 'trabajo') {
+        mostrar('ausenciaDiv', val === 'NO');
+        mostrar('seccionGanado',   val === 'SI');
+        mostrar('seccionPotreros', val === 'SI' && document.getElementById('trabajador').value === 'Héctor Zambrano');
+        mostrar('seccionCercas',   val === 'SI');
+        mostrar('seccionActividades', val === 'SI');
+        mostrar('seccionCierre',   val === 'SI');
+        mostrar('seccionInsumos',  val === 'SI' && document.getElementById('trabajador').value === 'Héctor Zambrano');
+      }
+      if (grp === 'sanidad')  mostrar('novSanDiv',   val === 'SI');
+      if (grp === 'turno')    mostrar('conteoDiv',   val === 'SI');
+      if (grp === 'pesaje')   mostrar('pesajeDiv',   val === 'SI');
+      if (grp === 'cercas')   mostrar('cercaDetDiv',  val === 'FALLA');
+      if (grp === 'cercas2') {
+        mostrar('cercaDetDiv2', val === 'FALLA');
+        if (val === 'FALLA') { cercaFallasData = [{potrero:'',tipo:'',detalle:''}]; renderCercaFallas(); }
+      }
+      if (grp === 'decision') mostrar('decisionDiv', val === 'SI');
       recalc();
     });
   });
 
-  // Trabajador "Otro"
+  // Trabajador — roles diferenciados
   document.getElementById('trabajador').addEventListener('change', function() {
     mostrar('otroDiv', this.value === '__otro__');
+    var esHector = this.value === 'Héctor Zambrano';
+    var trabajo = S['trabajo'] === 'SI';
+    // Solo Héctor ve estado de potreros e insumos (y solo si trabajó)
+    mostrar('seccionPotreros', esHector && trabajo);
+    mostrar('seccionInsumos',  esHector && trabajo);
     recalc();
   });
 
@@ -576,6 +678,8 @@ var POTREROS = [];
 for (var p = 1; p <= 32; p++) {
   POTREROS.push('P-' + (p < 10 ? '0'+p : p));
 }
+// Ubicaciones especiales para suplementación
+var UBICACIONES_SUPL = ['Módulo de Suplementación', 'Corral Principal'].concat(POTREROS);
 
 // Renderizar detalles por actividad — con soporte multi-potrero
 function renderDetalles() {
@@ -590,8 +694,9 @@ function renderDetalles() {
     var valor = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
 
     var instsHtml = insts.map(function(inst, idx) {
-      var opts = POTREROS.map(function(p) {
-        var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+      var listaPotreros = (a.cod === 'CD-SUPL' || a.cod === 'CD-NUT') ? UBICACIONES_SUPL : POTREROS;
+      var opts = listaPotreros.map(function(p) {
+        var warn = (p.indexOf('P-') === 0 && parseInt(p.split('-')[1]) >= 17) ? ' ⚠' : '';
         return '<option value="' + p + '"' + (inst.potrero===p?' selected':'') + '>' + p + warn + '</option>';
       }).join('');
       var hrsText = inst.horas > 0 ? inst.horas.toFixed(1) + ' hrs' : '-- hrs';
@@ -618,9 +723,39 @@ function renderDetalles() {
         '<span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--vl);margin-left:auto">' + valor + '</span>' +
       '</div>' +
       instsHtml +
+      getSubtipoHtml(id, a.cod) +
       '<button type="button" onclick="addInst(\'' + id + '\')" style="width:100%;padding:7px;background:var(--vbg);border:1.5px dashed var(--vl);border-radius:6px;color:var(--vl);font-size:12px;font-weight:700;cursor:pointer;margin-top:2px;touch-action:manipulation">+ Agregar otro potrero</button>' +
     '</div>';
   }).join('');
+}
+
+function getSubtipoHtml(id, cod) {
+  var opciones = '';
+  if (id === 'chapia' || id === 'herbicida') {
+    opciones = '<option value="">Seleccionar tipo...</option>' +
+      '<option>Chapia manual con machete</option>' +
+      '<option>Fumigación hoja ancha</option>' +
+      '<option>Control paja de burro</option>' +
+      '<option>Chapia mecánica con guadaña</option>' +
+      '<option>Control maleza general</option>' +
+      '<option>Limpieza de bordes / accesos</option>' +
+      '<option>Otro</option>';
+  } else if (id === 'cercas') {
+    opciones = '<option value="">Seleccionar tipo...</option>' +
+      '<option>Cambio de alambre</option>' +
+      '<option>Tensión de alambre</option>' +
+      '<option>Colocar estacas / postes</option>' +
+      '<option>Arreglo de puerta</option>' +
+      '<option>Construcción de cerca nueva</option>' +
+      '<option>Revisión y mantenimiento general</option>' +
+      '<option>Otro</option>';
+  } else {
+    return '';
+  }
+  return '<div style="margin-top:6px;margin-bottom:4px">' +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Tipo de trabajo:</div>' +
+    '<select class="mini-inp" id="subtipo_' + id + '" style="font-size:13px">' + opciones + '</select>' +
+    '</div>';
 }
 
 function addInst(id) {
@@ -835,6 +970,89 @@ function recalc() {
   return score;
 }
 
+// ── CERCAS MULTI-FALLA ────────────────────────────────────────────────
+var cercaFallasData = [{potrero:'', tipo:'', detalle:''}];
+
+function renderCercaFallas() {
+  var cont = document.getElementById('cercaFallas');
+  if (!cont) return;
+  var optsPotreros = POTREROS.map(function(p) {
+    var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+    return '<option value="' + p + '">' + p + warn + '</option>';
+  }).join('');
+
+  cont.innerHTML = cercaFallasData.map(function(f, idx) {
+    var tipoOpts = ['Alambre cortado','Poste caído','Puerta rota',
+      'Alambre suelto / flojo','Animal rompió la cerca',
+      'Cerca incompleta','Otra falla'].map(function(t) {
+        return '<option' + (f.tipo===t?' selected':'') + '>' + t + '</option>';
+      }).join('');
+
+    var header = cercaFallasData.length > 1
+      ? '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+          '<span style="font-size:10px;font-family:monospace;color:var(--r);font-weight:700">FALLA ' + (idx+1) + '</span>' +
+          '<button type="button" data-remidx="' + idx + '" class="rem-cerca-btn" style="background:var(--r);border:none;color:#fff;border-radius:4px;padding:2px 8px;font-size:10px;cursor:pointer">✕ quitar</button>' +
+        '</div>'
+      : '';
+
+    return '<div class="cerca-falla-blk" style="background:var(--rbg);border:1px solid #FFCCCC;border-radius:8px;padding:10px;margin-bottom:6px">' +
+      header +
+      '<div class="g2" style="margin-bottom:6px">' +
+        '<div class="fld"><label class="lbl">Potrero</label>' +
+          '<select class="mini-inp cerca-pot" data-idx="' + idx + '">' +
+            '<option value="">Seleccionar...</option>' + optsPotreros +
+          '</select></div>' +
+        '<div class="fld"><label class="lbl">Tipo de falla</label>' +
+          '<select class="mini-inp cerca-tipo" data-idx="' + idx + '">' +
+            '<option value="">Seleccionar...</option>' + tipoOpts +
+          '</select></div>' +
+      '</div>' +
+      '<input type="text" class="mini-inp cerca-det" data-idx="' + idx + '" placeholder="Descripción adicional..." value="' + (f.detalle||'') + '" style="font-size:13px">' +
+    '</div>';
+  }).join('');
+
+  // Bind events after render
+  cont.querySelectorAll('.cerca-pot').forEach(function(el) {
+    el.value = cercaFallasData[el.getAttribute('data-idx')].potrero || '';
+    el.addEventListener('change', function() {
+      cercaFallasData[this.getAttribute('data-idx')].potrero = this.value;
+    });
+  });
+  cont.querySelectorAll('.cerca-tipo').forEach(function(el) {
+    el.value = cercaFallasData[el.getAttribute('data-idx')].tipo || '';
+    el.addEventListener('change', function() {
+      cercaFallasData[this.getAttribute('data-idx')].tipo = this.value;
+    });
+  });
+  cont.querySelectorAll('.cerca-det').forEach(function(el) {
+    el.addEventListener('change', function() {
+      cercaFallasData[this.getAttribute('data-idx')].detalle = this.value;
+    });
+  });
+  cont.querySelectorAll('.rem-cerca-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var i = parseInt(this.getAttribute('data-remidx'));
+      if (cercaFallasData.length > 1) {
+        cercaFallasData.splice(i, 1);
+        renderCercaFallas();
+      }
+    });
+  });
+}
+
+function addCercaFalla() {
+  cercaFallasData.push({potrero:'', tipo:'', detalle:''});
+  renderCercaFallas();
+}
+
+function remCercaFalla(idx) {
+  if (cercaFallasData.length <= 1) return;
+  cercaFallasData.splice(idx, 1);
+  renderCercaFallas();
+}
+
+
+
 window.enviar = function() {
   var btn = document.getElementById('btnSub');
   btn.textContent = 'Enviando...';
@@ -851,7 +1069,7 @@ window.enviar = function() {
   var bono  = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
   var scoreFinal = Math.min(100, score + bono);
 
-  var ll    = document.getElementById('horaLlegada').value || '';
+  var ll    = document.getElementById('horaLlegada').value || ''; // inicio actividades
   var sl    = document.getElementById('horaSalida').value || '';
   // Usar fecha manual si fue cambiada, sino la del tag
   var fechaInpVal = document.getElementById('fechaManual') ? document.getElementById('fechaManual').value : '';
@@ -870,9 +1088,13 @@ window.enviar = function() {
   var acts = [];
   Object.keys(actsData).forEach(function(id) {
     var a = actsData[id];
+    var subtipoEl = document.getElementById('subtipo_' + id);
+    var subtipo = subtipoEl ? subtipoEl.value : '';
     a.instancias.forEach(function(inst) {
       acts.push({
-        actividad: a.nom,
+        actividad: a.nom + (subtipo ? ' · ' + subtipo : ''),
+        actividadBase: a.nom,
+        subtipo: subtipo,
         codigoCosto: a.cod,
         potrero: inst.potrero,
         horaInicio: inst.hInicio,
@@ -881,6 +1103,9 @@ window.enviar = function() {
       });
     });
   });
+
+  // Datos de cercas (sección separada para ambos trabajadores)
+
 
   // Total horas para prorrateo
   var totalHrs = acts.reduce(function(s,a){return s+(a.horas||0);},0);
@@ -930,6 +1155,12 @@ window.enviar = function() {
     observaciones: obs,
     decisionRequerida: S['decision'] || '',
     decisionDetalle: document.getElementById('decisionTxt').value || '',
+    trabajoHoy: S['trabajo'] || 'SI',
+    ausenciaMotivo: S['trabajo'] === 'NO' ? (S['ausencia'] || '') : '',
+    ausenciaDetalle: S['trabajo'] === 'NO' ? (document.getElementById('ausenciaDetalle')?.value || '') : '',
+    // Cercas (todos reportan) — multi-ubicación
+    cercas2: S['cercas2'] || '',
+    cercaFallas: S['cercas2'] === 'FALLA' ? JSON.stringify(cercaFallasData) : '[]',
     // Actividades estructuradas
     actividades: acts
   };
