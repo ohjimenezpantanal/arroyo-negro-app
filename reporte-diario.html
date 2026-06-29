@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function() {
         delete actsData[id];
         el.classList.remove('sel');
       } else {
-        actsData[id] = { nom:nom, cod:cod, instancias:[{potrero:'',hInicio:'',hFin:'',horas:0}] };
+        actsData[id] = { nom:nom, cod:cod, subtipo:'', eliminado:'', instancias:[{potrero:'',hInicio:'',hFin:'',horas:0}] };
         el.classList.add('sel');
       }
       renderDetalles();
@@ -712,6 +712,14 @@ document.addEventListener('DOMContentLoaded', function() {
       var cid   = el.getAttribute('data-cid');
       var campo = el.getAttribute('data-campo');
       if (actsData[cid]) { actsData[cid].instancias[0][campo] = el.value; renderDetalles(); recalc(); }
+    }
+    if (el.classList.contains('subtipo-ev')) {
+      var sid = el.getAttribute('data-sid');
+      if (actsData[sid]) { actsData[sid].subtipo = el.value; renderDetalles(); recalc(); }
+    }
+    if (el.classList.contains('eliminado-ev')) {
+      var sid = el.getAttribute('data-sid');
+      if (actsData[sid]) actsData[sid].eliminado = el.value;
     }
     if (el.classList.contains('corral-txt')) {
       var cid   = el.getAttribute('data-cid');
@@ -1241,35 +1249,34 @@ function getPastoCorteHtml(id) {
 
 
 function getSubtipoHtml(id, cod) {
-  var opciones = '';
-  if (id === 'chapia' || id === 'herbicida') {
-    opciones = '<option value="">Seleccionar tipo...</option>' +
-      '<option>Chapia manual con machete</option>' +
-      '<option>Fumigación hoja ancha</option>' +
-      '<option>Control paja de burro</option>' +
-      '<option>Chapia mecánica con guadaña</option>' +
-      '<option>Control maleza general</option>' +
-      '<option>Limpieza de bordes / accesos</option>' +
-      '<option>Otro</option>';
-  } else if (id === 'cercas') {
-    opciones = '<option value="">Seleccionar tipo...</option>' +
-      '<option>Cambio de alambre</option>' +
-      '<option>Tensión de alambre</option>' +
-      '<option>Colocar estacas / postes</option>' +
-      '<option>Arreglo de puerta</option>' +
-      '<option>Construcción de cerca nueva</option>' +
-      '<option>Revisión y mantenimiento general</option>' +
-      '<option>Otro</option>';
-  } else {
-    return '';
-  }
-  var subVal = document.getElementById('subtipo_' + id) ? document.getElementById('subtipo_' + id).value : '';
+  var tiposChapia = ['Chapia manual con machete','Fumigación hoja ancha','Control paja de burro',
+    'Chapia mecánica con guadaña','Control maleza general','Limpieza de bordes / accesos','Otro'];
+  var tiposCercas = ['Cambio de alambre','Tensión de alambre','Colocar estacas / postes',
+    'Arreglo de puerta','Construcción de cerca nueva','Revisión y mantenimiento general','Otro'];
+
+  var lista = null;
+  if (id === 'chapia' || id === 'herbicida') lista = tiposChapia;
+  else if (id === 'cercas') lista = tiposCercas;
+  else return '';
+
+  // Leer valor guardado en actsData
+  var subVal    = actsData[id] ? (actsData[id].subtipo   || '') : '';
+  var elimVal   = actsData[id] ? (actsData[id].eliminado || '') : '';
   var showEliminado = (id === 'chapia' || id === 'herbicida') && subVal !== '';
+
+  var opts = '<option value="">Seleccionar tipo...</option>' +
+    lista.map(function(t) {
+      return '<option value="' + t + '"' + (subVal === t ? ' selected' : '') + '>' + t + '</option>';
+    }).join('');
+
   return '<div style="margin-top:6px;margin-bottom:4px">' +
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Tipo de trabajo:</div>' +
-    '<select class="mini-inp subtipo-sel" id="subtipo_' + id + '" data-sid="' + id + '" style="font-size:13px" onchange="renderDetalles()">' + opciones + '</select>' +
-    (showEliminado ? '<div style="margin-top:6px"><div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">¿Qué eliminó / aplicó?</div>' +
-      '<input type="text" class="mini-inp" id="eliminado_' + id + '" placeholder="Ej: paja de burro, maleza de hoja ancha, guadua..." style="font-size:13px"></div>' : '') +
+    '<select class="mini-inp subtipo-ev" data-sid="' + id + '" style="font-size:13px">' + opts + '</select>' +
+    (showEliminado ?
+      '<div style="margin-top:6px">' +
+        '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">¿Qué eliminó / aplicó?</div>' +
+        '<input type="text" class="mini-inp eliminado-ev" data-sid="' + id + '" value="' + elimVal + '" placeholder="Ej: paja de burro, maleza de hoja ancha..." style="font-size:13px">' +
+      '</div>' : '') +
     '</div>';
 }
 
@@ -1605,10 +1612,8 @@ window.enviar = function() {
   var acts = [];
   Object.keys(actsData).forEach(function(id) {
     var a = actsData[id];
-    var subtipoEl  = document.getElementById('subtipo_' + id);
-    var subtipo    = subtipoEl ? subtipoEl.value : '';
-    var eliminadoEl = document.getElementById('eliminado_' + id);
-    var eliminado   = eliminadoEl ? eliminadoEl.value : '';
+    var subtipo  = actsData[id] ? (actsData[id].subtipo   || '') : '';
+    var eliminado = actsData[id] ? (actsData[id].eliminado || '') : '';
     a.instancias.forEach(function(inst) {
       var actEntry = {
         actividad: a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : ''),
