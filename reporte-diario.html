@@ -3,136 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Arroyo Negro · Reporte</title>
+<title>Arroyo Negro · Registro de Campo</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0)}
 :root{
-  --v:#1A3A1A;--vm:#2E5C1E;--vl:#4A8A34;--vbg:#E8F5E9;
+  --v:#1A3A1A;--vm:#2E5C1E;--vl:#4A8A34;--vbg:#E8F5E9;--vbg2:#D6EDD9;
   --r:#8B1A1A;--rbg:#FFEBEE;
   --a:#7A4A00;--abg:#FFF8EE;
   --az:#0D2B5E;--azbg:#EBF2FF;
-  --gris:#F4F4F4;--txt:#1A1A1A;--sub:#666;--brd:#DDD;--w:#FFF;
-  --oro:#C8961E;
+  --gr:#F4F4F4;--brd:#DDD;--txt:#1A1A1A;--sub:#666;--w:#FFF;
+  --oro:#C8961E;--orobg:#FFF9C4;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--v);min-height:100vh;padding-bottom:80px;font-size:15px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  background:var(--v);min-height:100vh;padding-bottom:100px}
 
 /* HEADER */
-.hdr{background:var(--v);padding:12px 16px;border-bottom:2px solid var(--vm);position:sticky;top:0;z-index:100}
+.hdr{background:var(--v);padding:12px 16px;border-bottom:2px solid var(--vm);
+  position:sticky;top:0;z-index:100}
 .hdr-row{display:flex;justify-content:space-between;align-items:center}
 .marca{font-size:12px;font-weight:700;color:var(--vl);letter-spacing:.15em;font-family:monospace}
-.fecha{font-size:11px;color:#88AA88;background:rgba(255,255,255,.08);padding:3px 8px;border-radius:4px;font-family:monospace}
+.fecha-tag{font-size:11px;color:#88AA88;background:rgba(255,255,255,.08);
+  padding:3px 8px;border-radius:4px;font-family:monospace}
 
 /* SCORE STICKY */
-.score-bar{background:var(--vm);padding:12px 16px;border-bottom:2px solid var(--vl);position:sticky;top:48px;z-index:99}
+.score-bar{background:var(--vm);padding:12px 16px;border-bottom:2px solid var(--vl);
+  position:sticky;top:48px;z-index:99}
 .score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .score-big{font-size:34px;font-weight:700;color:#fff;font-family:monospace;line-height:1}
 .score-lbl{font-size:10px;color:#88AA88;font-family:monospace;text-transform:uppercase;letter-spacing:.1em}
 .score-tag{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px}
-.tag-ex{background:#1B5E20;color:#A5D6A7}
-.tag-ok{background:#4A3800;color:#FFD54F}
-.tag-mal{background:#4A0000;color:#EF9A9A}
+.s-ex{background:#1B5E20;color:#A5D6A7}
+.s-ok{background:#4A3800;color:#FFD54F}
+.s-mal{background:#4A0000;color:#EF9A9A}
 .score-prog{height:10px;background:rgba(0,0,0,.3);border-radius:5px;overflow:hidden}
 .score-fill{height:100%;border-radius:5px;transition:width .3s,background .3s}
-.score-sub{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#668866;font-family:monospace}
+.score-sub{display:flex;justify-content:space-between;margin-top:5px;
+  font-size:10px;color:#668866;font-family:monospace}
 
 /* MAIN */
 main{padding:10px;max-width:480px;margin:0 auto}
 
-/* CARD */
-.card{background:var(--w);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+/* CARDS */
+.card{background:var(--w);border-radius:12px;margin-bottom:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .card-hdr{background:var(--v);padding:10px 14px;display:flex;align-items:center;gap:8px}
 .card-ico{font-size:16px}
-.card-tit{font-size:11px;font-weight:700;color:#B8D4A8;letter-spacing:.1em;text-transform:uppercase;font-family:monospace}
+.card-tit{font-size:11px;font-weight:700;color:#B8D4A8;letter-spacing:.1em;
+  text-transform:uppercase;font-family:monospace}
 .card-pts{margin-left:auto;font-size:12px;font-weight:700;color:var(--oro);font-family:monospace}
 .card-body{padding:14px}
 
-/* FORM FIELDS */
+/* FIELDS */
 .fld{margin-bottom:14px}
 .fld:last-child{margin-bottom:0}
-.lbl{display:block;font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;font-family:monospace}
-select,input,textarea{
-  width:100%;padding:11px 13px;
-  border:1.5px solid var(--brd);border-radius:8px;
-  font-size:16px;font-family:inherit;
-  background:var(--w);color:var(--txt);
-  -webkit-appearance:none;appearance:none;
-  outline:none;
-}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.lbl{display:block;font-size:11px;font-weight:700;color:var(--sub);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;font-family:monospace}
+select,input[type=time],input[type=number],input[type=text],textarea{
+  width:100%;padding:11px 13px;border:1.5px solid var(--brd);border-radius:8px;
+  font-size:16px;font-family:inherit;background:var(--w);color:var(--txt);
+  -webkit-appearance:none;appearance:none;outline:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
 select:focus,input:focus,textarea:focus{border-color:var(--vl)}
 textarea{min-height:64px;resize:vertical;line-height:1.5}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 
-/* TOGGLE BUTTONS — nueva arquitectura */
+/* TOGGLES */
 .tg-grp{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
-.tg{
-  padding:10px 16px;
-  border:2px solid var(--brd);
-  border-radius:8px;
-  background:var(--w);
-  color:var(--txt);
-  font-size:14px;
-  font-weight:600;
-  font-family:inherit;
-  cursor:pointer;
-  user-select:none;
-  -webkit-user-select:none;
-  transition:background .15s,border-color .15s,color .15s;
-  touch-action:manipulation;
-  display:inline-block;
-  min-height:44px;
-  line-height:1.2;
-}
-.tg.sel-v{background:var(--vl) !important;border-color:var(--vl) !important;color:#fff !important}
-.tg.sel-r{background:var(--r) !important;border-color:var(--r) !important;color:#fff !important}
-.tg.sel-a{background:var(--a) !important;border-color:var(--a) !important;color:#fff !important}
+.tg{padding:10px 16px;border:2px solid var(--brd);border-radius:8px;
+  background:var(--w);color:var(--txt);font-size:14px;font-weight:600;
+  font-family:inherit;cursor:pointer;user-select:none;touch-action:manipulation;
+  transition:all .15s;min-height:44px;display:inline-block}
+.tg.sv{background:var(--vl)!important;border-color:var(--vl)!important;color:#fff!important}
+.tg.sr{background:var(--r)!important;border-color:var(--r)!important;color:#fff!important}
+.tg.sa{background:var(--a)!important;border-color:var(--a)!important;color:#fff!important}
 
 /* ACTIVIDADES */
-.act-lista{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.act{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 10px;
-  border:2px solid var(--brd);
-  border-radius:8px;
-  background:var(--w);
-  cursor:pointer;
-  user-select:none;
-  -webkit-user-select:none;
-  touch-action:manipulation;
-  transition:all .15s;
-  min-height:48px;
-}
-.act.sel{background:var(--vbg) !important;border-color:var(--vl) !important}
-.act-ico{font-size:16px;flex-shrink:0}
+.act-lista{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.act{display:flex;align-items:center;gap:6px;padding:10px;
+  border:2px solid var(--brd);border-radius:8px;background:var(--w);
+  cursor:pointer;touch-action:manipulation;transition:all .15s;min-height:48px}
+.act.sel{background:var(--vbg)!important;border-color:var(--vl)!important}
+.act-ico{font-size:15px;flex-shrink:0}
 .act-nom{font-size:12px;font-weight:600;flex:1;line-height:1.2}
-.act-p{font-size:10px;font-weight:700;color:var(--vl);background:#E8F5E9;padding:2px 5px;border-radius:3px;flex-shrink:0;font-family:monospace}
-.act.sel .act-p{background:var(--vl);color:#fff}
+.act-cod{font-size:9px;font-family:monospace;color:var(--sub);
+  padding:1px 4px;background:var(--gr);border-radius:3px;flex-shrink:0}
+.act.sel .act-cod{background:var(--vl);color:#fff}
 
-/* CANTIDADES */
-.qty-blk{background:#F8F8F8;border-radius:8px;padding:10px 12px;margin-top:10px}
-.qty-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--brd)}
-.qty-row:last-child{border-bottom:none}
-.qty-nom{flex:1;font-size:13px;font-weight:600}
-.qty-inp{width:58px;text-align:center;font-family:monospace;font-size:14px;padding:6px 4px;border:1.5px solid var(--brd);border-radius:6px;background:var(--w)}
-.qty-un{font-size:11px;color:var(--sub);font-family:monospace;white-space:nowrap}
-.qty-pts{font-size:11px;font-weight:700;color:var(--vl);font-family:monospace;min-width:50px;text-align:right}
+/* ACTIVIDAD EXPANDIDA — potrero + horas */
+.act-detalle{background:var(--vbg);border:1.5px solid var(--vl);border-radius:10px;
+  padding:12px;margin-bottom:8px;animation:slideDown .2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.act-det-tit{font-size:12px;font-weight:700;color:var(--v);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.act-det-tit .cod{font-family:monospace;font-size:10px;padding:2px 6px;
+  border-radius:3px;font-weight:700}
+.mini-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.mini-lbl{font-size:10px;font-weight:700;color:var(--sub);min-width:65px;font-family:monospace;text-transform:uppercase}
+.mini-inp{flex:1;padding:8px 10px;border:1.5px solid var(--brd);border-radius:6px;
+  font-size:14px;font-family:monospace;background:var(--w);-webkit-appearance:none}
+.mini-inp:focus{outline:none;border-color:var(--vl)}
+.hrs-display{font-family:monospace;font-size:13px;font-weight:700;
+  color:var(--vl);padding:6px 10px;background:var(--w);border-radius:6px;
+  border:1.5px solid var(--vl);min-width:80px;text-align:center}
 
-/* DESGLOSE */
-.desglose{background:var(--gris);border-radius:8px;padding:10px 12px;margin-top:10px}
-.des-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:.5px solid var(--brd)}
-.des-row:last-child{border-bottom:none;font-weight:700;font-size:13px;padding-top:8px}
+/* RESUMEN ACTIVIDADES */
+.resumen-acts{background:var(--gr);border-radius:8px;padding:10px 12px;margin-top:8px}
+.res-row{display:flex;justify-content:space-between;font-size:12px;
+  padding:4px 0;border-bottom:.5px solid var(--brd);font-family:monospace}
+.res-row:last-child{border-bottom:none;font-weight:700;font-size:13px;padding-top:6px}
+.res-val{font-weight:700;color:var(--vl)}
+.res-pm{color:var(--r)}
 
-/* GDP */
-.gdp{font-family:monospace;font-size:28px;font-weight:700;text-align:center;padding:14px;border-radius:8px;margin-top:8px;display:none}
-.gdp-v{background:var(--vbg);color:var(--vm)}
-.gdp-a{background:var(--abg);color:var(--a)}
-.gdp-r{background:var(--rbg);color:var(--r)}
-
-/* ALERT INLINE */
-.alrt{padding:9px 12px;border-radius:6px;font-size:12px;line-height:1.5;margin-top:8px;display:none}
+/* ALERTA */
+.alrt{padding:9px 12px;border-radius:6px;font-size:12px;line-height:1.5;margin-top:6px;display:none}
 .alrt.show{display:block}
 .alrt-v{background:var(--vbg);border:1px solid #B8D4A0;color:var(--vm)}
 .alrt-a{background:var(--abg);border:1px solid #FFD89A;color:var(--a)}
@@ -140,7 +126,9 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 
 /* SUBMIT */
 .sub-wrap{padding:14px;background:var(--v);border-radius:12px;margin-bottom:16px}
-.btn-sub{width:100%;padding:16px;background:var(--vl);color:#fff;border:none;border-radius:10px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;touch-action:manipulation;transition:background .15s}
+.btn-sub{width:100%;padding:16px;background:var(--vl);color:#fff;border:none;
+  border-radius:10px;font-size:17px;font-weight:700;font-family:inherit;
+  cursor:pointer;touch-action:manipulation}
 .btn-sub:active{background:var(--vm)}
 .btn-sub:disabled{background:#666}
 .sub-nota{margin-top:8px;font-size:11px;color:#88AA88;font-family:monospace;text-align:center}
@@ -148,25 +136,33 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 /* PREVIEW */
 .prev{background:var(--v);border-radius:12px;padding:14px;margin-bottom:20px;display:none}
 .prev.show{display:block}
-.prev-tit{font-family:monospace;font-size:10px;color:var(--vl);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
-.prev-txt{font-family:monospace;font-size:12px;color:#C8E8C0;line-height:1.9;white-space:pre-wrap;background:rgba(0,0,0,.25);padding:12px;border-radius:6px;margin-bottom:10px;max-height:280px;overflow-y:auto}
-.btn-wa{width:100%;padding:13px;background:var(--oro);color:var(--txt);border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.prev-txt{font-family:monospace;font-size:12px;color:#C8E8C0;line-height:1.9;
+  white-space:pre-wrap;background:rgba(0,0,0,.25);padding:12px;border-radius:6px;
+  margin-bottom:10px;max-height:280px;overflow-y:auto}
+.btn-wa{width:100%;padding:13px;background:var(--oro);color:var(--txt);
+  border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation}
 
-/* MODAL CONFIRMACION */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999;display:none}
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);
+  align-items:center;justify-content:center;z-index:9999;display:none}
 .modal.show{display:flex}
-.modal-box{background:var(--v);border:2px solid var(--vl);border-radius:16px;padding:28px 24px;text-align:center;max-width:300px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.6)}
-.modal-ico{font-size:52px;margin-bottom:12px}
+.modal-box{background:var(--v);border:2px solid var(--vl);border-radius:16px;
+  padding:28px 24px;text-align:center;max-width:300px;width:90%;
+  box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.modal-ico{font-size:48px;margin-bottom:12px}
 .modal-tit{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px}
 .modal-sub{font-size:12px;color:#88AA88;font-family:monospace;line-height:1.6;margin-bottom:16px}
-.modal-btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation}
-.modal-btn-v{background:var(--vl);color:#fff}
-.modal-btn-a{background:var(--oro);color:var(--txt)}
-.spin{display:inline-block;animation:spin 1s linear infinite;font-size:36px;margin-bottom:12px}
+.modal-btn{width:100%;padding:12px;border:none;border-radius:8px;
+  font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.mbv{background:var(--vl);color:#fff}
+.mba{background:var(--oro);color:var(--txt)}
+.spin{display:inline-block;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* STATUS */
-.status{position:fixed;bottom:0;left:0;right:0;background:var(--vm);padding:8px 16px;font-family:monospace;font-size:11px;color:#B8D4A8;display:flex;justify-content:space-between;z-index:200;border-top:1px solid var(--vl)}
+.status{position:fixed;bottom:0;left:0;right:0;background:var(--vm);
+  padding:8px 16px;font-family:monospace;font-size:11px;color:#B8D4A8;
+  display:flex;justify-content:space-between;z-index:200;border-top:1px solid var(--vl)}
 
 @media(max-width:380px){
   .act-lista{grid-template-columns:1fr}
@@ -180,17 +176,18 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 <div class="hdr">
   <div class="hdr-row">
     <div class="marca">▲ ARROYO NEGRO</div>
-    <div class="fecha" id="fechaTag">—</div>
+    <div class="fecha-tag" id="fechaTag">—</div>
   </div>
 </div>
 
+<!-- SCORE STICKY -->
 <div class="score-bar">
   <div class="score-row">
     <div>
       <div class="score-lbl">Score de jornada</div>
       <div><span class="score-big" id="sNum">0</span><span style="font-size:16px;color:#88AA88">/100</span></div>
     </div>
-    <div class="score-tag tag-mal" id="sTag">Sin datos</div>
+    <div class="score-tag s-mal" id="sTag">Sin datos</div>
   </div>
   <div class="score-prog"><div class="score-fill" id="sFill" style="width:0%;background:#555"></div></div>
   <div class="score-sub">
@@ -201,7 +198,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 
 <main>
 
-<!-- IDENTIFICACIÓN -->
+<!-- 1. IDENTIFICACIÓN -->
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">👤</span>
@@ -213,9 +210,13 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <label class="lbl">Trabajador</label>
       <select id="trabajador">
         <option value="">Seleccionar...</option>
-        <option>Héctor</option>
-        <option>Peón</option>
+        <option value="Héctor Zambrano">Héctor Zambrano</option>
+        <option value="Sebastian Pantoja">Sebastian Pantoja</option>
+        <option value="__otro__">Otro (temporal)...</option>
       </select>
+    </div>
+    <div id="otroDiv" style="display:none;margin-top:8px">
+      <input type="text" id="otroNombre" placeholder="Escribir nombre completo del trabajador temporal">
     </div>
     <div class="g2">
       <div class="fld">
@@ -231,118 +232,96 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
 </div>
 
-<!-- GANADO -->
+<!-- 2. ESTADO DEL GANADO -->
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">🐄</span>
     <span class="card-tit">Estado del Ganado</span>
-    <span class="card-pts" id="cp_ganado">0 pts</span>
+    <span class="card-pts" id="cp_gan">0 pts</span>
   </div>
   <div class="card-body">
     <div class="g3">
-      <div class="fld"><label class="lbl">G1 bovinos</label><input type="number" id="g1" placeholder="30" min="0" max="60"></div>
-      <div class="fld"><label class="lbl">G2 bovinos</label><input type="number" id="g2" placeholder="35" min="0" max="60"></div>
-      <div class="fld"><label class="lbl">Búfalos</label><input type="number" id="buf" placeholder="10" min="0" max="20"></div>
+      <div class="fld"><label class="lbl">G1 bovinos</label>
+        <input type="number" id="g1" placeholder="30" min="0" max="60"></div>
+      <div class="fld"><label class="lbl">G2 bovinos</label>
+        <input type="number" id="g2" placeholder="35" min="0" max="60"></div>
+      <div class="fld"><label class="lbl">Búfalos</label>
+        <input type="number" id="buf" placeholder="10" min="0" max="30"></div>
     </div>
-
     <div class="fld">
       <label class="lbl">Novedad sanitaria</label>
       <div class="tg-grp" id="grp_sanidad">
-        <button class="tg" data-grp="sanidad" data-val="NO" data-cls="sel-v">✅ Sin novedades</button>
-        <button class="tg" data-grp="sanidad" data-val="SI" data-cls="sel-r">🚨 Hay novedad</button>
+        <button type="button" class="tg" data-grp="sanidad" data-val="NO" data-cls="sv">✅ Sin novedades</button>
+        <button type="button" class="tg" data-grp="sanidad" data-val="SI" data-cls="sr">🚨 Hay novedad</button>
       </div>
     </div>
     <div id="novSanDiv" style="display:none;margin-top:8px">
-      <textarea id="novSan" placeholder="Animal afectado, síntoma, acción tomada..."></textarea>
+      <textarea id="novSan" placeholder="Animal afectado, arete, síntoma, acción tomada..."></textarea>
     </div>
-
-    <div class="fld" style="margin-top:12px">
-      <label class="lbl">Pesaje realizado hoy (+20 pts)</label>
+    <div class="fld" style="margin-top:10px">
+      <label class="lbl">¿Pesaje realizado hoy? (+20 pts)</label>
       <div class="tg-grp" id="grp_pesaje">
-        <button class="tg" data-grp="pesaje" data-val="NO" data-cls="sel-v">No se pesó</button>
-        <button class="tg" data-grp="pesaje" data-val="SI" data-cls="sel-v">✅ Sí se pesó</button>
+        <button type="button" class="tg" data-grp="pesaje" data-val="NO" data-cls="sv">No se pesó</button>
+        <button type="button" class="tg" data-grp="pesaje" data-val="SI" data-cls="sv">✅ Sí se pesó</button>
       </div>
     </div>
     <div id="pesajeDiv" style="display:none;margin-top:8px">
       <div class="g2">
-        <div class="fld"><label class="lbl">Peso G1 (kg)</label><input type="number" id="pesoG1" placeholder="165"></div>
-        <div class="fld"><label class="lbl">Peso G2 (kg)</label><input type="number" id="pesoG2" placeholder="360"></div>
+        <div class="fld"><label class="lbl">Peso prom. G1 (kg)</label>
+          <input type="number" id="pesoG1" placeholder="165"></div>
+        <div class="fld"><label class="lbl">Peso prom. G2 (kg)</label>
+          <input type="number" id="pesoG2" placeholder="360"></div>
       </div>
-      <div class="gdp" id="gdpBox"></div>
     </div>
   </div>
 </div>
 
-<!-- POTREROS -->
+<!-- 3. POTREROS -->
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">🌿</span>
-    <span class="card-tit">Potreros</span>
+    <span class="card-tit">Estado Potreros</span>
     <span class="card-pts" id="cp_pot">0 pts</span>
   </div>
   <div class="card-body">
     <div class="fld">
-      <label class="lbl">Potrero activo hoy</label>
-      <select id="potreroActivo">
-        <option value="">Seleccionar...</option>
-        <option disabled>── Buenos P01–P16 ──</option>
-        <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
-        <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
-        <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
-        <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
-        <option disabled>── Recuperación P17–P32 ──</option>
-        <option>P-17⚠</option><option>P-18⚠</option><option>P-19⚠</option><option>P-20⚠</option>
-        <option>P-21⚠</option><option>P-22⚠</option><option>P-23⚠</option><option>P-24⚠</option>
-        <option>P-25⚠</option><option>P-26⚠</option><option>P-27⚠</option><option>P-28⚠</option>
-      </select>
-    </div>
-
-    <div class="fld">
-      <label class="lbl">Estado del pasto</label>
+      <label class="lbl">Estado del pasto hoy</label>
       <div class="tg-grp" id="grp_pasto">
-        <button class="tg" data-grp="pasto" data-val="BUENO" data-cls="sel-v">🟢 Bueno</button>
-        <button class="tg" data-grp="pasto" data-val="REGULAR" data-cls="sel-a">🟡 Regular</button>
-        <button class="tg" data-grp="pasto" data-val="AGOTADO" data-cls="sel-r">🔴 Agotado</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="BUENO" data-cls="sv">🟢 Bueno</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="REGULAR" data-cls="sa">🟡 Regular</button>
+        <button type="button" class="tg" data-grp="pasto" data-val="AGOTADO" data-cls="sr">🔴 Agotado</button>
       </div>
     </div>
-
-    <div class="fld">
-      <label class="lbl">¿Cambio de potrero hoy? (+20 pts)</label>
-      <div class="tg-grp" id="grp_cambio">
-        <button class="tg" data-grp="cambio" data-val="NO" data-cls="sel-v">No</button>
-        <button class="tg" data-grp="cambio" data-val="SI" data-cls="sel-a">Sí → pasó a:</button>
-      </div>
-    </div>
-    <div id="nuevoPotDiv" style="display:none;margin-top:6px">
-      <select id="nuevoPot">
-        <option value="">Potrero nuevo...</option>
-        <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
-        <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
-        <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
-        <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
-      </select>
-    </div>
-
-    <div class="g2" style="margin-top:12px">
+    <div class="g2" style="margin-top:10px">
       <div class="fld">
         <label class="lbl">Sal mineral</label>
         <div class="tg-grp" id="grp_sal">
-          <button class="tg" data-grp="sal" data-val="OK" data-cls="sel-v">✅ OK</button>
-          <button class="tg" data-grp="sal" data-val="REPONER" data-cls="sel-r">🚨 Reponer</button>
+          <button type="button" class="tg" data-grp="sal" data-val="OK" data-cls="sv">✅ OK</button>
+          <button type="button" class="tg" data-grp="sal" data-val="REPONER" data-cls="sr">🚨 Reponer</button>
         </div>
       </div>
       <div class="fld">
         <label class="lbl">Agua / bebederos</label>
         <div class="tg-grp" id="grp_agua">
-          <button class="tg" data-grp="agua" data-val="OK" data-cls="sel-v">✅ OK</button>
-          <button class="tg" data-grp="agua" data-val="PROBLEMA" data-cls="sel-r">🚨 Problema</button>
+          <button type="button" class="tg" data-grp="agua" data-val="OK" data-cls="sv">✅ OK</button>
+          <button type="button" class="tg" data-grp="agua" data-val="PROBLEMA" data-cls="sr">🚨 Problema</button>
         </div>
       </div>
+    </div>
+    <div class="fld" style="margin-top:10px">
+      <label class="lbl">Estado de cercas</label>
+      <div class="tg-grp" id="grp_cercas">
+        <button type="button" class="tg" data-grp="cercas" data-val="OK" data-cls="sv">✅ OK</button>
+        <button type="button" class="tg" data-grp="cercas" data-val="FALLA" data-cls="sr">🚨 Falla</button>
+      </div>
+    </div>
+    <div id="cercaDetDiv" style="display:none;margin-top:6px">
+      <input type="text" id="cercaDet" placeholder="¿En qué potrero y tipo de falla?">
     </div>
   </div>
 </div>
 
-<!-- ACTIVIDADES -->
+<!-- 4. ACTIVIDADES CON POTRERO Y HORAS -->
 <div class="card">
   <div class="card-hdr">
     <span class="card-ico">⚒️</span>
@@ -350,122 +329,131 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <span class="card-pts" id="cp_act">0 pts</span>
   </div>
   <div class="card-body">
-    <label class="lbl">Toca todo lo que hiciste hoy</label>
+    <label class="lbl">Toca una actividad para registrar potrero y horas</label>
     <div class="act-lista" id="actLista">
-      <div class="act" data-id="chapea" data-pts="15" data-un="potreros" data-max="30">
-        <span class="act-ico">🌿</span><span class="act-nom">Chapea / maleza</span><span class="act-p">15/pot</span>
+      <div class="act" data-id="chapia" data-nom="Chapia / control maleza" data-cod="CD-PAST">
+        <span class="act-ico">🌿</span><span class="act-nom">Chapia / maleza</span><span class="act-cod">CD-PAST</span>
       </div>
-      <div class="act" data-id="cerca" data-pts="15" data-un="tramos" data-max="30">
-        <span class="act-ico">🪝</span><span class="act-nom">Cercas</span><span class="act-p">15/tramo</span>
+      <div class="act" data-id="herbicida" data-nom="Aplicación herbicida" data-cod="CD-PAST">
+        <span class="act-ico">🧪</span><span class="act-nom">Herbicida</span><span class="act-cod">CD-PAST</span>
       </div>
-      <div class="act" data-id="sanidad" data-pts="15" data-un="animales" data-max="25">
-        <span class="act-ico">💉</span><span class="act-nom">Sanidad</span><span class="act-p">15/animal</span>
+      <div class="act" data-id="cortepasto" data-nom="Corte y distribución pasto" data-cod="CD-PCOR">
+        <span class="act-ico">🌾</span><span class="act-nom">Corte pasto</span><span class="act-cod">CD-PCOR</span>
       </div>
-      <div class="act" data-id="herb" data-pts="15" data-un="potreros" data-max="30">
-        <span class="act-ico">🧪</span><span class="act-nom">Herbicida</span><span class="act-p">15/pot</span>
+      <div class="act" data-id="picado" data-nom="Picado de pasto" data-cod="CD-PCOR">
+        <span class="act-ico">✂️</span><span class="act-nom">Picado pasto</span><span class="act-cod">CD-PCOR</span>
       </div>
-      <div class="act" data-id="sal" data-pts="10" data-un="" data-max="10">
-        <span class="act-ico">🧂</span><span class="act-nom">Sal mineral</span><span class="act-p">10 pts</span>
+      <div class="act" data-id="sal" data-nom="Recarga sal mineral" data-cod="CD-SUPL">
+        <span class="act-ico">🧂</span><span class="act-nom">Sal mineral</span><span class="act-cod">CD-SUPL</span>
       </div>
-      <div class="act" data-id="agua" data-pts="10" data-un="" data-max="10">
-        <span class="act-ico">💧</span><span class="act-nom">Bebederos</span><span class="act-p">10 pts</span>
+      <div class="act" data-id="melaza" data-nom="Suministro melaza" data-cod="CD-SUPL">
+        <span class="act-ico">🍯</span><span class="act-nom">Melaza</span><span class="act-cod">CD-SUPL</span>
       </div>
-      <div class="act" data-id="recorrido" data-pts="5" data-un="" data-max="5">
-        <span class="act-ico">🚶</span><span class="act-nom">Recorrido gral.</span><span class="act-p">5 pts</span>
+      <div class="act" data-id="urea" data-nom="Mezcla urea / azufre" data-cod="CD-SUPL">
+        <span class="act-ico">⚗️</span><span class="act-nom">Urea / azufre</span><span class="act-cod">CD-SUPL</span>
       </div>
-      <div class="act" data-id="otro" data-pts="5" data-un="" data-max="5">
-        <span class="act-ico">➕</span><span class="act-nom">Otra actividad</span><span class="act-p">5 pts</span>
+      <div class="act" data-id="implante" data-nom="Aplicación implante oreja" data-cod="CD-IMP">
+        <span class="act-ico">💉</span><span class="act-nom">Implante oreja</span><span class="act-cod">CD-IMP</span>
+      </div>
+      <div class="act" data-id="desparasit" data-nom="Desparasitación" data-cod="CD-SAN">
+        <span class="act-ico">🩺</span><span class="act-nom">Desparasitación</span><span class="act-cod">CD-SAN</span>
+      </div>
+      <div class="act" data-id="vitaminas" data-nom="Vitaminación" data-cod="CD-SAN">
+        <span class="act-ico">💊</span><span class="act-nom">Vitaminación</span><span class="act-cod">CD-SAN</span>
+      </div>
+      <div class="act" data-id="cambiopot" data-nom="Cambio de potrero" data-cod="CD-MAN">
+        <span class="act-ico">🔄</span><span class="act-nom">Cambio potrero</span><span class="act-cod">CD-MAN</span>
+      </div>
+      <div class="act" data-id="pesaje" data-nom="Pesaje de ganado" data-cod="CD-MAN">
+        <span class="act-ico">⚖️</span><span class="act-nom">Pesaje ganado</span><span class="act-cod">CD-MAN</span>
+      </div>
+      <div class="act" data-id="arreo" data-nom="Arreo / manejo ganado" data-cod="CD-MAN">
+        <span class="act-ico">🐂</span><span class="act-nom">Arreo ganado</span><span class="act-cod">CD-MAN</span>
+      </div>
+      <div class="act" data-id="cercas" data-nom="Reparación cercas" data-cod="CI-INF">
+        <span class="act-ico">🪝</span><span class="act-nom">Cercas</span><span class="act-cod">CI-INF</span>
+      </div>
+      <div class="act" data-id="bebederos" data-nom="Mantenimiento bebederos" data-cod="CI-INF">
+        <span class="act-ico">💧</span><span class="act-nom">Bebederos</span><span class="act-cod">CI-INF</span>
+      </div>
+      <div class="act" data-id="recorrido" data-nom="Recorrido general" data-cod="CI-OPE">
+        <span class="act-ico">🚶</span><span class="act-nom">Recorrido gral.</span><span class="act-cod">CI-OPE</span>
+      </div>
+      <div class="act" data-id="otra" data-nom="Otra actividad" data-cod="CI-OPE">
+        <span class="act-ico">➕</span><span class="act-nom">Otra actividad</span><span class="act-cod">CI-OPE</span>
       </div>
     </div>
 
-    <div id="cantDiv" style="display:none">
-      <div class="qty-blk" id="qtyBlk"></div>
+    <!-- Detalles por actividad seleccionada -->
+    <div id="actDetalles"></div>
+
+    <!-- Resumen prorrateo -->
+    <div id="resumenDiv" style="display:none">
+      <div class="resumen-acts" id="resumenActs"></div>
     </div>
-    <div id="desDiv" style="display:none">
-      <div class="desglose" id="desBlk"></div>
-    </div>
+
     <div class="alrt" id="alrtActs"></div>
   </div>
 </div>
 
-<!-- INFRAESTRUCTURA -->
+<!-- 5. CIERRE -->
 <div class="card">
   <div class="card-hdr">
-    <span class="card-ico">🔧</span>
-    <span class="card-tit">Infraestructura</span>
-    <span class="card-pts" id="cp_inf">0 pts</span>
+    <span class="card-ico">📝</span>
+    <span class="card-tit">Cierre del día</span>
+    <span class="card-pts" id="cp_cierre">0 pts</span>
   </div>
   <div class="card-body">
     <div class="fld">
-      <label class="lbl">Estado de cercas</label>
-      <div class="tg-grp" id="grp_cercas">
-        <button class="tg" data-grp="cercas" data-val="OK" data-cls="sel-v">✅ OK</button>
-        <button class="tg" data-grp="cercas" data-val="FALLA" data-cls="sel-r">🚨 Falla</button>
-      </div>
-    </div>
-    <div id="cercaDetDiv" style="display:none;margin-top:6px">
-      <input type="text" id="cercaDet" placeholder="¿En qué potrero y qué tipo de falla?">
-    </div>
-    <div class="fld" style="margin-top:12px">
-      <label class="lbl">Insumos que se agotan</label>
-      <textarea id="insumos" placeholder="Ej: quedan 2 kg de sal mineral..."></textarea>
-    </div>
-  </div>
-</div>
-
-<!-- EVIDENCIA -->
-<div class="card">
-  <div class="card-hdr">
-    <span class="card-ico">📸</span>
-    <span class="card-tit">Evidencia y cierre</span>
-    <span class="card-pts" id="cp_foto">0 pts</span>
-  </div>
-  <div class="card-body">
-    <div class="fld">
-      <label class="lbl">¿Tomaste foto del trabajo de hoy? (+5 pts)</label>
+      <label class="lbl">¿Tomaste foto? (+5 pts)</label>
       <div class="tg-grp" id="grp_foto">
-        <button class="tg" data-grp="foto" data-val="SI" data-cls="sel-v">✅ Sí, tengo foto</button>
-        <button class="tg" data-grp="foto" data-val="NO" data-cls="sel-r">❌ No tomé foto</button>
+        <button type="button" class="tg" data-grp="foto" data-val="SI" data-cls="sv">✅ Sí, tengo foto</button>
+        <button type="button" class="tg" data-grp="foto" data-val="NO" data-cls="sr">❌ No tomé foto</button>
       </div>
     </div>
-    <div class="fld" style="margin-top:12px">
-      <label class="lbl">¿Reporte tarde? Motivo (después de 5 PM)</label>
-      <div class="tg-grp" id="grp_motivo" style="flex-wrap:wrap">
-        <button class="tg" data-grp="motivo" data-val="GANADO_SUELTO" data-cls="sel-a">🐄 Ganado suelto</button>
-        <button class="tg" data-grp="motivo" data-val="CERCA_ROTA" data-cls="sel-a">🪝 Cerca rota</button>
-        <button class="tg" data-grp="motivo" data-val="EMERGENCIA" data-cls="sel-a">💉 Emergencia</button>
-        <button class="tg" data-grp="motivo" data-val="CUADRILLA" data-cls="sel-a">👷 Cuadrilla</button>
-        <button class="tg" data-grp="motivo" data-val="OTRO" data-cls="sel-a">➕ Otro</button>
-      </div>
+    <div class="fld" style="margin-top:10px">
+      <label class="lbl">Insumos que se agotan</label>
+      <textarea id="insumos" placeholder="Ej: quedan 2 kg de sal mineral, se acabó la melaza..."></textarea>
     </div>
-    <div class="fld" style="margin-top:12px">
-      <label class="lbl">Observación del día — lo que Oscar debe saber</label>
-      <textarea id="obs" placeholder="Novedades, problemas o sugerencias..." style="min-height:70px"></textarea>
+    <div class="fld">
+      <label class="lbl">Observación — lo que Oscar debe saber</label>
+      <textarea id="obs" placeholder="Novedades, problemas, sugerencias..." style="min-height:70px"></textarea>
     </div>
     <div class="fld">
       <label class="lbl">¿Necesitas decisión de Oscar?</label>
       <div class="tg-grp" id="grp_decision">
-        <button class="tg" data-grp="decision" data-val="NO" data-cls="sel-v">No, controlado</button>
-        <button class="tg" data-grp="decision" data-val="SI" data-cls="sel-a">Sí, necesito respuesta</button>
+        <button type="button" class="tg" data-grp="decision" data-val="NO" data-cls="sv">No, controlado</button>
+        <button type="button" class="tg" data-grp="decision" data-val="SI" data-cls="sa">Sí, necesito respuesta</button>
       </div>
     </div>
     <div id="decisionDiv" style="display:none;margin-top:6px">
       <textarea id="decisionTxt" placeholder="¿Qué decide Oscar?"></textarea>
+    </div>
+    <div class="fld" style="margin-top:10px">
+      <label class="lbl">Reporte tarde — motivo (si aplica)</label>
+      <div class="tg-grp" id="grp_motivo">
+        <button type="button" class="tg" data-grp="motivo" data-val="GANADO_SUELTO" data-cls="sa">🐄 Ganado suelto</button>
+        <button type="button" class="tg" data-grp="motivo" data-val="EMERGENCIA" data-cls="sa">🚨 Emergencia</button>
+        <button type="button" class="tg" data-grp="motivo" data-val="CUADRILLA" data-cls="sa">👷 Cuadrilla</button>
+        <button type="button" class="tg" data-grp="motivo" data-val="OTRO" data-cls="sa">➕ Otro</button>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- SUBMIT -->
 <div class="sub-wrap">
-  <button class="btn-sub" id="btnSub" type="button" onclick="enviar()">📋 Enviar reporte del día</button>
-  <div class="sub-nota" id="subNota">Score: <span id="subScore">0</span>/100</div>
+  <button type="button" class="btn-sub" id="btnSub" onclick="enviar()">
+    📋 Enviar registro del día
+  </button>
+  <div class="sub-nota">Score: <span id="subScore">0</span>/100</div>
 </div>
 
 <!-- PREVIEW -->
 <div class="prev" id="prevBox">
-  <div class="prev-tit">▲ REPORTE GENERADO</div>
+  <div style="font-family:monospace;font-size:10px;color:var(--vl);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">▲ REGISTRO GENERADO</div>
   <div class="prev-txt" id="prevTxt"></div>
-  <button class="btn-wa" id="btnWA">📋 Copiar y abrir WhatsApp</button>
+  <button type="button" class="btn-wa" onclick="copiarWA()">📋 Copiar y abrir WhatsApp</button>
 </div>
 
 </main>
@@ -475,27 +463,27 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   <div class="modal-box" id="modalBox">
     <div class="modal-ico" id="modalIco">📡</div>
     <div class="modal-tit" id="modalTit">Enviando...</div>
-    <div class="modal-sub" id="modalSub">Conectando con el sistema</div>
-    <button class="modal-btn modal-btn-v" id="modalBtn" style="display:none">OK</button>
+    <div class="modal-sub" id="modalSub">Guardando en el sistema</div>
+    <button type="button" class="modal-btn mbv" id="modalBtn" style="display:none">OK</button>
   </div>
 </div>
 
 <div class="status">
-  <span>Arroyo Negro · Sistema de Control</span>
+  <span>Arroyo Negro · Registro de Campo</span>
   <span id="statusR">⬤ listo</span>
 </div>
 
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
+var VALOR_DIARIO = 16;
 
 var S = {};
-var actsSeleccionadas = {};
+var actsData = {}; // {id: {nom, cod, potrero, hInicio, hFin, horas}}
+
 var HOY = new Date();
 var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 var MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-// ── TODO dentro de DOMContentLoaded ──────────────────────────────────────
-// mostrar/ocultar elementos
 function mostrar(id, v) {
   var el = document.getElementById(id);
   if (el) el.style.display = v ? 'block' : 'none';
@@ -503,349 +491,444 @@ function mostrar(id, v) {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-document.getElementById('fechaTag').textContent =
-  DIAS[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + MESES[HOY.getMonth()] + ' ' + HOY.getFullYear();
+  // Fecha
+  document.getElementById('fechaTag').textContent =
+    DIAS[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + MESES[HOY.getMonth()] + ' ' + HOY.getFullYear();
 
-// ── TOGGLE BUTTONS ────────────────────────────────────────────────────────
-document.querySelectorAll('.tg').forEach(function(btn) {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    var grp = btn.getAttribute('data-grp');
-    var val = btn.getAttribute('data-val');
-    var cls = btn.getAttribute('data-cls');
-
-    // Quitar selección del grupo
-    document.querySelectorAll('.tg[data-grp="' + grp + '"]').forEach(function(b) {
-      b.classList.remove('sel-v','sel-r','sel-a');
+  // Toggles
+  document.querySelectorAll('.tg').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var grp = btn.getAttribute('data-grp');
+      var val = btn.getAttribute('data-val');
+      var cls = btn.getAttribute('data-cls');
+      document.querySelectorAll('.tg[data-grp="' + grp + '"]').forEach(function(b) {
+        b.classList.remove('sv','sr','sa');
+      });
+      btn.classList.add(cls);
+      S[grp] = val;
+      mostrar('novSanDiv',  grp==='sanidad'  && val==='SI');
+      mostrar('pesajeDiv',  grp==='pesaje'   && val==='SI');
+      mostrar('cercaDetDiv',grp==='cercas'   && val==='FALLA');
+      mostrar('decisionDiv',grp==='decision' && val==='SI');
+      recalc();
     });
-    // Activar este
-    btn.classList.add(cls);
-    S[grp] = val;
+  });
 
-    // Efectos secundarios
-    mostrar('novSanDiv',  grp==='sanidad'  && val==='SI');
-    mostrar('pesajeDiv',  grp==='pesaje'   && val==='SI');
-    mostrar('nuevoPotDiv',grp==='cambio'   && val==='SI');
-    mostrar('cercaDetDiv',grp==='cercas'   && val==='FALLA');
-    mostrar('decisionDiv',grp==='decision' && val==='SI');
-
+  // Trabajador "Otro"
+  document.getElementById('trabajador').addEventListener('change', function() {
+    mostrar('otroDiv', this.value === '__otro__');
     recalc();
   });
+
+  // Actividades
+  document.querySelectorAll('.act').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var id  = el.getAttribute('data-id');
+      var nom = el.getAttribute('data-nom');
+      var cod = el.getAttribute('data-cod');
+      if (actsData[id]) {
+        delete actsData[id];
+        el.classList.remove('sel');
+      } else {
+        actsData[id] = { nom:nom, cod:cod, potrero:'', hInicio:'', hFin:'', horas:0 };
+        el.classList.add('sel');
+      }
+      renderDetalles();
+      recalc();
+    });
+  });
+
+  // Listeners generales
+  ['trabajador','horaLlegada','horaSalida'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('change', recalc);
+  });
+
+  recalc();
 });
 
-// ── ACTIVIDADES ───────────────────────────────────────────────────────────
-document.querySelectorAll('.act').forEach(function(el) {
-  el.addEventListener('click', function(e) {
-    var id = el.getAttribute('data-id');
-    if (actsSeleccionadas[id]) {
-      delete actsSeleccionadas[id];
-      el.classList.remove('sel');
-    } else {
-      actsSeleccionadas[id] = {
-        pts:  parseInt(el.getAttribute('data-pts')),
-        un:   el.getAttribute('data-un'),
-        max:  parseInt(el.getAttribute('data-max')),
-        nom:  el.querySelector('.act-nom').textContent,
-        qty:  1
-      };
-      el.classList.add('sel');
+// Potreros disponibles
+var POTREROS = [];
+for (var p = 1; p <= 32; p++) {
+  POTREROS.push('P-' + (p < 10 ? '0'+p : p));
+}
+
+// Renderizar detalles por actividad
+function renderDetalles() {
+  var cont = document.getElementById('actDetalles');
+  var ids = Object.keys(actsData);
+
+  if (!ids.length) {
+    cont.innerHTML = '';
+    mostrar('resumenDiv', false);
+    return;
+  }
+
+  cont.innerHTML = ids.map(function(id) {
+    var a = actsData[id];
+    var opts = POTREROS.map(function(p) {
+      var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+      return '<option value="' + p + '"' + (a.potrero===p?' selected':'') + '>' + p + warn + '</option>';
+    }).join('');
+
+    var hrsText = a.horas > 0 ? a.horas.toFixed(1) + ' hrs' : '-- hrs';
+    var pct = calcPct(id);
+    var valor = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+
+    return '<div class="act-detalle" id="det_' + id + '">' +
+      '<div class="act-det-tit">' +
+        '<span>' + a.nom + '</span>' +
+        '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+      '</div>' +
+      '<div class="mini-row">' +
+        '<span class="mini-lbl">Potrero:</span>' +
+        '<select class="mini-inp" id="pot_' + id + '" onchange="updAct(\'' + id + '\')">' +
+          '<option value="">Seleccionar...</option>' + opts +
+        '</select>' +
+      '</div>' +
+      '<div class="mini-row">' +
+        '<span class="mini-lbl">De:</span>' +
+        '<input type="time" class="mini-inp" id="hi_' + id + '" value="' + a.hInicio + '" onchange="updAct(\'' + id + '\')">' +
+        '<span class="mini-lbl" style="text-align:center;min-width:30px">A:</span>' +
+        '<input type="time" class="mini-inp" id="hf_' + id + '" value="' + a.hFin + '" onchange="updAct(\'' + id + '\')">' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">' +
+        '<span id="hrs_' + id + '" class="hrs-display">' + hrsText + '</span>' +
+        '<span style="font-family:monospace;font-size:13px;font-weight:700;color:var(--vl)">' + valor + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function codColor(cod) {
+  var colors = {
+    'CD-PAST':'#2D5016','CD-PCOR':'#1A5C14','CD-SUPL':'#0D6B2B',
+    'CD-IMP':'#0D2B5E','CD-SAN':'#1A3A6B','CD-MAN':'#7A4A00',
+    'CI-INF':'#8B5A00','CI-OPE':'#8B1A1A'
+  };
+  return colors[cod] || '#374151';
+}
+
+function updAct(id) {
+  var pot = document.getElementById('pot_' + id);
+  var hi  = document.getElementById('hi_'  + id);
+  var hf  = document.getElementById('hf_'  + id);
+  if (!pot || !hi || !hf) return;
+
+  actsData[id].potrero  = pot.value;
+  actsData[id].hInicio  = hi.value;
+  actsData[id].hFin     = hf.value;
+
+  // Calcular horas
+  var horas = 0;
+  if (hi.value && hf.value) {
+    var p1 = hi.value.split(':').map(Number);
+    var p2 = hf.value.split(':').map(Number);
+    horas = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+    if (horas < 0) horas = 0;
+  }
+  actsData[id].horas = parseFloat(horas.toFixed(1));
+
+  var hrsEl = document.getElementById('hrs_' + id);
+  if (hrsEl) hrsEl.textContent = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  actualizarValoresEnDetalles();
+  recalc();
+}
+
+function calcPct(id) {
+  var totalHrs = Object.values(actsData).reduce(function(s,a) { return s + a.horas; }, 0);
+  if (!totalHrs || !actsData[id]) return 0;
+  return actsData[id].horas / totalHrs;
+}
+
+function actualizarValoresEnDetalles() {
+  Object.keys(actsData).forEach(function(id) {
+    var pct = calcPct(id);
+    var valor = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+    var det = document.getElementById('det_' + id);
+    if (det) {
+      var spans = det.querySelectorAll('span[style*="color:var(--vl)"]');
+      if (spans.length) spans[0].textContent = valor;
     }
-    actualizarCantidades();
-    recalc();
   });
-});
+  renderResumen();
+}
 
-// ── CANTIDADES ────────────────────────────────────────────────────────────
-function actualizarCantidades() {
-  var ids = Object.keys(actsSeleccionadas).filter(function(id) {
-    return actsSeleccionadas[id].un !== '';
-  });
-  var cantDiv = document.getElementById('cantDiv');
-  var qtyBlk  = document.getElementById('qtyBlk');
+function renderResumen() {
+  var ids = Object.keys(actsData);
+  var totalHrs = Object.values(actsData).reduce(function(s,a){return s+a.horas;},0);
+  var totalVal = 0;
 
-  if (!ids.length) { cantDiv.style.display='none'; return; }
-  cantDiv.style.display = 'block';
+  if (!ids.length || !totalHrs) { mostrar('resumenDiv', false); return; }
 
-  qtyBlk.innerHTML = ids.map(function(id) {
-    var a = actsSeleccionadas[id];
-    var pts = Math.min(a.max, a.pts * a.qty);
-    return '<div class="qty-row">' +
-      '<span class="qty-nom">' + a.nom + '</span>' +
-      '<input type="number" class="qty-inp" id="qty_' + id + '" value="' + a.qty + '" min="1" max="10">' +
-      '<span class="qty-un">' + a.un + '</span>' +
-      '<span class="qty-pts" id="qpts_' + id + '">+' + pts + ' pts</span>' +
+  var html = ids.map(function(id) {
+    var a = actsData[id];
+    var pct = calcPct(id);
+    var val = pct * VALOR_DIARIO;
+    totalVal += val;
+    var isPM = a.cod === 'CI-OPE';
+    return '<div class="res-row">' +
+      '<span class="' + (isPM?'res-pm':'') + '">' + a.nom.substring(0,22) + '</span>' +
+      '<span style="color:var(--sub);font-size:10px">' + a.horas.toFixed(1) + 'h · ' + (pct*100).toFixed(0) + '%</span>' +
+      '<span class="res-val ' + (isPM?'res-pm':'') + '">' + (isPM?'⚠ ':'') + '$' + val.toFixed(2) + '</span>' +
     '</div>';
   }).join('');
 
-  // Listeners en los inputs de cantidad
-  ids.forEach(function(id) {
-    var inp = document.getElementById('qty_' + id);
-    if (inp) {
-      inp.addEventListener('input', function() {
-        actsSeleccionadas[id].qty = parseInt(inp.value) || 1;
-        var a = actsSeleccionadas[id];
-        var pts = Math.min(a.max, a.pts * a.qty);
-        var el = document.getElementById('qpts_' + id);
-        if (el) el.textContent = '+' + pts + ' pts';
-        recalc();
-      });
-    }
-  });
+  html += '<div class="res-row">' +
+    '<span>TOTAL</span>' +
+    '<span style="color:var(--sub);font-size:10px">' + totalHrs.toFixed(1) + ' hrs</span>' +
+    '<span class="res-val">' + (Math.abs(totalVal - VALOR_DIARIO) < 0.01 ? '✅ ' : '') + '$' + totalVal.toFixed(2) + '</span>' +
+  '</div>';
+
+  document.getElementById('resumenActs').innerHTML = html;
+  mostrar('resumenDiv', true);
 }
 
-// ── RECALCULAR SCORE ──────────────────────────────────────────────────────
 function recalc() {
   var pts = {};
   var ahora = new Date();
-  var hora = ahora.getHours();
+  var hora  = ahora.getHours();
 
   // Identificación
-  var idOk = document.getElementById('trabajador').value &&
-             document.getElementById('horaLlegada').value &&
-             document.getElementById('horaSalida').value;
+  var trabVal = document.getElementById('trabajador').value;
+  var idOk = trabVal && document.getElementById('horaLlegada').value && document.getElementById('horaSalida').value;
   pts.id = idOk ? 10 : 0;
 
   // Jornada
   if (document.getElementById('horaLlegada').value && document.getElementById('horaSalida').value) {
-    var parts1 = document.getElementById('horaLlegada').value.split(':');
-    var parts2 = document.getElementById('horaSalida').value.split(':');
-    var hrs = (parseInt(parts2[0])*60+parseInt(parts2[1]) - parseInt(parts1[0])*60-parseInt(parts1[1]))/60;
+    var p1 = document.getElementById('horaLlegada').value.split(':').map(Number);
+    var p2 = document.getElementById('horaSalida').value.split(':').map(Number);
+    var hrs = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
     var aJ = document.getElementById('alrtJornada');
-    if (hrs < 6) {
-      if(aJ){aJ.className='alrt show alrt-r';
-      aJ.textContent='⚠ Jornada de ' + hrs.toFixed(1) + ' horas — menos de 6 horas afecta el score.';
-      pts.id = Math.round(pts.id * hrs/8);}
-    } else {
-      if(aJ){aJ.className='alrt show alrt-v';
-      aJ.textContent='Jornada de ' + hrs.toFixed(1) + ' horas registrada.';}
+    if (aJ) {
+      if (hrs < 6) {
+        aJ.className='alrt show alrt-r';
+        aJ.textContent = '⚠ Jornada de ' + hrs.toFixed(1) + ' horas — menos de 6 horas.';
+      } else {
+        aJ.className='alrt show alrt-v';
+        aJ.textContent = 'Jornada de ' + hrs.toFixed(1) + ' horas registrada.';
+      }
     }
   }
 
-  // Cambio de potrero
-  pts.cambio = S['cambio'] === 'SI' ? 20 : 0;
-
   // Pesaje
-  pts.pesaje = S['pesaje'] === 'SI' ? 20 : 0;
-
+  pts.pesaje = S['pesaje']==='SI' ? 20 : 0;
   // Foto
-  pts.foto = S['foto'] === 'SI' ? 5 : 0;
-
+  pts.foto = S['foto']==='SI' ? 5 : 0;
   // Reporte a tiempo
-  var tieneMotivo = S['motivo'] && S['motivo'] !== '';
-  if (hora < 17) pts.tiempo = 10;
-  else if (hora < 21 && tieneMotivo) pts.tiempo = 5;
-  else pts.tiempo = 0;
-
+  var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
+  pts.tiempo = bono;
   // Actividades
-  pts.acts = 0;
-  Object.keys(actsSeleccionadas).forEach(function(id) {
-    var a = actsSeleccionadas[id];
-    pts.acts += Math.min(a.max, a.pts * a.qty);
+  var totalHrs = Object.values(actsData).reduce(function(s,a){return s+a.horas;},0);
+  var actsPts = 0;
+  Object.values(actsData).forEach(function(a) {
+    if (a.horas > 0) {
+      var pct = a.horas / totalHrs;
+      if (a.cod !== 'CI-OPE') actsPts += pct * 60; // max 60 pts de actividades
+    } else if (Object.keys(actsData).length > 0) {
+      actsPts += 5; // pts mínimos por registrar
+    }
   });
+  pts.acts = Math.min(60, actsPts);
 
-  // Total bruto y normalizado
-  var bruto = 0;
-  Object.keys(pts).forEach(function(k) { bruto += pts[k]; });
-  var score = Math.min(100, Math.round(bruto / 185 * 100));
+  var bruto = Object.values(pts).reduce(function(s,v){return s+v;},0);
+  var score = Math.min(100, Math.round(bruto));
 
-  // Actualizar UI
-  actualizarScoreHero(score, bruto, pts);
-
-  // Pts por sección
-  var _e=document.getElementById('cp_id');if(_e)_e.textContent    = pts.id + ' pts';
-  var _e2=document.getElementById('cp_ganado');if(_e2)_e2.textContent = pts.pesaje + ' pts';
-  var _e3=document.getElementById('cp_pot');if(_e3)_e3.textContent    = pts.cambio + ' pts';
-  var _e4=document.getElementById('cp_act');if(_e4)_e4.textContent    = pts.acts + ' pts';
-  var _e5=document.getElementById('cp_foto');if(_e5)_e5.textContent   = (pts.foto + pts.tiempo) + ' pts';
-
-  // Desglose
-  var ids = Object.keys(actsSeleccionadas);
-  if (ids.length || pts.cambio || pts.pesaje) {
-    var html = '';
-    if (pts.id)     html += '<div class="des-row"><span>Identificación</span><span>+' + pts.id + '</span></div>';
-    if (pts.cambio) html += '<div class="des-row"><span>Cambio de potrero</span><span>+' + pts.cambio + '</span></div>';
-    if (pts.pesaje) html += '<div class="des-row"><span>Pesaje</span><span>+' + pts.pesaje + '</span></div>';
-    ids.forEach(function(id) {
-      var a = actsSeleccionadas[id];
-      var p = Math.min(a.max, a.pts * a.qty);
-      html += '<div class="des-row"><span>' + a.nom + '</span><span>+' + p + '</span></div>';
-    });
-    if (pts.foto)   html += '<div class="des-row"><span>Foto de evidencia</span><span>+' + pts.foto + '</span></div>';
-    if (pts.tiempo) html += '<div class="des-row"><span>Reporte a tiempo</span><span>+' + pts.tiempo + '</span></div>';
-    html += '<div class="des-row"><span>TOTAL</span><span>' + bruto + ' brutos → <strong>' + score + '/100</strong></span></div>';
-    var _e8=document.getElementById('desBlk');if(_e8)_e8.innerHTML = html;
-    document.getElementById('desDiv').style.display = 'block';
-  }
-
-  // Botón
-  var _e6=document.getElementById('subScore');if(_e6)_e6.textContent = score;
-  var _e7=document.getElementById('subNota');if(_e7)_e7.textContent =
-    'Score: ' + score + '/100  ·  ' +
-    (score>=85 ? '✅ Pago completo justificado' : score>=70 ? '⚠ Pago con observación' : '🚨 Agrega más actividades');
-
-  return score;
-}
-window.recalc = recalc;
-
-function actualizarScoreHero(score, bruto, pts) {
+  // UI
   document.getElementById('sNum').textContent = score;
+  document.getElementById('subScore').textContent = score;
   var fill = document.getElementById('sFill');
   var tag  = document.getElementById('sTag');
   var det  = document.getElementById('sDet');
   var pago = document.getElementById('sPago');
-
   fill.style.width = score + '%';
-
   if (score >= 85) {
-    fill.style.background = '#4A8A34';
-    tag.className = 'score-tag tag-ex';
-    tag.textContent = '✅ Excelente';
-    pago.textContent = 'Pago: $230 ✅';
+    fill.style.background='#4A8A34'; tag.className='score-tag s-ex'; tag.textContent='✅ Excelente';
+    pago.textContent='Pago: $' + VALOR_DIARIO + ' ✅';
   } else if (score >= 70) {
-    fill.style.background = '#C8961E';
-    tag.className = 'score-tag tag-ok';
-    tag.textContent = '⚠ Aceptable';
-    pago.textContent = 'Pago: $230 + llamada';
+    fill.style.background='#C8961E'; tag.className='score-tag s-ok'; tag.textContent='⚠ Aceptable';
+    pago.textContent='Pago: $' + VALOR_DIARIO + ' + llamada';
   } else if (score > 0) {
-    fill.style.background = '#8B1A1A';
-    tag.className = 'score-tag tag-mal';
-    tag.textContent = '🚨 Deficiente';
-    pago.textContent = 'Pago en revisión';
+    fill.style.background='#8B1A1A'; tag.className='score-tag s-mal'; tag.textContent='🚨 Deficiente';
+    pago.textContent='Pago en revisión';
   } else {
-    fill.style.background = '#555';
-    tag.className = 'score-tag tag-mal';
-    tag.textContent = 'Sin datos';
-    pago.textContent = '—';
+    fill.style.background='#555'; tag.className='score-tag s-mal'; tag.textContent='Sin datos';
+    pago.textContent='—';
   }
+  var nActs = Object.keys(actsData).length;
+  det.textContent = nActs > 0 ? nActs + ' actividades · ' + totalHrs.toFixed(1) + ' hrs totales' : 'Completa el reporte para sumar puntos';
 
-  var nActs = Object.keys(actsSeleccionadas).length;
-  det.textContent = nActs > 0 ?
-    nActs + ' actividades · ' + bruto + ' pts brutos' :
-    'Toca las actividades para sumar puntos';
+  var cpId = document.getElementById('cp_id'); if(cpId) cpId.textContent = pts.id + ' pts';
+  var cpGan = document.getElementById('cp_gan'); if(cpGan) cpGan.textContent = pts.pesaje + ' pts';
+  var cpAct = document.getElementById('cp_act'); if(cpAct) cpAct.textContent = Math.round(pts.acts) + ' pts';
+  var cpCierre = document.getElementById('cp_cierre'); if(cpCierre) cpCierre.textContent = (pts.foto + pts.tiempo) + ' pts';
+
+  return score;
 }
 
-// ── GDP ───────────────────────────────────────────────────────────────────
-document.getElementById('pesoG2').addEventListener('input', function() {
-  var p2 = parseFloat(this.value);
-  var box = document.getElementById('gdpBox');
-  if (!p2) { box.style.display='none'; return; }
-  var dias = Math.max(1, Math.round((new Date() - new Date('2026-05-12'))/86400000));
-  var gdp = ((p2-360)/dias).toFixed(2);
-  var v = parseFloat(gdp);
-  box.style.display = 'block';
-  box.className = 'gdp ' + (v>=0.8?'gdp-v':v>=0.5?'gdp-a':'gdp-r');
-  box.textContent = 'G2: ' + gdp + ' kg/día ' + (v>=0.8?'✅':v>=0.5?'⚠':'🚨');
-});
-
-// ── LISTENERS GENERALES ───────────────────────────────────────────────────
-['trabajador','horaLlegada','horaSalida','potreroActivo'].forEach(function(id) {
-  var el = document.getElementById(id);
-  if (el) el.addEventListener('change', recalc);
-});
-
-async function esperar(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
-
-// Exponer enviar() globalmente desde dentro del closure
-// para que onclick="enviar()" funcione y tenga acceso a recalc()
-window.enviar = async function() {
+window.enviar = function() {
   var btn = document.getElementById('btnSub');
   btn.textContent = 'Enviando...';
   btn.disabled = true;
-  try {
-    var score = recalc();
-    var ahora = new Date();
-    var hora = ahora.getHours();
-    var horaEnvio = hora + ':' + String(ahora.getMinutes()).padStart(2,'0');
-    var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
-    var scoreFinal = Math.min(100, score + bono);
-    var trab = document.getElementById('trabajador').value || 'sin nombre';
-    var ll   = document.getElementById('horaLlegada').value || '';
-    var sl   = document.getElementById('horaSalida').value || '';
-    var pot  = document.getElementById('potreroActivo').value || '';
-    var obs  = document.getElementById('obs').value || '';
-    var ins  = document.getElementById('insumos').value || '';
-    var fecha = document.getElementById('fechaTag').textContent;
-    var estadoPago = scoreFinal>=85 ? 'PAGO COMPLETO' : scoreFinal>=70 ? 'CON OBSERVACION' : 'EN REVISION';
-    var actsList = Object.keys(actsSeleccionadas).map(function(id) {
-      var a = actsSeleccionadas[id];
-      return a.nom + (a.un ? ' (' + a.qty + ' ' + a.un + ')' : '') + ': +' + Math.min(a.max, a.pts * a.qty) + ' pts';
-    });
-    var rid = 'AN-' + ahora.getFullYear() +
-      String(ahora.getMonth()+1).padStart(2,'0') +
-      String(ahora.getDate()).padStart(2,'0') + '-' +
-      trab.substring(0,3).toUpperCase() + '-' +
-      Date.now().toString().slice(-4);
-    var payload = {
-      reporteId:rid, fecha:fecha, trabajador:trab,
-      horaLlegada:ll, horaSalida:sl, horaEnvio:horaEnvio,
-      reporteATiempo:hora<17?'SI':'NO', score:scoreFinal, estadoPago:estadoPago,
-      g1:document.getElementById('g1').value||'',
-      g2:document.getElementById('g2').value||'',
-      bufalo:document.getElementById('buf').value||'',
-      sanidad:S['sanidad']||'',
-      novSanidad:document.getElementById('novSan').value||'',
-      pesaje:S['pesaje']||'',
-      pesoG1:document.getElementById('pesoG1').value||'',
-      pesoG2:document.getElementById('pesoG2').value||'',
-      potreroActivo:pot, estadoPasto:S['pasto']||'',
-      cambioPotrero:S['cambio']||'',
-      nuevoPotrero:document.getElementById('nuevoPot').value||'',
-      salMineral:S['sal']||'', agua:S['agua']||'',
-      actividades:actsList.join(' | '),
-      cercas:S['cercas']||'',
-      cercaDetalle:document.getElementById('cercaDet').value||'',
-      insumosAgotan:ins, foto:S['foto']||'',
-      motivoTarde:S['motivo']||'', observaciones:obs,
-      decisionRequerida:S['decision']||'',
-      decisionDetalle:document.getElementById('decisionTxt').value||''
+
+  var trabVal = document.getElementById('trabajador').value;
+  var trab = trabVal === '__otro__'
+    ? (document.getElementById('otroNombre').value || 'Otro temporal')
+    : trabVal;
+
+  var score = recalc();
+  var ahora = new Date();
+  var hora  = ahora.getHours();
+  var bono  = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
+  var scoreFinal = Math.min(100, score + bono);
+
+  var ll    = document.getElementById('horaLlegada').value || '';
+  var sl    = document.getElementById('horaSalida').value || '';
+  var fecha = document.getElementById('fechaTag').textContent;
+  var obs   = document.getElementById('obs').value || '';
+  var ins   = document.getElementById('insumos').value || '';
+
+  // Construir lista de actividades estructurada
+  var acts = Object.keys(actsData).map(function(id) {
+    var a = actsData[id];
+    return {
+      actividad: a.nom,
+      codigoCosto: a.cod,
+      potrero: a.potrero,
+      horaInicio: a.hInicio,
+      horaFin: a.hFin,
+      horas: a.horas
     };
+  });
 
-    // Mostrar reporte texto
-    var reporteTxt = 'REPORTE ARROYO NEGRO\n' + fecha + ' - ' + trab +
-      '\nScore: ' + scoreFinal + '/100 - ' + estadoPago +
-      '\nG1:' + (payload.g1||'?') + ' G2:' + (payload.g2||'?') +
-      '\nPotrero: ' + pot + ' Pasto: ' + (S['pasto']||'?') +
-      '\nActividades: ' + (actsList.join(', ')||'ninguna') +
-      '\nObs: ' + obs;
-    payload.reporte = reporteTxt;
-    var pt = document.getElementById('prevTxt'); if(pt) pt.textContent = reporteTxt;
-    var pb = document.getElementById('prevBox'); if(pb) pb.classList.add('show');
+  // Total horas para prorrateo
+  var totalHrs = acts.reduce(function(s,a){return s+a.horas;},0);
 
-    window.modal('📡', 'Enviando...', 'Guardando en el sistema', null);
+  // Calcular prorrateo para cada actividad
+  acts.forEach(function(a) {
+    a.pctDia = totalHrs > 0 ? a.horas / totalHrs : 0;
+    a.valorDolar = parseFloat((a.pctDia * VALOR_DIARIO).toFixed(2));
+  });
 
-    var url = SCRIPT_URL + '?action=registrar&data=' + encodeURIComponent(JSON.stringify(payload));
-    var res = await fetch(url);
-    var json = await res.json();
-    window.modal('✅', '¡Guardado!', 'ID: ' + rid, 'OK', 'modal-btn-v');
+  // Semana del año
+  var inicio = new Date(HOY.getFullYear(), 0, 1);
+  var semana = Math.ceil(((HOY - inicio) / 86400000 + inicio.getDay() + 1) / 7);
 
-  } catch(err) {
-    window.modal('⚠️', 'Error', err.message || 'desconocido', 'OK', 'modal-btn-a');
-  }
-  btn.textContent = '📋 Enviar reporte del día';
-  btn.disabled = false;
+  var payload = {
+    accion: 'registro_campo',
+    reporteId: 'AN-' + HOY.getFullYear() + String(HOY.getMonth()+1).padStart(2,'0') +
+               String(HOY.getDate()).padStart(2,'0') + '-' +
+               trab.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-4),
+    semana: semana,
+    fecha: fecha,
+    mes: HOY.getMonth() + 1,
+    anio: HOY.getFullYear(),
+    trabajador: trab,
+    score: scoreFinal,
+    valorDiario: VALOR_DIARIO,
+    horaLlegada: ll,
+    horaSalida: sl,
+    horaEnvio: hora + ':' + String(ahora.getMinutes()).padStart(2,'0'),
+    // Estado general
+    g1: document.getElementById('g1').value || '',
+    g2: document.getElementById('g2').value || '',
+    bufalo: document.getElementById('buf').value || '',
+    sanidad: S['sanidad'] || '',
+    novSanidad: document.getElementById('novSan').value || '',
+    pesaje: S['pesaje'] || '',
+    pesoG1: document.getElementById('pesoG1').value || '',
+    pesoG2: document.getElementById('pesoG2').value || '',
+    estadoPasto: S['pasto'] || '',
+    salMineral: S['sal'] || '',
+    agua: S['agua'] || '',
+    cercas: S['cercas'] || '',
+    cercaDetalle: document.getElementById('cercaDet').value || '',
+    foto: S['foto'] || '',
+    motivoTarde: S['motivo'] || '',
+    insumosAgotan: ins,
+    observaciones: obs,
+    decisionRequerida: S['decision'] || '',
+    decisionDetalle: document.getElementById('decisionTxt').value || '',
+    // Actividades estructuradas
+    actividades: acts
+  };
+
+  // Preview texto
+  var actLines = acts.map(function(a) {
+    return '  • ' + a.actividad + ' | ' + (a.potrero||'—') + ' | ' +
+      (a.hInicio||'—') + '–' + (a.hFin||'—') + ' | ' +
+      a.horas.toFixed(1) + 'h | ' + (a.pctDia*100).toFixed(0) + '% | $' + a.valorDolar.toFixed(2);
+  }).join('\n');
+
+  var prevTxt =
+    '📋 REGISTRO ARROYO NEGRO\n' +
+    fecha.toUpperCase() + ' · ' + trab + '\n' +
+    '━━━━━━━━━━━━━━━━━━\n' +
+    '📊 SCORE: ' + scoreFinal + '/100\n' +
+    '🕐 ' + ll + ' → ' + sl + '\n\n' +
+    '🐄 G1:' + (payload.g1||'—') + ' G2:' + (payload.g2||'—') + ' Búf:' + (payload.bufalo||'—') + '\n' +
+    'Sanidad: ' + (S['sanidad']||'—') + ' · Pasto: ' + (S['pasto']||'—') + '\n' +
+    'Sal: ' + (S['sal']||'—') + ' · Agua: ' + (S['agua']||'—') + '\n\n' +
+    '⚒️ ACTIVIDADES [Actividad | Potrero | Horario | Hrs | % | Valor$]\n' +
+    (actLines || '  — Ninguna registrada') + '\n\n' +
+    '💰 PRORRATEO: ' + totalHrs.toFixed(1) + ' hrs totales · $' + VALOR_DIARIO + '/día\n' +
+    (obs ? '📝 ' + obs + '\n' : '') +
+    '━━━━━━━━━━━━━━━━━━\nArroyo Negro · Registro de Campo';
+
+  var pEl = document.getElementById('prevTxt');
+  if (pEl) pEl.textContent = prevTxt;
+  var pb = document.getElementById('prevBox');
+  if (pb) { pb.classList.add('show'); pb.scrollIntoView({behavior:'smooth'}); }
+
+  // Mostrar modal
+  showModal('📡', 'Enviando...', 'Guardando en Registro de Campo', null);
+
+  var url = SCRIPT_URL + '?action=registrar&data=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(url).then(function(r){ return r.json(); }).then(function(json) {
+    if (json && (json.status==='ok'||json.ok)) {
+      showModal('✅', '¡Guardado!', 'ID: ' + payload.reporteId + '\n' + acts.length + ' actividades registradas', 'OK', 'mbv');
+      document.getElementById('statusR').textContent = '✅ guardado';
+    } else {
+      showModal('✅', 'Enviado', payload.reporteId, 'OK', 'mbv');
+    }
+  }).catch(function(e) {
+    showModal('⚠️', 'Sin conexión', 'Copia el registro y envía por WhatsApp', 'OK', 'mba');
+    document.getElementById('statusR').textContent = '⚠ error';
+  }).finally(function() {
+    btn.textContent = '📋 Enviar registro del día';
+    btn.disabled = false;
+  });
 };
 
-// Exponer modal globalmente también
-window.modal = function(ico, tit, sub, btnTxt, btnCls) {
+function showModal(ico, tit, sub, btnTxt, btnCls) {
   var m = document.getElementById('modal');
-  var mIco = document.getElementById('modalIco'); if(mIco) { try { mIco.innerHTML = ico; } catch(e) { mIco.textContent = ico; } }
+  var mIco = document.getElementById('modalIco'); if(mIco) mIco.textContent = ico;
   var mTit = document.getElementById('modalTit'); if(mTit) mTit.textContent = tit;
   var mSub = document.getElementById('modalSub'); if(mSub) mSub.textContent = sub;
-  var b = document.getElementById('modalBtn');
-  if (b) {
+  var mBtn = document.getElementById('modalBtn');
+  if (mBtn) {
     if (btnTxt) {
-      b.textContent = btnTxt;
-      b.className = 'modal-btn ' + (btnCls||'modal-btn-v');
-      b.style.display = 'block';
-      b.onclick = function() { if(m) m.classList.remove('show'); };
-    } else {
-      b.style.display = 'none';
-    }
+      mBtn.textContent = btnTxt;
+      mBtn.className = 'modal-btn ' + (btnCls||'mbv');
+      mBtn.style.display = 'block';
+      mBtn.onclick = function() { if(m) m.classList.remove('show'); };
+    } else { mBtn.style.display = 'none'; }
   }
   if (m) m.classList.add('show');
-};
+}
 
-}); // end DOMContentLoaded
+window.copiarWA = function() {
+  var txt = document.getElementById('prevTxt').textContent;
+  navigator.clipboard.writeText(txt).then(function() {
+    document.querySelector('.btn-wa').textContent = '✅ Copiado...';
+    setTimeout(function() {
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+      document.querySelector('.btn-wa').textContent = '📋 Copiar y abrir WhatsApp';
+    }, 800);
+  }).catch(function() { alert('Copia el texto manualmente'); });
+};
 </script>
 </body>
 </html>
