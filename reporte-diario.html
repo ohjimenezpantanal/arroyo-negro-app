@@ -277,6 +277,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
         <input type="number" id="g2" placeholder="35" min="0" max="60"></div>
       <div class="fld"><label class="lbl">Búfalos</label>
         <input type="number" id="buf" placeholder="10" min="0" max="30"></div>
+      <div class="fld"><label class="lbl">G3 (Ensayo)</label>
+        <input type="number" id="g3" placeholder="10" min="0" max="30"></div>
     </div>
     <div class="fld">
       <label class="lbl">Novedad sanitaria</label>
@@ -861,7 +863,7 @@ function getCorralHtml(id) {
   var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
   var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
 
-  var grupoOpts = ['G1','G2','Búfalos','Todos'].map(function(g) {
+  var grupoOpts = ['G1','G2','G3 (Ensayo)','Búfalos','Todos'].map(function(g) {
     return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
   }).join('');
 
@@ -951,7 +953,7 @@ function getArreoHtml(id) {
   origenOpts  = origenOpts.replace('"' + inst.origen  + '">', '"' + (inst.origen||'')  + '" selected>');
   destinoOpts = destinoOpts.replace('"' + inst.destino + '">', '"' + (inst.destino||'') + '" selected>');
 
-  var grupoOpts = ['G1','G2','Búfalos','Todos'].map(function(g) {
+  var grupoOpts = ['G1','G2','G3 (Ensayo)','Búfalos','Todos'].map(function(g) {
     return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
   }).join('');
 
@@ -1627,6 +1629,7 @@ window.enviar = function() {
     g1: document.getElementById('g1').value || '',
     g2: document.getElementById('g2').value || '',
     bufalo: document.getElementById('buf').value || '',
+    g3: document.getElementById('g3') ? document.getElementById('g3').value || '' : '',
     sanidad: S['sanidad'] || '',
     novSanidad: document.getElementById('novSan').value || '',
     pesaje: S['pesaje'] || '',
@@ -1675,7 +1678,7 @@ window.enviar = function() {
     '━━━━━━━━━━━━━━━━━━\n' +
     '📊 SCORE: ' + scoreFinal + '/100\n' +
     '🕐 ' + ll + ' → ' + sl + '\n\n' +
-    '🐄 G1:' + (payload.g1||'—') + ' G2:' + (payload.g2||'—') + ' Búf:' + (payload.bufalo||'—') + '\n' +
+    '🐄 G1:' + (payload.g1||'—') + ' G2:' + (payload.g2||'—') + ' G3:' + (payload.g3||'—') + ' Búf:' + (payload.bufalo||'—') + '\n' +
     'Sanidad: ' + (S['sanidad']||'—') + ' · Pasto: ' + (S['pasto']||'—') + '\n' +
     'Sal: ' + (S['sal']||'—') + ' · Agua: ' + (S['agua']||'—') + '\n\n' +
     '⚒️ ACTIVIDADES [Actividad | Potrero | Horario | Hrs | % | Valor$]\n' +
