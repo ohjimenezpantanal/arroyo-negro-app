@@ -271,14 +271,18 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     </div>
     <div id="conteoDiv" style="display:none;margin-top:10px">
     <div class="g3">
-      <div class="fld"><label class="lbl">G1 bovinos</label>
+      <div class="fld">
+        <label class="lbl">G1 <span style="font-family:monospace;font-size:9px;background:#E8F5E9;color:#1A3A1A;padding:1px 5px;border-radius:3px">F-04-26</span></label>
         <input type="number" id="g1" placeholder="30" min="0" max="60"></div>
-      <div class="fld"><label class="lbl">G2 bovinos</label>
+      <div class="fld">
+        <label class="lbl">G2 <span style="font-family:monospace;font-size:9px;background:#EBF2FF;color:#0D2B5E;padding:1px 5px;border-radius:3px">F-02-24</span></label>
         <input type="number" id="g2" placeholder="35" min="0" max="60"></div>
-      <div class="fld"><label class="lbl">Búfalos</label>
-        <input type="number" id="buf" placeholder="10" min="0" max="30"></div>
-      <div class="fld"><label class="lbl">G3 (Ensayo)</label>
+      <div class="fld">
+        <label class="lbl">G3 <span style="font-family:monospace;font-size:9px;background:#FFF8EE;color:#7A4A00;padding:1px 5px;border-radius:3px">XIOM</span></label>
         <input type="number" id="g3" placeholder="10" min="0" max="30"></div>
+      <div class="fld">
+        <label class="lbl">Búfalos <span style="font-family:monospace;font-size:9px;background:#F4F4F4;color:#374151;padding:1px 5px;border-radius:3px">8 total</span></label>
+        <input type="number" id="buf" placeholder="8" min="0" max="15"></div>
     </div>
     <div class="fld">
       <label class="lbl">Novedad sanitaria</label>
@@ -321,7 +325,21 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
   <div class="card-body">
     <div class="fld">
-      <label class="lbl">Estado del pasto hoy</label>
+      <label class="lbl">¿Qué potrero estás reportando?</label>
+      <select id="potreroReporte">
+        <option value="">Seleccionar potrero...</option>
+        <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
+        <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
+        <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
+        <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
+        <option>P-17 ⚠</option><option>P-18 ⚠</option><option>P-19 ⚠</option><option>P-20 ⚠</option>
+        <option>P-21 ⚠</option><option>P-22 ⚠</option><option>P-23 ⚠</option><option>P-24 ⚠</option>
+        <option>P-25 ⚠</option><option>P-26 ⚠</option><option>P-27 ⚠</option><option>P-28 ⚠</option>
+        <option>P-29 ⚠</option><option>P-30 ⚠</option><option>P-31 ⚠</option><option>P-32 ⚠</option>
+      </select>
+    </div>
+    <div class="fld">
+      <label class="lbl">Estado del pasto en ese potrero</label>
       <div class="tg-grp" id="grp_pasto">
         <button type="button" class="tg" data-grp="pasto" data-val="CON_PASTO" data-cls="sv">🟢 Con pasto</button>
         <button type="button" class="tg" data-grp="pasto" data-val="PASTO_BAJO" data-cls="sa">🟡 Pasto bajo</button>
@@ -785,6 +803,15 @@ function renderDetalles() {
         getArreoHtml(id) +
       '</div>';
     }
+    if (id === 'cambiopot') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getCambioPotHtml(id) +
+      '</div>';
+    }
     if (id === 'recorrido') {
       return '<div class="act-detalle" id="det_' + id + '">' +
         '<div class="act-det-tit">' +
@@ -977,6 +1004,54 @@ function getArreoHtml(id) {
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.origen && inst.destino ? '🐂 ' + (inst.grupo||'Ganado') + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🐂 Define origen y destino<br>') +
+      '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function getCambioPotHtml(id) {
+  var inst    = actsData[id] ? actsData[id].instancias[0] : {};
+  var hInicio = inst.hInicio || '';
+  var hFin    = inst.hFin    || '';
+  var horas   = inst.horas   || 0;
+  var pct     = calcPct(id);
+  var valor   = pct > 0 ? '$' + (pct * VALOR_DIARIO).toFixed(2) : '$--';
+  var hrsCalc = horas > 0 ? horas.toFixed(1) + ' hrs' : '-- hrs';
+
+  var potOpts = POTREROS.map(function(p) {
+    var warn = parseInt(p.split('-')[1]) >= 17 ? ' ⚠' : '';
+    return '<option value="' + p + '">' + p + warn + '</option>';
+  }).join('');
+
+  var origenOpts = '<option value="">¿De qué potrero?</option>' +
+    potOpts.replace('"' + (inst.origen||'') + '">', '"' + (inst.origen||'') + '" selected>');
+  var destinoOpts = '<option value="">¿A qué potrero?</option>' +
+    potOpts.replace('"' + (inst.destino||'') + '">', '"' + (inst.destino||'') + '" selected>');
+
+  var grupoOpts = ['G1 · F-04-26','G2 · F-02-24','G3 · XIOM','Búfalos','Todos'].map(function(g) {
+    return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
+  }).join('');
+
+  return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Rotación</div>' +
+      '<div class="mini-row"><span class="mini-lbl">De potrero:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="origen">' + origenOpts + '</select></div>' +
+      '<div class="mini-row"><span class="mini-lbl">A potrero:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="destino">' + destinoOpts + '</select></div>' +
+      '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+          '<option value="">Seleccionar...</option>' + grupoOpts + '</select></div>' +
+    '</div>' +
+    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
+    '<div class="mini-row">' +
+      '<span class="mini-lbl">De:</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
+      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+    '</div>' +
+    '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
+      (inst.origen && inst.destino ? '🔄 ' + (inst.grupo||'Ganado') + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🔄 Define potrero origen y destino<br>') +
       '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
     '</div>' +
   '</div>';
@@ -1188,9 +1263,13 @@ function getSubtipoHtml(id, cod) {
   } else {
     return '';
   }
+  var subVal = document.getElementById('subtipo_' + id) ? document.getElementById('subtipo_' + id).value : '';
+  var showEliminado = (id === 'chapia' || id === 'herbicida') && subVal !== '';
   return '<div style="margin-top:6px;margin-bottom:4px">' +
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Tipo de trabajo:</div>' +
-    '<select class="mini-inp" id="subtipo_' + id + '" style="font-size:13px">' + opciones + '</select>' +
+    '<select class="mini-inp subtipo-sel" id="subtipo_' + id + '" data-sid="' + id + '" style="font-size:13px" onchange="renderDetalles()">' + opciones + '</select>' +
+    (showEliminado ? '<div style="margin-top:6px"><div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">¿Qué eliminó / aplicó?</div>' +
+      '<input type="text" class="mini-inp" id="eliminado_' + id + '" placeholder="Ej: paja de burro, maleza de hoja ancha, guadua..." style="font-size:13px"></div>' : '') +
     '</div>';
 }
 
@@ -1524,11 +1603,13 @@ window.enviar = function() {
   var acts = [];
   Object.keys(actsData).forEach(function(id) {
     var a = actsData[id];
-    var subtipoEl = document.getElementById('subtipo_' + id);
-    var subtipo = subtipoEl ? subtipoEl.value : '';
+    var subtipoEl  = document.getElementById('subtipo_' + id);
+    var subtipo    = subtipoEl ? subtipoEl.value : '';
+    var eliminadoEl = document.getElementById('eliminado_' + id);
+    var eliminado   = eliminadoEl ? eliminadoEl.value : '';
     a.instancias.forEach(function(inst) {
       var actEntry = {
-        actividad: a.nom + (subtipo ? ' · ' + subtipo : ''),
+        actividad: a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : ''),
         actividadBase: a.nom,
         subtipo: subtipo,
         codigoCosto: a.cod,
@@ -1544,8 +1625,24 @@ window.enviar = function() {
         actEntry.nAnimales       = inst.nAnimales   || '';
         actEntry.tipoVitamina    = inst.tipoVit     || '';
       }
+      // Datos cambio de potrero
+      if (id === 'cambiopot') {
+        actEntry.potrero       = (inst.origen||'') + ' → ' + (inst.destino||'');
+        actEntry.origenArreo   = inst.origen  || '';
+        actEntry.destinoArreo  = inst.destino || '';
+        actEntry.grupo         = inst.grupo   || '';
+      }
       // Datos recorrido general
-      if (id === 'recorrido') {
+      if (id === 'cambiopot') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getCambioPotHtml(id) +
+      '</div>';
+    }
+    if (id === 'recorrido') {
         actEntry.potrero = inst.zona === 'Potrero específico' ? (inst.potrero||'') :
                            inst.zona === 'Lindero' ? 'Lindero' : (inst.zona||'');
         actEntry.zonaRecorrido = inst.zona    || '';
@@ -1564,7 +1661,16 @@ window.enviar = function() {
         actEntry.grupo           = inst.grupo   || '';
       }
       // Datos especiales de pasto de corte
-      if (id === 'recorrido') {
+      if (id === 'cambiopot') {
+      return '<div class="act-detalle" id="det_' + id + '">' +
+        '<div class="act-det-tit">' +
+          '<span>' + a.nom + '</span>' +
+          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
+        '</div>' +
+        getCambioPotHtml(id) +
+      '</div>';
+    }
+    if (id === 'recorrido') {
       return '<div class="act-detalle" id="det_' + id + '">' +
         '<div class="act-det-tit">' +
           '<span>' + a.nom + '</span>' +
@@ -1635,6 +1741,7 @@ window.enviar = function() {
     pesaje: S['pesaje'] || '',
     pesoG1: document.getElementById('pesoG1').value || '',
     pesoG2: document.getElementById('pesoG2').value || '',
+    potreroReporte: document.getElementById('potreroReporte') ? document.getElementById('potreroReporte').value || '' : '',
     estadoPasto: S['pasto'] || '',
     salMineral: S['sal'] || '',
     agua: S['agua'] || '',
