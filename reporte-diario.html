@@ -697,18 +697,26 @@ function procesarCatalogos(filas) {
       });
     }
 
-    // Col G (idx 6): Trabajadores
+    // Col G (idx 6): Trabajadores, Col H (idx 7): Valor diario
     if (fila[6] && fila[6] !== 'TRABAJADOR' && fila[6] !== '👤 PERSONAL' &&
         !fila[6].includes('Agregar')) {
       var nombre = fila[6].trim();
-      if (nombre !== 'Oscar') { // Oscar no usa el formulario de campo
+      if (nombre !== 'Oscar') {
         nuevosTrabajadores.push(nombre);
+      }
+      // Leer valor diario del trabajador (col H)
+      if (fila[7] && fila[7].match(/[0-9]/)) {
+        var rawVal = fila[7].replace(/\$/g,'').replace(/\./g,'').replace(/,/g,'.');
+        var vt = parseFloat(rawVal);
+        if (!isNaN(vt) && vt > 0 && vt < 200) nuevoValorDiario = vt;
       }
     }
 
     // Col P (idx 15): Parámetros, Col Q (idx 16): Valor
     if (fila[15] && fila[15].toLowerCase().includes('valor diario') && fila[16]) {
-      var v = parseFloat(fila[16].replace(/[$,]/g, ''));
+      // Ecuador usa coma decimal: "$16,00" → 16.00
+      var raw = fila[16].replace(/\$/g,'').replace(/\./g,'').replace(/,/g,'.');
+      var v = parseFloat(raw);
       if (!isNaN(v) && v > 0) nuevoValorDiario = v;
     }
   });
