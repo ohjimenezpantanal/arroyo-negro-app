@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-EC">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -245,11 +245,11 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="g2">
       <div class="fld">
         <label class="lbl">Inicio de actividades</label>
-        <input type="time" id="horaLlegada" value="06:30">
+        <input type="time" lang="es-EC" id="horaLlegada" value="06:30">
       </div>
       <div class="fld">
         <label class="lbl">Fin de actividades</label>
-        <input type="time" id="horaSalida">
+        <input type="time" lang="es-EC" id="horaSalida">
       </div>
     </div>
     <div class="alrt" id="alrtJornada"></div>
@@ -1199,9 +1199,9 @@ function renderDetalles() {
           '</select>' +
         '</div>' +
         '<div class="mini-row"><span class="mini-lbl">De:</span>' +
-          '<input type="time" class="mini-inp" id="hi_' + id + '_' + idx + '" value="' + inst.hInicio + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
+          '<input type="time" lang="es-EC" class="mini-inp" id="hi_' + id + '_' + idx + '" value="' + inst.hInicio + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
           '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-          '<input type="time" class="mini-inp" id="hf_' + id + '_' + idx + '" value="' + inst.hFin + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
+          '<input type="time" lang="es-EC" class="mini-inp" id="hf_' + id + '_' + idx + '" value="' + inst.hFin + '" onchange="updInst(\'' + id + '\',' + idx + ')">' +
           '<span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--vl);min-width:52px;text-align:right">' + hrsText + '</span>' +
         '</div>' +
         '<div style="margin-top:6px">' +
@@ -1333,9 +1333,9 @@ function getCorralHtml(id) {
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
       '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.grupo ? '🐄 ' + inst.grupo + (inst.nAnimales?' · '+inst.nAnimales+' animales':'') + (inst.tipoVit?' · '+inst.tipoVit:'') + (inst.producto?' · '+inst.producto:'') + '<br>' : '') +
@@ -1400,9 +1400,9 @@ function getArreoHtml(id) {
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
       '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.origen && inst.destino ? '🐂 ' + grupoResumen + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🐂 Define origen, destino y grupo<br>') +
@@ -1482,9 +1482,9 @@ function getCambioPotHtml(id) {
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
       '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.origen && inst.destino ? '🔄 ' + grupoResumen + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🔄 Define potrero origen y destino<br>') +
@@ -1538,9 +1538,9 @@ function getRecorridoHtml(id) {
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
       '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (zona ? '🚶 ' + zona + (lindero?' · '+lindero:'') + (inst.potrero&&zona==='Potrero específico'?' · '+inst.potrero:'') + '<br>' : '') +
@@ -1579,9 +1579,9 @@ function getOtraHtml(id) {
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
       '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-      '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+      '<input type="time" lang="es-EC" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.descripcion ? '📋 ' + inst.descripcion + '<br>' : '') +
@@ -1662,9 +1662,9 @@ function getPastoCorteHtml(id) {
       '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">4. Horario de la actividad</div>' +
       '<div class="mini-row">' +
         '<span class="mini-lbl">De:</span>' +
-        '<input type="time" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
+        '<input type="time" lang="es-EC" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hInicio" value="' + hInicio + '">' +
         '<span style="font-size:11px;color:#888;margin:0 4px">a</span>' +
-        '<input type="time" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
+        '<input type="time" lang="es-EC" class="mini-inp pasto-time" data-pastoid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
       '</div>' +
     '</div>' +
     '<div style="margin-bottom:10px">' +
