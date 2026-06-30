@@ -1854,7 +1854,8 @@ function calcPct(id) {
   var jornadaBruta = getJornadaHrs();
   var descAlm = (jornadaBruta >= 6) ? 1 : 0; // defaults — Catálogos define el real en Apps Script
   var jornadaHrs = Math.max(0, jornadaBruta - descAlm);
-  var denominador = jornadaHrs > 0 ? jornadaHrs : getTotalActHrs();
+  var denominador = Math.max(jornadaHrs, getTotalActHrs());
+  if (denominador === 0) denominador = 1;
   if (!denominador || !actsData[id]) return 0;
   var actHrs = actsData[id].instancias.reduce(function(s,inst){return s+inst.horas;},0);
   return actHrs / denominador;
