@@ -1962,27 +1962,55 @@ function recalc() {
   pts.pesaje = S['pesaje']==='SI' ? 20 : 0;
   // Foto
   pts.foto = S['foto']==='SI' ? 5 : 0;
-  // Reporte a tiempo
+  // Reporte a tiempo (10 pts)
   var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
   pts.tiempo = bono;
-  // Actividades
-  var totalHrs = Object.values(actsData).reduce(function(s,a){
-    return s + a.instancias.reduce(function(s2,inst){return s2+inst.horas;},0);
-  },0);
-  var actsPts = 0;
+
+  // Pesaje (10 pts) — reducido de 20 para no sobreponderar algo que no es diario
+  pts.pesaje = S['pesaje']==='SI' ? 10 : 0;
+
+  // Foto (5 pts)
+  pts.foto = S['foto']==='SI' ? 5 : 0;
+
+  // Turno de conteo completo (10 pts)
+  var hizoCont = S['turno'] === 'SI';
+  var potEl = document.getElementById('potreroReporte');
+  var contCompl = hizoCont && potEl && potEl.value && S['pasto'] && S['agua'] && S['cercas2'];
+  pts.conteo = hizoCont ? (contCompl ? 10 : 5) : 10; // Si no tocó turno no penaliza
+
+  // ── ACTIVIDADES PRODUCTIVAS (60 pts) ─────────────────────────────────
+  // Lógica: horas productivas (no CI-OPE) vs jornada efectiva pagada
+  // 60 pts = jornada 100% en trabajo productivo
+  // Agregar más actividades NUNCA baja el score — solo lo sube o lo mantiene
+  var jornadaEfect = getJornadaHrs();
+  var hrsProductivas = 0;
+  var nActsConHora = 0;
+
   Object.values(actsData).forEach(function(a) {
     var hrsAct = a.instancias.reduce(function(s,inst){return s+inst.horas;},0);
     if (hrsAct > 0) {
-      var pct = hrsAct / totalHrs;
-      if (a.cod !== 'CI-OPE') actsPts += pct * 60;
-    } else if (Object.keys(actsData).length > 0) {
-      actsPts += 5;
+      if (a.cod !== 'CI-OPE') hrsProductivas += hrsAct;
+      nActsConHora++;
     }
   });
-  pts.acts = Math.min(60, actsPts);
+
+  if (jornadaEfect > 0 && nActsConHora > 0) {
+    var pctProductivo = Math.min(1, hrsProductivas / jornadaEfect);
+    pts.acts = Math.round(pctProductivo * 60);
+  } else if (nActsConHora > 0) {
+    pts.acts = Math.min(60, nActsConHora * 10);
+  } else {
+    pts.acts = 0;
+  }
+
+  // Penalización: actividades sin horario (-5 pts c/u)
+  var sinHora = Object.values(actsData).filter(function(a) {
+    return a.instancias.every(function(inst){ return !inst.hInicio || !inst.hFin; });
+  }).length;
+  pts.penalizacion = sinHora > 0 ? -(sinHora * 5) : 0;
 
   var bruto = Object.values(pts).reduce(function(s,v){return s+v;},0);
-  var score = Math.min(100, Math.round(bruto));
+  var score = Math.min(100, Math.max(0, Math.round(bruto)));
 
   // UI
   document.getElementById('sNum').textContent = score;
@@ -1991,6 +2019,7 @@ function recalc() {
   var tag  = document.getElementById('sTag');
   var det  = document.getElementById('sDet');
   var pago = document.getElementById('sPago');
+
   fill.style.width = score + '%';
   if (score >= 85) {
     fill.style.background='#4A8A34'; tag.className='score-tag s-ex'; tag.textContent='✅ Excelente';
