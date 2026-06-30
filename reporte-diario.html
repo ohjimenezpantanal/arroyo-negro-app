@@ -1380,13 +1380,29 @@ function updAct(id) {
   recalc();
 }
 
-function calcPct(id) {
-  var totalHrs = Object.values(actsData).reduce(function(s,a) {
+function getJornadaHrs() {
+  var ll = document.getElementById('horaLlegada');
+  var sl = document.getElementById('horaSalida');
+  if (!ll || !sl || !ll.value || !sl.value) return 0;
+  var p1 = ll.value.split(':').map(Number);
+  var p2 = sl.value.split(':').map(Number);
+  var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+  return h > 0 ? h : 0;
+}
+
+function getTotalActHrs() {
+  return Object.values(actsData).reduce(function(s,a) {
     return s + a.instancias.reduce(function(s2,inst){return s2+inst.horas;},0);
   }, 0);
-  if (!totalHrs || !actsData[id]) return 0;
+}
+
+function calcPct(id) {
+  // Denominador = jornada total (lo que Oscar paga), no solo horas reportadas
+  var jornadaHrs = getJornadaHrs();
+  var denominador = jornadaHrs > 0 ? jornadaHrs : getTotalActHrs();
+  if (!denominador || !actsData[id]) return 0;
   var actHrs = actsData[id].instancias.reduce(function(s,inst){return s+inst.horas;},0);
-  return actHrs / totalHrs;
+  return actHrs / denominador;
 }
 
 function actualizarValoresEnDetalles() {
@@ -1409,7 +1425,7 @@ function renderResumen() {
   },0);
   var totalVal = 0;
 
-  if (!ids.length || !totalHrs) { mostrar('resumenDiv', false); return; }
+  if (!ids.length) { mostrar('resumenDiv', false); return; }
 
   var html = ids.map(function(id) {
     var a = actsData[id];
@@ -1426,9 +1442,22 @@ function renderResumen() {
     '</div>';
   }).join('');
 
+  var jornadaHrs = getJornadaHrs();
+  var tiempoNoRep = jornadaHrs > 0 ? jornadaHrs - totalHrs : 0;
+  var costoNoRep  = jornadaHrs > 0 ? (tiempoNoRep / jornadaHrs) * VALOR_DIARIO : 0;
+
+  if (tiempoNoRep > 0.25) {
+    html += '<div class="res-row" style="background:#FFEBEE">' +
+      '<span class="res-pm">⚠ Tiempo no reportado</span>' +
+      '<span style="color:var(--color-text-danger);font-size:10px">' + tiempoNoRep.toFixed(1) + 'h · CI-OPE</span>' +
+      '<span class="res-val res-pm">$' + costoNoRep.toFixed(2) + '</span>' +
+    '</div>';
+    totalVal += costoNoRep;
+  }
+
   html += '<div class="res-row">' +
-    '<span>TOTAL</span>' +
-    '<span style="color:var(--sub);font-size:10px">' + totalHrs.toFixed(1) + ' hrs</span>' +
+    '<span>TOTAL JORNADA</span>' +
+    '<span style="color:var(--sub);font-size:10px">' + (jornadaHrs > 0 ? jornadaHrs.toFixed(1) : totalHrs.toFixed(1)) + ' hrs</span>' +
     '<span class="res-val">' + (Math.abs(totalVal - VALOR_DIARIO) < 0.01 ? '✅ ' : '') + '$' + totalVal.toFixed(2) + '</span>' +
   '</div>';
 
@@ -1625,6 +1654,7 @@ window.enviar = function() {
 
   var ll    = document.getElementById('horaLlegada') ? document.getElementById('horaLlegada').value || '' : '';
   var sl    = document.getElementById('horaSalida') ? document.getElementById('horaSalida').value || '' : '';
+  var jornadaHrsPay = getJornadaHrs();
 
   // Validar que las horas de actividades sean razonables
   var horasValidas = true;
@@ -1791,6 +1821,7 @@ window.enviar = function() {
     trabajador: trab,
     score: scoreFinal,
     valorDiario: VALOR_DIARIO,
+    jornadaHrs: jornadaHrsPay,
     horaLlegada: ll,
     horaSalida: sl,
     horaEnvio: hora + ':' + String(ahora.getMinutes()).padStart(2,'0'),
