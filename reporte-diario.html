@@ -178,6 +178,9 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     <div class="marca">▲ ARROYO NEGRO</div>
     <div class="fecha-tag" id="fechaTag">—</div>
   </div>
+  <div class="hdr-row" style="margin-top:4px">
+    <span id="statusCatalogo" style="font-size:10px;color:#88AA88;font-family:monospace">⟳ Cargando catálogos...</span>
+  </div>
 </div>
 
 <!-- SCORE STICKY -->
@@ -584,7 +587,286 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
-var VALOR_DIARIO = 16;
+var VALOR_DIARIO = 16; // Se actualiza desde Catálogos si hay conexión
+
+/**
+ * CARGA DINÁMICA DE CATÁLOGOS DESDE GOOGLE SHEETS
+ * Reemplaza los datos hardcodeados del formulario con datos del Sheets
+ * Oscar solo edita el Sheets — el formulario se actualiza automáticamente
+ */
+
+// ── CONFIGURACIÓN ──────────────────────────────────────────────────────────
+// 1. En Google Sheets abre ⚙️ Catálogos
+// 2. Archivo → Compartir → Publicar en la web
+// 3. Selecciona "⚙️ Catálogos" y formato "Valores separados por comas (.csv)"
+// 4. Copia la URL y pégala aquí:
+var CATALOGO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTB8-iohe_6baAZU0hK63dnauV-O0tZH95wah4v_IBinXLpNwu8Xo5BIYCqWc4WnCtxP7s7MLUsw8Bx/pub?gid=423790602&single=true&output=csv';
+
+// Defaults por si falla la conexión
+var DEFAULTS = {
+  valorDiario: 16,
+  trabajadores: ['Héctor Zambrano','Sebastian Pantoja'],
+  grupos: [
+    {nom:'G1', cod:'F-04-26'},
+    {nom:'G2', cod:'F-02-24'},
+    {nom:'G3 (Ensayo)', cod:'XIOM'},
+    {nom:'Búfalos', cod:'8 total'},
+  ],
+  actividades: [] // se mantienen las del HTML
+};
+
+// Estado de catálogos cargados
+var catalogoCargado = false;
+
+// ── PARSER CSV ─────────────────────────────────────────────────────────────
+function parsearCSV(csv) {
+  var lines = csv.split('\n');
+  return lines.map(function(line) {
+    // Manejar campos con comas dentro de comillas
+    var cols = [];
+    var cur = '';
+    var inQuote = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') { inQuote = !inQuote; }
+      else if (c === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+// ── CARGAR CATÁLOGOS ───────────────────────────────────────────────────────
+function cargarCatalogos() {
+  var statusEl = document.getElementById('statusCatalogo');
+  if (statusEl) statusEl.textContent = '⟳ Cargando catálogos...';
+
+  // Intentar cargar directo desde Sheets
+  fetch(CATALOGO_URL + '&t=' + Date.now(), {mode:'cors'})
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(function(csv) {
+      var filas = parsearCSV(csv);
+      procesarCatalogos(filas);
+      if (statusEl) statusEl.textContent = '✅ Catálogos actualizados desde Sheets';
+    })
+    .catch(function(err) {
+      // Fallback: cargar via Apps Script (proxy)
+      console.warn('Directo falló, intentando via proxy —', err.message);
+      var proxyUrl = SCRIPT_URL + '?action=catalogo';
+      fetch(proxyUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(json) {
+          if (json && json.csv) {
+            var filas = parsearCSV(json.csv);
+            procesarCatalogos(filas);
+            if (statusEl) statusEl.textContent = '✅ Catálogos cargados (proxy)';
+          } else throw new Error('Sin datos');
+        })
+        .catch(function() {
+          if (statusEl) statusEl.textContent = '⚠ Usando datos locales';
+          aplicarDefaults();
+        });
+    });
+}
+
+// ── PROCESAR DATOS DEL CSV ─────────────────────────────────────────────────
+function procesarCatalogos(filas) {
+  var nuevoValorDiario = DEFAULTS.valorDiario;
+  var nuevosGrupos     = [];
+  var nuevosTrabajadores = [];
+  var nuevasActividades  = [];
+
+  filas.forEach(function(fila) {
+    // Col A (idx 0): Grupos
+    if (fila[0] && fila[0].match(/^G[0-9]|^Búfalos|^Buffalo/i) &&
+        !fila[0].includes('GRUPOS') && !fila[0].includes('GRUPO')) {
+      nuevosGrupos.push(fila[0].trim());
+    }
+
+    // Col C (idx 2): Actividades, Col D (idx 3): Código, Col E (idx 4): Productiva
+    if (fila[2] && fila[2] !== 'ACTIVIDAD' && fila[2] !== '⚒️ ACTIVIDADES' &&
+        !fila[2].includes('Agregar') && fila[3] && fila[3].match(/^C[DI]-/)) {
+      nuevasActividades.push({
+        nom:  fila[2].trim(),
+        cod:  fila[3].trim(),
+        prod: fila[4] ? fila[4].trim() : 'SI'
+      });
+    }
+
+    // Col G (idx 6): Trabajadores
+    if (fila[6] && fila[6] !== 'TRABAJADOR' && fila[6] !== '👤 PERSONAL' &&
+        !fila[6].includes('Agregar')) {
+      var nombre = fila[6].trim();
+      if (nombre !== 'Oscar') { // Oscar no usa el formulario de campo
+        nuevosTrabajadores.push(nombre);
+      }
+    }
+
+    // Col P (idx 15): Parámetros, Col Q (idx 16): Valor
+    if (fila[15] && fila[15].toLowerCase().includes('valor diario') && fila[16]) {
+      var v = parseFloat(fila[16].replace(/[$,]/g, ''));
+      if (!isNaN(v) && v > 0) nuevoValorDiario = v;
+    }
+  });
+
+  // Aplicar cambios al formulario
+  if (nuevoValorDiario !== VALOR_DIARIO) {
+    VALOR_DIARIO = nuevoValorDiario;
+    console.log('Valor diario actualizado: $' + VALOR_DIARIO);
+  }
+
+  if (nuevosTrabajadores.length > 0) {
+    actualizarDropdownTrabajadores(nuevosTrabajadores);
+  }
+
+  if (nuevosGrupos.length > 0) {
+    actualizarSeccionGanado(nuevosGrupos);
+  }
+
+  if (nuevasActividades.length > 0) {
+    actualizarListaActividades(nuevasActividades);
+  }
+
+  catalogoCargado = true;
+}
+
+// ── ACTUALIZAR DROPDOWN DE TRABAJADORES ────────────────────────────────────
+function actualizarDropdownTrabajadores(trabajadores) {
+  var sel = document.getElementById('trabajador');
+  if (!sel) return;
+
+  // Mantener la primera opción vacía
+  var firstOpt = sel.options[0];
+  sel.innerHTML = '';
+  sel.appendChild(firstOpt);
+
+  trabajadores.forEach(function(t) {
+    var opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t;
+    sel.appendChild(opt);
+  });
+
+  // Agregar "Otro (temporal)"
+  var otro = document.createElement('option');
+  otro.value = '__otro__';
+  otro.textContent = 'Otro (temporal)...';
+  sel.appendChild(otro);
+
+  console.log('Trabajadores cargados:', trabajadores.join(', '));
+}
+
+// ── ACTUALIZAR SECCIÓN GANADO ───────────────────────────────────────────────
+function actualizarSeccionGanado(grupos) {
+  // Actualizar labels del conteo
+  // Los grupos vienen del catálogo: "G1 — Bovinos recientes", "G2 — Bovinos maduros", etc.
+  // Los labels en el HTML tienen badges con los códigos
+  // Por ahora solo log — la sección de ganado es más compleja de reconstruir dinámicamente
+  console.log('Grupos en catálogo:', grupos.join(', '));
+}
+
+// ── ACTUALIZAR LISTA DE ACTIVIDADES ────────────────────────────────────────
+function actualizarListaActividades(actividades) {
+  var lista = document.getElementById('actLista');
+  if (!lista) return;
+
+  // IDs especiales que tienen sub-formularios propios — mantenerlos
+  var ESPECIALES = ['chapia','herbicida','cortepasto','picado','implante',
+    'vitaminas','pesaje','desparasit','cambiopot','arreo','recorrido','otra','cercas'];
+
+  // Mapa actual de actividades especiales (preservar)
+  var actualesEspeciales = {};
+  lista.querySelectorAll('.act').forEach(function(el) {
+    var id = el.getAttribute('data-id');
+    if (ESPECIALES.indexOf(id) >= 0) actualesEspeciales[id] = el;
+  });
+
+  // Reconstruir lista: primero las especiales en orden, luego las nuevas del catálogo
+  lista.innerHTML = '';
+
+  // Agregar las especiales que ya existen
+  ESPECIALES.forEach(function(id) {
+    if (actualesEspeciales[id]) lista.appendChild(actualesEspeciales[id]);
+  });
+
+  // Agregar actividades del catálogo que no son especiales
+  var idsEspeciales = ESPECIALES;
+  actividades.forEach(function(act) {
+    // Generar ID desde nombre
+    var id = act.nom.toLowerCase()
+      .replace(/[áa]/g,'a').replace(/[éе]/g,'e').replace(/[íi]/g,'i')
+      .replace(/[óo]/g,'o').replace(/[úu]/g,'u').replace(/[^a-z0-9]/g,'_')
+      .replace(/_+/g,'_').substring(0, 20);
+
+    // Si ya está como especial, skip
+    if (idsEspeciales.indexOf(id) >= 0) return;
+    // Si ya está en el catálogo especial por nombre similar, skip
+    var yaExiste = false;
+    lista.querySelectorAll('.act').forEach(function(el) {
+      if (el.getAttribute('data-nom') === act.nom) yaExiste = true;
+    });
+    if (yaExiste) return;
+
+    // Crear elemento nuevo
+    var div = document.createElement('div');
+    div.className = 'act';
+    div.setAttribute('data-id', id);
+    div.setAttribute('data-nom', act.nom);
+    div.setAttribute('data-cod', act.cod);
+
+    var ico = act.cod.startsWith('CD-PAST') ? '🌿' :
+              act.cod.startsWith('CD-PCOR') ? '🌾' :
+              act.cod.startsWith('CD-SUPL') ? '🧂' :
+              act.cod.startsWith('CD-IMP')  ? '💉' :
+              act.cod.startsWith('CD-SAN')  ? '🩺' :
+              act.cod.startsWith('CD-MAN')  ? '🐂' :
+              act.cod.startsWith('CI-INF')  ? '🪝' : '➕';
+
+    div.innerHTML = '<span class="act-ico">' + ico + '</span>' +
+      '<span class="act-nom">' + act.nom + '</span>' +
+      '<span class="act-cod">' + act.cod + '</span>';
+
+    // Bind click (igual que las demás actividades)
+    div.addEventListener('click', function() {
+      if (actsData[id]) {
+        delete actsData[id];
+        div.classList.remove('sel');
+      } else {
+        var ultimaHora = '';
+        var ids2 = Object.keys(actsData);
+        if (ids2.length > 0) {
+          var lastId = ids2[ids2.length-1];
+          var lastInsts = actsData[lastId].instancias;
+          ultimaHora = lastInsts[lastInsts.length-1].hFin || '';
+        }
+        if (!ultimaHora) {
+          var ll = document.getElementById('horaLlegada');
+          ultimaHora = ll ? ll.value || '' : '';
+        }
+        actsData[id] = { nom:act.nom, cod:act.cod, subtipo:'', eliminado:'',
+          instancias:[{potrero:'', hInicio:ultimaHora, hFin:'', horas:0}] };
+        div.classList.add('sel');
+      }
+      renderDetalles();
+      recalc();
+    });
+
+    lista.appendChild(div);
+  });
+
+  console.log('Actividades del catálogo aplicadas: ' + actividades.length);
+}
+
+// ── APLICAR DEFAULTS ───────────────────────────────────────────────────────
+function aplicarDefaults() {
+  // Ya están aplicados en el HTML — no hacer nada
+  console.log('Usando configuración local del formulario');
+}
+
 
 var S = {};
 var actsData = {}; // {id: {nom, cod, potrero, hInicio, hFin, horas}}
@@ -599,6 +881,9 @@ function mostrar(id, v) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+  // Cargar catálogos desde Sheets
+  cargarCatalogos();
 
   // Fecha
   document.getElementById('fechaTag').textContent =
@@ -698,6 +983,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Event delegation para sub-formulario de pasto de corte
   document.addEventListener('click', function(e) {
+    var btn3 = e.target.closest('.campot-grp-btn');
+    if (btn3) {
+      var cid   = btn3.getAttribute('data-cid');
+      var grupo = btn3.getAttribute('data-grupo');
+      if (actsData[cid]) {
+        var inst = actsData[cid].instancias[0];
+        if (!inst.grupos) inst.grupos = [];
+        var idx = inst.grupos.indexOf(grupo);
+        if (idx >= 0) inst.grupos.splice(idx, 1);
+        else inst.grupos.push(grupo);
+        inst.grupo = inst.grupos.join(' + '); // string for payload
+        renderDetalles(); recalc();
+      }
+    }
     var btn2 = e.target.closest('.corral-sel-btn');
     if (btn2) {
       var cid   = btn2.getAttribute('data-cid');
@@ -1028,9 +1327,10 @@ function getArreoHtml(id) {
         '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="origen">' + origenOpts + '</select></div>' +
       '<div class="mini-row"><span class="mini-lbl">Destino:</span>' +
         '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="destino">' + destinoOpts + '</select></div>' +
-      '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
-        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
-          '<option value="">Seleccionar...</option>' + grupoOpts + '</select></div>' +
+      '<div style="margin-bottom:8px"><div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">¿Qué grupo(s) se mueven?</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px" id="grpbtns_' + id + '">' + gruposBtns + '</div>' +
+        '<div style="font-size:11px;font-family:monospace;color:var(--vl);font-weight:700;margin-top:5px">↗ ' + grupoResumen + '</div>' +
+      '</div>' +
     '</div>' +
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
@@ -1065,9 +1365,25 @@ function getCambioPotHtml(id) {
   var destinoOpts = '<option value="">¿A qué potrero?</option>' +
     potOpts.replace('"' + (inst.destino||'') + '">', '"' + (inst.destino||'') + '" selected>');
 
-  var grupoOpts = ['G1 · F-04-26','G2 · F-02-24','G3 · XIOM','Búfalos','Todos'].map(function(g) {
-    return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
+  // Grupos seleccionados (array guardado en inst.grupos)
+  var gruposSeleccionados = inst.grupos || [];
+  var todosGrupos = [
+    {val:'G1',      ico:'F-04-26'},
+    {val:'G2',      ico:'F-02-24'},
+    {val:'G3',      ico:'XIOM'},
+    {val:'Búfalos', ico:'Excl.'},
+  ];
+  var gruposBtns = todosGrupos.map(function(g) {
+    var sel = gruposSeleccionados.indexOf(g.val) >= 0;
+    return '<button type="button" data-cid="' + id + '" data-grupo="' + g.val + '" ' +
+      'class="campot-grp-btn" style="padding:8px 10px;border:1.5px solid ' + (sel?'#1A3A1A':'#ddd') + ';' +
+      'background:' + (sel?'#1A3A1A':'white') + ';color:' + (sel?'white':'#333') + ';' +
+      'border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation;text-align:center">' +
+      '<div>' + g.val + '</div>' +
+      '<div style="font-size:9px;font-family:monospace;opacity:.7">' + g.ico + '</div>' +
+    '</button>';
   }).join('');
+  var grupoResumen = gruposSeleccionados.length > 0 ? gruposSeleccionados.join(' + ') : '—';
 
   return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
     '<div style="margin-bottom:10px">' +
@@ -1076,9 +1392,10 @@ function getCambioPotHtml(id) {
         '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="origen">' + origenOpts + '</select></div>' +
       '<div class="mini-row"><span class="mini-lbl">A potrero:</span>' +
         '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="destino">' + destinoOpts + '</select></div>' +
-      '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
-        '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
-          '<option value="">Seleccionar...</option>' + grupoOpts + '</select></div>' +
+      '<div style="margin-bottom:8px"><div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">¿Qué grupo(s) se mueven?</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px" id="grpbtns_' + id + '">' + gruposBtns + '</div>' +
+        '<div style="font-size:11px;font-family:monospace;color:var(--vl);font-weight:700;margin-top:5px">↗ ' + grupoResumen + '</div>' +
+      '</div>' +
     '</div>' +
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
@@ -1088,7 +1405,7 @@ function getCambioPotHtml(id) {
       '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
-      (inst.origen && inst.destino ? '🔄 ' + (inst.grupo||'Ganado') + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🔄 Define potrero origen y destino<br>') +
+      (inst.origen && inst.destino ? '🔄 ' + grupoResumen + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🔄 Define potrero origen y destino<br>') +
       '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
     '</div>' +
   '</div>';
