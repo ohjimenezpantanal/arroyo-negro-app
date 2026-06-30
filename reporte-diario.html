@@ -673,7 +673,22 @@ document.addEventListener('DOMContentLoaded', function() {
         delete actsData[id];
         el.classList.remove('sel');
       } else {
-        actsData[id] = { nom:nom, cod:cod, subtipo:'', eliminado:'', instancias:[{potrero:'',hInicio:'',hFin:'',horas:0}] };
+        // Smart default: iniciar donde terminó la última actividad
+        var ultimaHora = '';
+        var ids = Object.keys(actsData);
+        if (ids.length > 0) {
+          // Tomar la hora fin de la última actividad agregada
+          var lastId = ids[ids.length - 1];
+          var lastInsts = actsData[lastId].instancias;
+          ultimaHora = lastInsts[lastInsts.length - 1].hFin || '';
+        }
+        if (!ultimaHora) {
+          // Si es la primera actividad, usar hora de llegada
+          var llegadaEl = document.getElementById('horaLlegada');
+          ultimaHora = llegadaEl ? llegadaEl.value || '' : '';
+        }
+        actsData[id] = { nom:nom, cod:cod, subtipo:'', eliminado:'',
+          instancias:[{potrero:'', hInicio:ultimaHora, hFin:'', horas:0}] };
         el.classList.add('sel');
       }
       renderDetalles();
@@ -889,9 +904,23 @@ var ACTS_CORRAL  = ['implante','vitaminas','pesaje','desparasit'];
 var ACTS_ARREO   = ['arreo'];
 var UBICACIONES  = ['Corral Principal','Módulo de Suplementación'].concat(POTREROS);
 
+function getDefaultHoraInicio(currentId) {
+  // Devuelve la hora fin de la actividad anterior, o hora de llegada
+  var ids = Object.keys(actsData);
+  var idx = ids.indexOf(currentId);
+  if (idx > 0) {
+    var prevId = ids[idx - 1];
+    var prevInsts = actsData[prevId].instancias;
+    var prevHf = prevInsts[prevInsts.length - 1].hFin || '';
+    if (prevHf) return prevHf;
+  }
+  var llegadaEl = document.getElementById('horaLlegada');
+  return llegadaEl ? llegadaEl.value || '' : '';
+}
+
 function getCorralHtml(id) {
   var inst  = actsData[id] ? actsData[id].instancias[0] : {};
-  var hInicio = inst.hInicio || '';
+  var hInicio = inst.hInicio || getDefaultHoraInicio(id);
   var hFin    = inst.hFin    || '';
   var horas   = inst.horas   || 0;
   var pct     = calcPct(id);
@@ -1596,6 +1625,32 @@ window.enviar = function() {
 
   var ll    = document.getElementById('horaLlegada') ? document.getElementById('horaLlegada').value || '' : '';
   var sl    = document.getElementById('horaSalida') ? document.getElementById('horaSalida').value || '' : '';
+
+  // Validar que las horas de actividades sean razonables
+  var horasValidas = true;
+  var actNames = Object.keys(actsData);
+  if (ll && actNames.length > 0) {
+    var jH = parseInt(ll.split(':')[0]);
+    actNames.forEach(function(aid) {
+      actsData[aid].instancias.forEach(function(inst) {
+        if (inst.hInicio) {
+          var aH = parseInt(inst.hInicio.split(':')[0]);
+          // Si la actividad empieza más de 1 hora antes de llegada o después de las 8PM, advertir
+          if (aH > 20 || (jH > 0 && aH < jH - 1)) {
+            horasValidas = false;
+          }
+        }
+      });
+    });
+  }
+  if (!horasValidas) {
+    var confirmar = confirm('⚠️ Horas fuera del horario de jornada. ¿Las horas de las actividades son correctas?');
+    if (!confirmar) {
+      btn.textContent = '📋 Enviar registro del día';
+      btn.disabled = false;
+      return;
+    }
+  }
   // Usar fecha manual si fue cambiada, sino la del tag
   var fechaInpVal = document.getElementById('fechaManual') ? document.getElementById('fechaManual').value : '';
   var fecha;
