@@ -2023,110 +2023,80 @@ window.enviar = function() {
   var acts = [];
   Object.keys(actsData).forEach(function(id) {
     var a = actsData[id];
-    var subtipo  = actsData[id] ? (actsData[id].subtipo   || '') : '';
-    var eliminado = actsData[id] ? (actsData[id].eliminado || '') : '';
+    var subtipo   = a.subtipo   || '';
+    var eliminado = a.eliminado || '';
+
     a.instancias.forEach(function(inst) {
       var actEntry = {
-        actividad: a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : ''),
+        actividad:     a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : ''),
         actividadBase: a.nom,
-        subtipo: subtipo,
-        codigoCosto: a.cod,
-        potrero: inst.potrero || '',
-        horaInicio: inst.hInicio,
-        horaFin: inst.hFin,
-        horas: inst.horas
+        subtipo:       subtipo,
+        codigoCosto:   a.cod,
+        potrero:       inst.potrero || '',
+        horaInicio:    inst.hInicio || '',
+        horaFin:       inst.hFin    || '',
+        horas:         inst.horas   || 0
       };
-      // Datos especiales corral
+
+      // Corral Principal: implante, vitaminas, pesaje, desparasit
       if (ACTS_CORRAL.indexOf(id) >= 0) {
-        actEntry.potrero         = 'Corral Principal';
-        actEntry.grupo           = inst.grupo       || '';
-        actEntry.nAnimales       = inst.nAnimales   || '';
-        actEntry.tipoVitamina    = inst.tipoVit     || '';
+        actEntry.potrero      = 'Corral Principal';
+        actEntry.grupo        = inst.grupo    || '';
+        actEntry.nAnimales    = inst.nAnimales|| '';
+        actEntry.tipoVitamina = inst.tipoVit  || '';
+        actEntry.producto     = inst.producto || '';
       }
-      // Datos cambio de potrero
+
+      // Cambio de potrero: origen → destino
       if (id === 'cambiopot') {
-        actEntry.potrero       = (inst.origen||'') + ' → ' + (inst.destino||'');
-        actEntry.origenArreo   = inst.origen  || '';
-        actEntry.destinoArreo  = inst.destino || '';
-        actEntry.grupo         = inst.grupo   || '';
+        actEntry.potrero      = (inst.origen||'') + ' → ' + (inst.destino||'');
+        actEntry.origenArreo  = inst.origen  || '';
+        actEntry.destinoArreo = inst.destino || '';
+        actEntry.grupo        = inst.grupo   || '';
       }
-      // Datos recorrido general
-      if (id === 'cambiopot') {
-      return '<div class="act-detalle" id="det_' + id + '">' +
-        '<div class="act-det-tit">' +
-          '<span>' + a.nom + '</span>' +
-          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
-        '</div>' +
-        getCambioPotHtml(id) +
-      '</div>';
-    }
-    if (id === 'recorrido') {
-        actEntry.potrero = inst.zona === 'Potrero específico' ? (inst.potrero||'') :
-                           inst.zona === 'Lindero' ? 'Lindero' : (inst.zona||'');
-        actEntry.zonaRecorrido = inst.zona    || '';
+
+      // Arreo / manejo de ganado: origen → destino
+      if (ACTS_ARREO.indexOf(id) >= 0) {
+        actEntry.potrero      = (inst.origen||'') + ' → ' + (inst.destino||'');
+        actEntry.origenArreo  = inst.origen  || '';
+        actEntry.destinoArreo = inst.destino || '';
+        actEntry.grupo        = inst.grupo   || '';
+      }
+
+      // Recorrido general: zona / lindero
+      if (id === 'recorrido') {
+        actEntry.potrero        = inst.zona === 'Potrero específico' ? (inst.potrero||'') :
+                                   inst.zona === 'Lindero' ? 'Lindero' : (inst.zona||'');
+        actEntry.zonaRecorrido  = inst.zona    || '';
         actEntry.linderoDetalle = inst.lindero || '';
       }
-      // Datos otra actividad
+
+      // Otra actividad: descripción libre + ubicación
       if (id === 'otra') {
         actEntry.actividad = 'Otra: ' + (inst.descripcion||'sin descripción');
         actEntry.potrero   = inst.ubicacion === 'Otro' ? (inst.ubicacionOtro||'Otro') : (inst.ubicacion||'');
       }
-      // Datos especiales arreo
-      if (ACTS_ARREO.indexOf(id) >= 0) {
-        actEntry.potrero         = (inst.origen || '') + ' → ' + (inst.destino || '');
-        actEntry.origenArreo     = inst.origen  || '';
-        actEntry.destinoArreo    = inst.destino || '';
-        actEntry.grupo           = inst.grupo   || '';
+
+      // Corte y distribución / picado de pasto
+      if (id === 'cortepasto' || id === 'picado') {
+        actEntry.potrero        = 'Lote Pasto de Corte';
+        actEntry.tipoPasto      = inst.tipoPasto    || '';
+        actEntry.cantidadKg     = inst.cantKg       || '';
+        actEntry.destino        = inst.destino      || '';
+        actEntry.destinoPotrero = inst.destPotrero  || '';
+        actEntry.actividad      = a.nom + (inst.tipoPasto ? ' · ' + inst.tipoPasto : '');
       }
-      // Datos especiales de pasto de corte
-      if (id === 'cambiopot') {
-      return '<div class="act-detalle" id="det_' + id + '">' +
-        '<div class="act-det-tit">' +
-          '<span>' + a.nom + '</span>' +
-          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
-        '</div>' +
-        getCambioPotHtml(id) +
-      '</div>';
-    }
-    if (id === 'recorrido') {
-      return '<div class="act-detalle" id="det_' + id + '">' +
-        '<div class="act-det-tit">' +
-          '<span>' + a.nom + '</span>' +
-          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
-        '</div>' +
-        getRecorridoHtml(id) +
-      '</div>';
-    }
-    if (id === 'otra') {
-      return '<div class="act-detalle" id="det_' + id + '">' +
-        '<div class="act-det-tit">' +
-          '<span>' + a.nom + '</span>' +
-          '<span class="cod" style="background:' + codColor(a.cod) + ';color:#fff">' + a.cod + '</span>' +
-        '</div>' +
-        getOtraHtml(id) +
-      '</div>';
-    }
-    if (id === 'cortepasto' || id === 'picado') {
-        actEntry.potrero = 'Lote Pasto de Corte';
-        actEntry.tipoPasto    = inst.tipoPasto    || '';
-        actEntry.cantidadKg   = inst.cantKg       || '';
-        actEntry.destino      = inst.destino      || '';
-        actEntry.destinoPotrero = inst.destPotrero || '';
-        actEntry.actividad    = a.nom + (inst.tipoPasto ? ' · ' + inst.tipoPasto : '');
-      }
+
       acts.push(actEntry);
     });
   });
 
-  // Datos de cercas (sección separada para ambos trabajadores)
+  // Prorrateo basado en la JORNADA TOTAL (lo que se paga), no solo en horas de actividad
+  var totalHrs    = acts.reduce(function(s,a){ return s + (a.horas||0); }, 0);
+  var jornadaBase = jornadaHrsPay > 0 ? jornadaHrsPay : totalHrs;
 
-
-  // Total horas para prorrateo
-  var totalHrs = acts.reduce(function(s,a){return s+(a.horas||0);},0);
-
-  // Calcular prorrateo para cada actividad
   acts.forEach(function(a) {
-    a.pctDia = totalHrs > 0 ? a.horas / totalHrs : 0;
+    a.pctDia     = jornadaBase > 0 ? (a.horas||0) / jornadaBase : 0;
     a.valorDolar = parseFloat((a.pctDia * VALOR_DIARIO).toFixed(2));
   });
 
