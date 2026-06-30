@@ -328,9 +328,9 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
   </div>
   <div class="card-body">
     <div class="fld">
-      <label class="lbl">¿Qué potrero estás reportando?</label>
+      <label class="lbl">¿En qué potrero está el ganado HOY?</label>
       <select id="potreroReporte">
-        <option value="">Seleccionar potrero...</option>
+        <option value="">Seleccionar potrero activo...</option>
         <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
         <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
         <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
@@ -340,14 +340,16 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
         <option>P-25 ⚠</option><option>P-26 ⚠</option><option>P-27 ⚠</option><option>P-28 ⚠</option>
         <option>P-29 ⚠</option><option>P-30 ⚠</option><option>P-31 ⚠</option><option>P-32 ⚠</option>
       </select>
+      <div style="font-size:11px;color:var(--sub);margin-top:5px;line-height:1.4">El potrero donde el ganado pasó la noche y amaneció hoy — no uno cualquiera. Si rotaste ayer, selecciona el potrero nuevo.</div>
     </div>
     <div class="fld">
-      <label class="lbl">Estado del pasto en ese potrero</label>
+      <label class="lbl">Estado del pasto en ese potrero — ¿toca rotar?</label>
       <div class="tg-grp" id="grp_pasto">
         <button type="button" class="tg" data-grp="pasto" data-val="CON_PASTO" data-cls="sv">🟢 Con pasto</button>
         <button type="button" class="tg" data-grp="pasto" data-val="PASTO_BAJO" data-cls="sa">🟡 Pasto bajo</button>
         <button type="button" class="tg" data-grp="pasto" data-val="AGOTADO_MALEZA" data-cls="sr">🔴 Agotado / maleza</button>
       </div>
+      <div id="alertaRotacion" class="alrt" style="display:none"></div>
     </div>
     <div class="fld" style="margin-top:10px">
       <label class="lbl">Estado de cercas</label>
@@ -945,6 +947,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (grp === 'turno')    mostrar('conteoDiv',   val === 'SI');
       if (grp === 'pesaje')   mostrar('pesajeDiv',   val === 'SI');
       if (grp === 'cercas')   mostrar('cercaDetDiv',  val === 'FALLA');
+      if (grp === 'pasto') {
+        var aR = document.getElementById('alertaRotacion');
+        if (aR) {
+          if (val === 'AGOTADO_MALEZA') {
+            aR.className = 'alrt show alrt-r';
+            aR.textContent = '🚨 Pasto agotado — registra hoy la actividad "Cambio de potrero" para mover el ganado.';
+          } else if (val === 'PASTO_BAJO') {
+            aR.className = 'alrt show alrt-a';
+            aR.textContent = '⚠ Pasto bajo — vigila los próximos días, puede que toque rotar pronto.';
+          } else {
+            aR.className = 'alrt';
+          }
+        }
+      }
       if (grp === 'agua') mostrar('aguaDetDiv', val === 'PROBLEMA');
       if (grp === 'suplemento') mostrar('suplDetalleDiv', val === 'SI');
       if (grp === 'agotando') mostrar('agotandoDiv', val === 'SI');
