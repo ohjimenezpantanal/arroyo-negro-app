@@ -1037,6 +1037,15 @@ document.addEventListener('DOMContentLoaded', function() {
         renderDetalles(); recalc();
       }
     }
+    var btnNC = e.target.closest('.necchapia-btn');
+    if (btnNC) {
+      var cidNC = btnNC.getAttribute('data-cid');
+      var valNC = btnNC.getAttribute('data-val');
+      if (actsData[cidNC]) {
+        actsData[cidNC].instancias[0].necesitaChapia = valNC;
+        renderDetalles(); recalc();
+      }
+    }
     var btn3 = e.target.closest('.campot-grp-btn');
     if (btn3) {
       var cid   = btn3.getAttribute('data-cid');
@@ -1485,6 +1494,22 @@ function getCambioPotHtml(id) {
         '<div style="font-size:11px;font-family:monospace;color:var(--vl);font-weight:700;margin-top:5px">↗ ' + grupoResumen + '</div>' +
       '</div>' +
     '</div>' +
+    (inst.origen ?
+      '<div style="background:#FFF8EE;border:1.5px solid #C8961E;border-radius:8px;padding:10px;margin-bottom:10px">' +
+        '<div style="font-size:11px;font-weight:700;color:#7A4A00;margin-bottom:6px">🌱 Potrero que dejas: ' + inst.origen + '</div>' +
+        '<div style="font-size:10px;font-family:monospace;color:#7A4A00;margin-bottom:8px;line-height:1.4">Para que el rebrote esté listo en 21 días, la maleza debe controlarse AHORA — no esperar.</div>' +
+        '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#7A4A00;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">¿' + inst.origen + ' necesita chapia antes del descanso?</div>' +
+        '<div style="display:flex;gap:5px">' +
+          '<button type="button" data-cid="' + id + '" data-val="NO" class="necchapia-btn" ' +
+            'style="flex:1;padding:8px;border:1.5px solid ' + (inst.necesitaChapia==='NO'?'#4A8A34':'#ddd') + ';' +
+            'background:' + (inst.necesitaChapia==='NO'?'#4A8A34':'white') + ';color:' + (inst.necesitaChapia==='NO'?'white':'#333') + ';' +
+            'border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">✅ No, queda limpio</button>' +
+          '<button type="button" data-cid="' + id + '" data-val="SI" class="necchapia-btn" ' +
+            'style="flex:1;padding:8px;border:1.5px solid ' + (inst.necesitaChapia==='SI'?'#8B1A1A':'#ddd') + ';' +
+            'background:' + (inst.necesitaChapia==='SI'?'#8B1A1A':'white') + ';color:' + (inst.necesitaChapia==='SI'?'white':'#333') + ';' +
+            'border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">🌿 Sí, necesita chapia</button>' +
+        '</div>' +
+      '</div>' : '') +
     '<div style="font-size:10px;font-family:monospace;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Horario</div>' +
     '<div class="mini-row">' +
       '<span class="mini-lbl">De:</span>' +
@@ -1494,6 +1519,7 @@ function getCambioPotHtml(id) {
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
       (inst.origen && inst.destino ? '🔄 ' + grupoResumen + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🔄 Define potrero origen y destino<br>') +
+      (inst.necesitaChapia === 'SI' ? '<span style="color:#FFD89A">🌿 ' + inst.origen + ' queda pendiente de chapia</span><br>' : '') +
       '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
     '</div>' +
   '</div>';
@@ -2129,6 +2155,9 @@ function validarActividades() {
         if (!inst.origen)  errores.push(nombre + ': falta potrero de origen');
         if (!inst.destino) errores.push(nombre + ': falta potrero de destino');
         if (!inst.grupo)   errores.push(nombre + ': falta seleccionar grupo');
+        if (id === 'cambiopot' && !inst.necesitaChapia) {
+          errores.push(nombre + ': falta indicar si ' + (inst.origen||'el potrero') + ' necesita chapia antes del descanso');
+        }
       }
       else if (ACTS_CORRAL.indexOf(id) >= 0) {
         if (!inst.grupo) errores.push(nombre + ': falta seleccionar grupo');
@@ -2280,10 +2309,12 @@ window.enviar = function() {
 
       // Cambio de potrero: origen → destino
       if (id === 'cambiopot') {
-        actEntry.potrero      = (inst.origen||'') + ' → ' + (inst.destino||'');
-        actEntry.origenArreo  = inst.origen  || '';
-        actEntry.destinoArreo = inst.destino || '';
-        actEntry.grupo        = inst.grupo   || '';
+        actEntry.potrero        = (inst.origen||'') + ' → ' + (inst.destino||'');
+        actEntry.origenArreo    = inst.origen  || '';
+        actEntry.destinoArreo   = inst.destino || '';
+        actEntry.grupo          = inst.grupo   || '';
+        actEntry.necesitaChapia = inst.necesitaChapia || '';
+        actEntry.potreroPendienteChapia = inst.necesitaChapia === 'SI' ? (inst.origen||'') : '';
       }
 
       // Arreo / manejo de ganado: origen → destino
