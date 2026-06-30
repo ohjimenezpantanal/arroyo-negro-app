@@ -685,13 +685,10 @@ function procesarCatalogos(filas) {
     actualizarDropdownTrabajadores(nuevosTrabajadores);
   }
 
-  if (nuevosGrupos.length > 0) {
-    actualizarSeccionGanado(nuevosGrupos);
-  }
-
-  if (nuevasActividades.length > 0) {
-    actualizarListaActividades(nuevasActividades);
-  }
+  // Actividades NO se generan dinámicamente — las 18 ya construidas
+  // tienen lógica específica (sub-formularios) que la generación automática
+  // no puede replicar. Si se necesita una actividad nueva, se agrega
+  // directamente en el código del formulario con su lógica correcta.
 
   catalogoCargado = true;
 }
@@ -1300,6 +1297,25 @@ function getCorralHtml(id) {
       '</div>';
   }
 
+  if (id === 'desparasit') {
+    var prodVal = inst.producto || '';
+    campos =
+      '<div style="margin-bottom:10px">' +
+        '<div class="mini-row"><span class="mini-lbl">Grupo:</span>' +
+          '<select class="mini-inp corral-sel" data-cid="' + id + '" data-campo="grupo">' +
+            '<option value="">Seleccionar...</option>' + grupoOpts +
+          '</select></div>' +
+        '<div class="mini-row"><span class="mini-lbl">Animales:</span>' +
+          '<input type="number" class="mini-inp corral-num" data-cid="' + id + '" data-campo="nAnimales" ' +
+            'value="' + (inst.nAnimales||'') + '" placeholder="¿Cuántos animales?" min="0" style="font-size:16px;font-weight:700">' +
+        '</div>' +
+        '<div class="mini-row"><span class="mini-lbl">Producto:</span>' +
+          '<input type="text" class="mini-inp corral-txt" data-cid="' + id + '" data-campo="producto" ' +
+            'value="' + prodVal + '" placeholder="Nombre del desparasitante...">' +
+        '</div>' +
+      '</div>';
+  }
+
   if (id === 'pesaje') {
     campos =
       '<div style="margin-bottom:10px">' +
@@ -1349,9 +1365,25 @@ function getArreoHtml(id) {
   origenOpts  = origenOpts.replace('"' + inst.origen  + '">', '"' + (inst.origen||'')  + '" selected>');
   destinoOpts = destinoOpts.replace('"' + inst.destino + '">', '"' + (inst.destino||'') + '" selected>');
 
-  var grupoOpts = ['G1','G2','G3 (Ensayo)','Búfalos','Todos'].map(function(g) {
-    return '<option value="' + g + '"' + (inst.grupo===g?' selected':'') + '>' + g + '</option>';
+  // Grupos seleccionados (array guardado en inst.grupos) — multi-select
+  var gruposSeleccionados = inst.grupos || [];
+  var todosGruposArreo = [
+    {val:'G1',      ico:'F-04-26'},
+    {val:'G2',      ico:'F-02-24'},
+    {val:'G3',      ico:'XIOM'},
+    {val:'Búfalos', ico:'Excl.'},
+  ];
+  var gruposBtns = todosGruposArreo.map(function(g) {
+    var sel = gruposSeleccionados.indexOf(g.val) >= 0;
+    return '<button type="button" data-cid="' + id + '" data-grupo="' + g.val + '" ' +
+      'class="campot-grp-btn" style="padding:8px 10px;border:1.5px solid ' + (sel?'#1A3A1A':'#ddd') + ';' +
+      'background:' + (sel?'#1A3A1A':'white') + ';color:' + (sel?'white':'#333') + ';' +
+      'border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation;text-align:center">' +
+      '<div>' + g.val + '</div>' +
+      '<div style="font-size:9px;font-family:monospace;opacity:.7">' + g.ico + '</div>' +
+    '</button>';
   }).join('');
+  var grupoResumen = gruposSeleccionados.length > 0 ? gruposSeleccionados.join(' + ') : '—';
 
   return '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 0 8px">' +
     '<div style="margin-bottom:10px">' +
@@ -1373,11 +1405,12 @@ function getArreoHtml(id) {
       '<input type="time" class="mini-inp corral-time" data-cid="' + id + '" data-campo="hFin" value="' + hFin + '">' +
     '</div>' +
     '<div style="background:#1A3A1A;border-radius:6px;padding:8px 10px;font-family:monospace;font-size:11px;color:#B8D4A8;line-height:1.9;margin-top:8px">' +
-      (inst.origen && inst.destino ? '🐂 ' + (inst.grupo||'Ganado') + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🐂 Define origen y destino<br>') +
+      (inst.origen && inst.destino ? '🐂 ' + grupoResumen + ': ' + inst.origen + ' → ' + inst.destino + '<br>' : '🐂 Define origen, destino y grupo<br>') +
       '<span style="color:#88DD88">⏱ ' + hrsCalc + ' · ' + (pct*100).toFixed(0) + '% del día · ' + valor + '</span>' +
     '</div>' +
   '</div>';
 }
+
 
 function getCambioPotHtml(id) {
   var inst    = actsData[id] ? actsData[id].instancias[0] : {};
