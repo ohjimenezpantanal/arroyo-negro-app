@@ -588,6 +588,8 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
 var VALOR_DIARIO = 16; // Se actualiza desde Catálogos si hay conexión
+var HORAS_ALMUERZO = 1;      // Se resta de la jornada si jornada >= UMBRAL_ALMUERZO
+var UMBRAL_ALMUERZO = 6;     // Horas mínimas de jornada para aplicar descuento de almuerzo
 
 /**
  * CARGA DINÁMICA DE CATÁLOGOS DESDE GOOGLE SHEETS
@@ -718,6 +720,16 @@ function procesarCatalogos(filas) {
       var raw = fila[16].replace(/\$/g,'').replace(/\./g,'').replace(/,/g,'.');
       var v = parseFloat(raw);
       if (!isNaN(v) && v > 0) nuevoValorDiario = v;
+    }
+    if (fila[15] && fila[15].toLowerCase().includes('horas de almuerzo') && fila[16]) {
+      var rawA = fila[16].toString().replace(/\$/g,'').replace(/,/g,'.');
+      var vA = parseFloat(rawA);
+      if (!isNaN(vA) && vA >= 0) HORAS_ALMUERZO = vA;
+    }
+    if (fila[15] && fila[15].toLowerCase().includes('jornada mínima para almuerzo') && fila[16]) {
+      var rawU = fila[16].toString().replace(/\$/g,'').replace(/,/g,'.');
+      var vU = parseFloat(rawU);
+      if (!isNaN(vU) && vU >= 0) UMBRAL_ALMUERZO = vU;
     }
   });
 
@@ -1712,6 +1724,9 @@ function getJornadaHrs() {
   var p1 = ll.value.split(':').map(Number);
   var p2 = sl.value.split(':').map(Number);
   var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+  if (h <= 0) return 0;
+  // Descontar hora de almuerzo si la jornada alcanza el umbral
+  if (h >= UMBRAL_ALMUERZO) h -= HORAS_ALMUERZO;
   return h > 0 ? h : 0;
 }
 
@@ -1722,8 +1737,10 @@ function getTotalActHrs() {
 }
 
 function calcPct(id) {
-  // Denominador = jornada total (lo que Oscar paga), no solo horas reportadas
-  var jornadaHrs = getJornadaHrs();
+  // Denominador = jornada EFECTIVA (jornada bruta - almuerzo), no solo horas reportadas
+  var jornadaBruta = getJornadaHrs();
+  var descAlm = (jornadaBruta >= 6) ? 1 : 0; // defaults — Catálogos define el real en Apps Script
+  var jornadaHrs = Math.max(0, jornadaBruta - descAlm);
   var denominador = jornadaHrs > 0 ? jornadaHrs : getTotalActHrs();
   if (!denominador || !actsData[id]) return 0;
   var actHrs = actsData[id].instancias.reduce(function(s,inst){return s+inst.horas;},0);
@@ -1767,7 +1784,11 @@ function renderResumen() {
     '</div>';
   }).join('');
 
-  var jornadaHrs = getJornadaHrs();
+  var jornadaBruta = getJornadaHrs();
+  var HORAS_ALMUERZO = 1;       // mismo default que Apps Script — Catálogos es la fuente real
+  var JORNADA_MIN_ALMUERZO = 6;
+  var descAlmuerzo = (jornadaBruta >= JORNADA_MIN_ALMUERZO) ? HORAS_ALMUERZO : 0;
+  var jornadaHrs = Math.max(0, jornadaBruta - descAlmuerzo);
   var tiempoNoRep = jornadaHrs > 0 ? jornadaHrs - totalHrs : 0;
   var costoNoRep  = jornadaHrs > 0 ? (tiempoNoRep / jornadaHrs) * VALOR_DIARIO : 0;
 
@@ -1780,8 +1801,13 @@ function renderResumen() {
     totalVal += costoNoRep;
   }
 
+  if (descAlmuerzo > 0) {
+    html += '<div class="res-row" style="font-size:10px;color:var(--sub)">' +
+      '<span>🍽 Almuerzo (no se paga)</span><span>-' + descAlmuerzo.toFixed(1) + 'h</span><span></span>' +
+    '</div>';
+  }
   html += '<div class="res-row">' +
-    '<span>TOTAL JORNADA</span>' +
+    '<span>TOTAL JORNADA EFECTIVA</span>' +
     '<span style="color:var(--sub);font-size:10px">' + (jornadaHrs > 0 ? jornadaHrs.toFixed(1) : totalHrs.toFixed(1)) + ' hrs</span>' +
     '<span class="res-val">' + (Math.abs(totalVal - VALOR_DIARIO) < 0.01 ? '✅ ' : '') + '$' + totalVal.toFixed(2) + '</span>' +
   '</div>';
@@ -1959,7 +1985,76 @@ function remCercaFalla(idx) {
 
 
 
+// ── VALIDACIÓN DE CAMPOS OBLIGATORIOS POR ACTIVIDAD ────────────────────────
+function validarActividades() {
+  var errores = [];
+
+  Object.keys(actsData).forEach(function(id) {
+    var a = actsData[id];
+    var nombre = a.nom;
+
+    a.instancias.forEach(function(inst, idx) {
+      var sufijo = a.instancias.length > 1 ? ' (potrero ' + (idx+1) + ')' : '';
+
+      // Horario siempre obligatorio
+      if (!inst.hInicio || !inst.hFin) {
+        errores.push(nombre + sufijo + ': falta horario');
+        return; // no seguir validando esta instancia si no hay horario
+      }
+
+      // Validaciones específicas por tipo de actividad
+      if (id === 'chapia' || id === 'herbicida') {
+        if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
+        if (!a.subtipo) errores.push(nombre + ': falta tipo de trabajo');
+      }
+      else if (id === 'cercas') {
+        if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
+        if (!a.subtipo) errores.push(nombre + ': falta tipo de falla/trabajo');
+      }
+      else if (id === 'cambiopot' || ACTS_ARREO.indexOf(id) >= 0) {
+        if (!inst.origen)  errores.push(nombre + ': falta potrero de origen');
+        if (!inst.destino) errores.push(nombre + ': falta potrero de destino');
+        if (!inst.grupo)   errores.push(nombre + ': falta seleccionar grupo');
+      }
+      else if (ACTS_CORRAL.indexOf(id) >= 0) {
+        if (!inst.grupo) errores.push(nombre + ': falta seleccionar grupo');
+        if ((id === 'implante' || id === 'vitaminas' || id === 'desparasit') && !inst.nAnimales) {
+          errores.push(nombre + ': falta número de animales');
+        }
+      }
+      else if (id === 'cortepasto' || id === 'picado') {
+        if (!inst.tipoPasto) errores.push(nombre + ': falta tipo de pasto');
+        if (!inst.cantKg)    errores.push(nombre + ': falta cantidad en kg');
+        if (!inst.destino)   errores.push(nombre + ': falta destino del producto');
+      }
+      else if (id === 'recorrido') {
+        if (!inst.zona) errores.push(nombre + ': falta seleccionar zona');
+        if (inst.zona === 'Lindero' && !inst.lindero) errores.push(nombre + ': falta indicar cuál lindero');
+        if (inst.zona === 'Potrero específico' && !inst.potrero) errores.push(nombre + ': falta el potrero');
+      }
+      else if (id === 'otra') {
+        if (!inst.descripcion) errores.push(nombre + ': falta descripción');
+        if (!inst.ubicacion)   errores.push(nombre + ': falta ubicación');
+      }
+      else {
+        // Actividades genéricas con potrero simple
+        if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
+      }
+    });
+  });
+
+  return errores;
+}
+
 window.enviar = function() {
+  // Validar ANTES de cualquier otra cosa
+  var errores = validarActividades();
+  if (errores.length > 0) {
+    var msg = '⚠️ Faltan datos obligatorios:\n\n' + errores.map(function(e){return '• '+e;}).join('\n');
+    alert(msg);
+    return; // detener el envío
+  }
+
   var btn = document.getElementById('btnSub');
   btn.textContent = 'Enviando...';
   btn.disabled = true;
