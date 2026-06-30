@@ -312,21 +312,11 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
           <input type="number" id="pesoG2" placeholder="360"></div>
       </div>
     </div>
-    </div><!-- cierre conteoDiv -->
-  </div>
-</div>
 
-</div><!-- cierre seccionGanado -->
+    <div style="border-top:1.5px dashed var(--brd);margin:16px 0 12px;padding-top:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--vm);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">🌿 Inspección del potrero donde está el ganado</div>
+    </div>
 
-<!-- 3. POTREROS — solo Héctor -->
-<div id="seccionPotreros" style="display:none">
-<div class="card">
-  <div class="card-hdr">
-    <span class="card-ico">🌿</span>
-    <span class="card-tit">Estado Potreros</span>
-    <span class="card-pts" id="cp_pot">0 pts</span>
-  </div>
-  <div class="card-body">
     <div class="fld">
       <label class="lbl">¿En qué potrero está el ganado HOY?</label>
       <select id="potreroReporte">
@@ -351,59 +341,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       </div>
       <div id="alertaRotacion" class="alrt" style="display:none"></div>
     </div>
-    <div class="fld" style="margin-top:10px">
-      <label class="lbl">Estado de cercas</label>
-      <div class="tg-grp" id="grp_cercas">
-        <button type="button" class="tg" data-grp="cercas" data-val="OK" data-cls="sv">✅ OK</button>
-        <button type="button" class="tg" data-grp="cercas" data-val="FALLA" data-cls="sr">🚨 Falla</button>
-      </div>
-    </div>
-    <div id="cercaDetDiv" style="display:none;margin-top:6px">
-      <div class="g2" style="margin-bottom:8px">
-        <div class="fld">
-          <label class="lbl">¿En qué potrero?</label>
-          <select id="cercaPotreroFalla">
-            <option value="">Seleccionar...</option>
-            <option>P-01</option><option>P-02</option><option>P-03</option><option>P-04</option>
-            <option>P-05</option><option>P-06</option><option>P-07</option><option>P-08</option>
-            <option>P-09</option><option>P-10</option><option>P-11</option><option>P-12</option>
-            <option>P-13</option><option>P-14</option><option>P-15</option><option>P-16</option>
-            <option>P-17⚠</option><option>P-18⚠</option><option>P-19⚠</option><option>P-20⚠</option>
-            <option>P-21⚠</option><option>P-22⚠</option><option>P-23⚠</option><option>P-24⚠</option>
-            <option>P-25⚠</option><option>P-26⚠</option><option>P-27⚠</option><option>P-28⚠</option>
-            <option>P-29⚠</option><option>P-30⚠</option><option>P-31⚠</option><option>P-32⚠</option>
-          </select>
-        </div>
-        <div class="fld">
-          <label class="lbl">Tipo de falla</label>
-          <select id="cercaTipoFalla">
-            <option value="">Seleccionar...</option>
-            <option>Alambre cortado</option>
-            <option>Poste caído</option>
-            <option>Puerta rota</option>
-            <option>Alambre suelto / flojo</option>
-            <option>Animal rompió la cerca</option>
-            <option>Cerca incompleta</option>
-            <option>Otra falla</option>
-          </select>
-        </div>
-      </div>
-      <input type="text" id="cercaDet" placeholder="Descripción adicional del problema...">
-    </div>
-  </div>
-</div>
-</div><!-- cierre seccionPotreros -->
-
-<div id="seccionCercas" style="display:none">
-<!-- CERCAS — ambos trabajadores reportan — multi-ubicación -->
-<div class="card">
-  <div class="card-hdr">
-    <span class="card-ico">🪝</span>
-    <span class="card-tit">Estado de Cercas</span>
-    <span class="card-pts" id="cp_cercas">0 pts</span>
-  </div>
-  <div class="card-body">
-    <div class="fld">
+    <div class="fld" style="margin-top:12px">
       <label class="lbl">Agua / bebederos</label>
       <div class="tg-grp" id="grp_agua">
         <button type="button" class="tg" data-grp="agua" data-val="OK" data-cls="sv">✅ OK</button>
@@ -414,7 +352,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <input type="text" id="aguaDet" placeholder="¿En qué potrero y cuál es el problema?">
     </div>
     <div class="fld" style="margin-top:12px">
-      <label class="lbl">¿Las cercas están bien hoy?</label>
+      <label class="lbl">¿Las cercas de ese potrero están bien?</label>
       <div class="tg-grp" id="grp_cercas2">
         <button type="button" class="tg" data-grp="cercas2" data-val="OK" data-cls="sv">✅ Todas OK</button>
         <button type="button" class="tg" data-grp="cercas2" data-val="FALLA" data-cls="sr">🚨 Hay falla</button>
@@ -424,10 +362,12 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <div id="cercaFallas"></div>
       <button type="button" onclick="addCercaFalla()" style="width:100%;padding:8px;background:var(--rbg);border:1.5px dashed var(--r);border-radius:6px;color:var(--r);font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;touch-action:manipulation">+ Agregar otra falla</button>
     </div>
+
+    </div><!-- cierre conteoDiv -->
   </div>
 </div>
 
-</div><!-- cierre seccionCercas -->
+</div><!-- cierre seccionGanado -->
 
 <!-- 4. ACTIVIDADES CON POTRERO Y HORAS -->
 <div id="seccionActividades" style="display:none">
@@ -936,17 +876,14 @@ document.addEventListener('DOMContentLoaded', function() {
         mostrar('ausenciaDiv', val === 'NO');
         mostrar('seccionGanado',   val === 'SI');
         var esHect = document.getElementById('trabajador').value === 'Héctor Zambrano';
-        mostrar('seccionPotreros',       val === 'SI' && esHect);
         mostrar('seccionSuplementacion', val === 'SI' && esHect);
-        mostrar('seccionCercas',   val === 'SI');
         mostrar('seccionActividades', val === 'SI');
         mostrar('seccionCierre',   val === 'SI');
-        mostrar('seccionInsumos',  val === 'SI' && document.getElementById('trabajador').value === 'Héctor Zambrano');
+        mostrar('seccionInsumos',  val === 'SI' && esHect);
       }
       if (grp === 'sanidad')  mostrar('novSanDiv',   val === 'SI');
       if (grp === 'turno')    mostrar('conteoDiv',   val === 'SI');
       if (grp === 'pesaje')   mostrar('pesajeDiv',   val === 'SI');
-      if (grp === 'cercas')   mostrar('cercaDetDiv',  val === 'FALLA');
       if (grp === 'pasto') {
         var aR = document.getElementById('alertaRotacion');
         if (aR) {
@@ -978,7 +915,6 @@ document.addEventListener('DOMContentLoaded', function() {
     mostrar('otroDiv', this.value === '__otro__');
     var esHector = this.value === 'Héctor Zambrano';
     var trabajo = S['trabajo'] === 'SI';
-    mostrar('seccionPotreros',       esHector && trabajo);
     mostrar('seccionSuplementacion', esHector && trabajo);
     mostrar('seccionInsumos',        esHector && trabajo);
     recalc();
@@ -2403,8 +2339,6 @@ window.enviar = function() {
     estadoPasto: S['pasto'] || '',
     salMineral: S['sal'] || '',
     agua: S['agua'] || '',
-    cercas: S['cercas'] || '',
-    cercaDetalle: document.getElementById('cercaDet') ? document.getElementById('cercaDet').value || '' : '',
     foto: S['foto'] || '',
     motivoTarde: S['motivo'] || '',
     insumosAgotan: ins,
