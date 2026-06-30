@@ -993,6 +993,7 @@ document.addEventListener('DOMContentLoaded', function() {
           ultimaHora = llegadaEl ? llegadaEl.value || '' : '';
         }
         actsData[id] = { nom:nom, cod:cod, subtipo:'', eliminado:'',
+          tipoMaleza:'', producto:'', dosisLitros:'',
           instancias:[{potrero:'', hInicio:ultimaHora, hFin:'', horas:0}] };
         el.classList.add('sel');
       }
@@ -1063,6 +1064,14 @@ document.addEventListener('DOMContentLoaded', function() {
       var cid   = el.getAttribute('data-cid');
       var campo = el.getAttribute('data-campo');
       if (actsData[cid]) { actsData[cid].instancias[0][campo] = el.value; renderDetalles(); recalc(); }
+    }
+    if (el.classList.contains('herb-ev')) {
+      var hsid   = el.getAttribute('data-sid');
+      var hcampo = el.getAttribute('data-campo');
+      if (actsData[hsid]) {
+        actsData[hsid][hcampo] = el.value;
+        if (hcampo !== 'dosisLitros') { renderDetalles(); recalc(); }
+      }
     }
     if (el.classList.contains('subtipo-ev')) {
       var sid = el.getAttribute('data-sid');
@@ -1671,35 +1680,72 @@ function getPastoCorteHtml(id) {
 
 
 function getSubtipoHtml(id, cod) {
-  var tiposChapia = ['Chapia manual con machete','Fumigación hoja ancha','Control paja de burro',
-    'Chapia mecánica con guadaña','Control maleza general','Limpieza de bordes / accesos','Otro'];
-  var tiposCercas = ['Cambio de alambre','Tensión de alambre','Colocar estacas / postes',
-    'Arreglo de puerta','Construcción de cerca nueva','Revisión y mantenimiento general','Otro'];
+  // ── CERCAS: tipo de trabajo físico ──────────────────────────────────────
+  if (id === 'cercas') {
+    var tiposCercas = ['Cambio de alambre','Tensión de alambre','Colocar estacas / postes',
+      'Arreglo de puerta','Construcción de cerca nueva','Revisión y mantenimiento general','Otro'];
+    var subValC = actsData[id] ? (actsData[id].subtipo || '') : '';
+    var optsC = '<option value="">Seleccionar tipo...</option>' +
+      tiposCercas.map(function(t) {
+        return '<option value="' + t + '"' + (subValC===t?' selected':'') + '>' + t + '</option>';
+      }).join('');
+    return '<div style="margin-top:6px;margin-bottom:4px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Tipo de trabajo:</div>' +
+      '<select class="mini-inp subtipo-ev" data-sid="' + id + '" style="font-size:13px">' + optsC + '</select>' +
+      '</div>';
+  }
 
-  var lista = null;
-  if (id === 'chapia' || id === 'herbicida') lista = tiposChapia;
-  else if (id === 'cercas') lista = tiposCercas;
-  else return '';
+  // ── CHAPIA: método físico, sin insumo ───────────────────────────────────
+  if (id === 'chapia') {
+    var metodos = ['Chapia manual con machete','Chapia mecánica con guadaña',
+      'Control manual de paja de burro','Limpieza de bordes / accesos','Otro'];
+    var subVal  = actsData[id] ? (actsData[id].subtipo   || '') : '';
+    var elimVal = actsData[id] ? (actsData[id].eliminado || '') : '';
 
-  // Leer valor guardado en actsData
-  var subVal    = actsData[id] ? (actsData[id].subtipo   || '') : '';
-  var elimVal   = actsData[id] ? (actsData[id].eliminado || '') : '';
-  var showEliminado = (id === 'chapia' || id === 'herbicida') && subVal !== '';
+    var optsM = '<option value="">Seleccionar método...</option>' +
+      metodos.map(function(t) {
+        return '<option value="' + t + '"' + (subVal===t?' selected':'') + '>' + t + '</option>';
+      }).join('');
 
-  var opts = '<option value="">Seleccionar tipo...</option>' +
-    lista.map(function(t) {
-      return '<option value="' + t + '"' + (subVal === t ? ' selected' : '') + '>' + t + '</option>';
-    }).join('');
-
-  return '<div style="margin-top:6px;margin-bottom:4px">' +
-    '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Tipo de trabajo:</div>' +
-    '<select class="mini-inp subtipo-ev" data-sid="' + id + '" style="font-size:13px">' + opts + '</select>' +
-    (showEliminado ?
-      '<div style="margin-top:6px">' +
-        '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">¿Qué eliminó / aplicó?</div>' +
-        '<input type="text" class="mini-inp eliminado-ev" data-sid="' + id + '" value="' + elimVal + '" placeholder="Ej: paja de burro, maleza de hoja ancha..." style="font-size:13px">' +
+    return '<div style="margin-top:6px;margin-bottom:4px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Método de chapia:</div>' +
+      '<select class="mini-inp subtipo-ev" data-sid="' + id + '" style="font-size:13px">' + optsM + '</select>' +
+      (subVal ? '<div style="margin-top:6px">' +
+        '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">¿Qué maleza eliminó?</div>' +
+        '<input type="text" class="mini-inp eliminado-ev" data-sid="' + id + '" value="' + elimVal + '" placeholder="Ej: paja de burro, rastrojo, guadua..." style="font-size:13px">' +
       '</div>' : '') +
     '</div>';
+  }
+
+  // ── HERBICIDA: aplicación química, con insumo ───────────────────────────
+  if (id === 'herbicida') {
+    var malezas  = ['Hoja ancha','Gramínea','Paja de burro','Maleza mixta','Otro'];
+    var productos = ['Glifosato','2,4-D','Picloram + 2,4-D (Tordon)','Otro'];
+
+    var malVal  = actsData[id] ? (actsData[id].tipoMaleza || '') : '';
+    var prodVal = actsData[id] ? (actsData[id].producto   || '') : '';
+    var dosisVal = actsData[id] ? (actsData[id].dosisLitros || '') : '';
+
+    var optsMal = '<option value="">Seleccionar maleza objetivo...</option>' +
+      malezas.map(function(t) {
+        return '<option value="' + t + '"' + (malVal===t?' selected':'') + '>' + t + '</option>';
+      }).join('');
+    var optsProd = '<option value="">Seleccionar producto...</option>' +
+      productos.map(function(t) {
+        return '<option value="' + t + '"' + (prodVal===t?' selected':'') + '>' + t + '</option>';
+      }).join('');
+
+    return '<div style="margin-top:6px;margin-bottom:4px">' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Maleza objetivo:</div>' +
+      '<select class="mini-inp herb-ev" data-sid="' + id + '" data-campo="tipoMaleza" style="font-size:13px;margin-bottom:8px">' + optsMal + '</select>' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Producto aplicado:</div>' +
+      '<select class="mini-inp herb-ev" data-sid="' + id + '" data-campo="producto" style="font-size:13px;margin-bottom:8px">' + optsProd + '</select>' +
+      '<div style="font-size:10px;font-family:monospace;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Dosis aplicada (litros):</div>' +
+      '<input type="number" class="mini-inp herb-ev" data-sid="' + id + '" data-campo="dosisLitros" value="' + dosisVal + '" placeholder="Ej: 2.5" min="0" step="0.1" style="font-size:14px;font-weight:700">' +
+    '</div>';
+  }
+
+  return '';
 }
 
 function addInst(id) {
@@ -2059,11 +2105,7 @@ function validarActividades() {
       }
 
       // Validaciones específicas por tipo de actividad
-      if (id === 'chapia' || id === 'herbicida') {
-        if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
-        if (!a.subtipo) errores.push(nombre + ': falta tipo de trabajo');
-      }
-      else if (id === 'cercas') {
+      if (id === 'cercas') {
         if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
         if (!a.subtipo) errores.push(nombre + ': falta tipo de falla/trabajo');
       }
@@ -2093,8 +2135,20 @@ function validarActividades() {
         if (!inst.descripcion) errores.push(nombre + ': falta descripción');
         if (!inst.ubicacion)   errores.push(nombre + ': falta ubicación');
       }
+      else if (id === 'chapia') {
+        if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
+        if (!a.subtipo)    errores.push(nombre + ': falta método de chapia');
+        if (!inst.estado)  errores.push(nombre + sufijo + ': falta indicar si terminó la tarea');
+      }
+      else if (id === 'herbicida') {
+        if (!inst.potrero)    errores.push(nombre + sufijo + ': falta potrero');
+        if (!a.tipoMaleza)    errores.push(nombre + ': falta maleza objetivo');
+        if (!a.producto)      errores.push(nombre + ': falta producto aplicado');
+        if (!a.dosisLitros)   errores.push(nombre + ': falta dosis en litros');
+        if (!inst.estado)     errores.push(nombre + sufijo + ': falta indicar si terminó la tarea');
+      }
       else {
-        // Actividades genéricas con potrero simple (chapia, herbicida, cercas, bebederos)
+        // Actividades genéricas con potrero simple (cercas, bebederos)
         if (!inst.potrero) errores.push(nombre + sufijo + ': falta potrero');
         if (!inst.estado) errores.push(nombre + sufijo + ': falta indicar si terminó la tarea');
       }
@@ -2180,8 +2234,14 @@ window.enviar = function() {
     var eliminado = a.eliminado || '';
 
     a.instancias.forEach(function(inst) {
+      var actLabel = a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : '');
+      if (id === 'herbicida') {
+        actLabel = a.nom +
+          (a.tipoMaleza ? ' · ' + a.tipoMaleza : '') +
+          (a.producto   ? ' · ' + a.producto   : '');
+      }
       var actEntry = {
-        actividad:     a.nom + (subtipo ? ' · ' + subtipo : '') + (eliminado ? ' · ' + eliminado : ''),
+        actividad:     actLabel,
         actividadBase: a.nom,
         subtipo:       subtipo,
         codigoCosto:   a.cod,
@@ -2230,6 +2290,13 @@ window.enviar = function() {
       if (id === 'otra') {
         actEntry.actividad = 'Otra: ' + (inst.descripcion||'sin descripción');
         actEntry.potrero   = inst.ubicacion === 'Otro' ? (inst.ubicacionOtro||'Otro') : (inst.ubicacion||'');
+      }
+
+      // Herbicida: maleza objetivo + producto + dosis (insumo químico)
+      if (id === 'herbicida') {
+        actEntry.tipoMaleza   = a.tipoMaleza   || '';
+        actEntry.producto     = a.producto     || '';
+        actEntry.dosisLitros  = a.dosisLitros  || '';
       }
 
       // Corte y distribución / picado de pasto
