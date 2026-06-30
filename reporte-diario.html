@@ -1418,9 +1418,10 @@ function recalc() {
   pts.id = idOk ? 10 : 0;
 
   // Jornada
-  if (document.getElementById('horaLlegada').value && document.getElementById('horaSalida').value) {
-    var p1 = document.getElementById('horaLlegada').value.split(':').map(Number);
-    var p2 = document.getElementById('horaSalida').value.split(':').map(Number);
+  var elHL = document.getElementById('horaLlegada'), elHS = document.getElementById('horaSalida');
+  if (elHL && elHS && elHL.value && elHS.value) {
+    var p1 = elHL.value.split(':').map(Number);
+    var p2 = elHS.value.split(':').map(Number);
     var hrs = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
     var aJ = document.getElementById('alrtJornada');
     if (aJ) {
@@ -1593,8 +1594,8 @@ window.enviar = function() {
   var bono  = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
   var scoreFinal = Math.min(100, score + bono);
 
-  var ll    = document.getElementById('horaLlegada').value || ''; // inicio actividades
-  var sl    = document.getElementById('horaSalida').value || '';
+  var ll    = document.getElementById('horaLlegada') ? document.getElementById('horaLlegada').value || '' : '';
+  var sl    = document.getElementById('horaSalida') ? document.getElementById('horaSalida').value || '' : '';
   // Usar fecha manual si fue cambiada, sino la del tag
   var fechaInpVal = document.getElementById('fechaManual') ? document.getElementById('fechaManual').value : '';
   var fecha;
@@ -1605,8 +1606,8 @@ window.enviar = function() {
   } else {
     fecha = document.getElementById('fechaTag').textContent;
   }
-  var obs   = document.getElementById('obs').value || '';
-  var ins   = document.getElementById('insumos').value || '';
+  var obs   = document.getElementById('obs') ? document.getElementById('obs').value || '' : '';
+  var ins   = document.getElementById('insumos') ? document.getElementById('insumos').value || '' : '';
 
   // Construir lista de actividades — una entrada por instancia (potrero)
   var acts = [];
@@ -1739,27 +1740,27 @@ window.enviar = function() {
     horaSalida: sl,
     horaEnvio: hora + ':' + String(ahora.getMinutes()).padStart(2,'0'),
     // Estado general
-    g1: document.getElementById('g1').value || '',
-    g2: document.getElementById('g2').value || '',
-    bufalo: document.getElementById('buf').value || '',
+    g1: document.getElementById('g1') ? document.getElementById('g1').value || '' : '',
+    g2: document.getElementById('g2') ? document.getElementById('g2').value || '' : '',
+    bufalo: document.getElementById('buf') ? document.getElementById('buf').value || '' : '',
     g3: document.getElementById('g3') ? document.getElementById('g3').value || '' : '',
     sanidad: S['sanidad'] || '',
-    novSanidad: document.getElementById('novSan').value || '',
+    novSanidad: document.getElementById('novSan') ? document.getElementById('novSan').value || '' : '',
     pesaje: S['pesaje'] || '',
-    pesoG1: document.getElementById('pesoG1').value || '',
-    pesoG2: document.getElementById('pesoG2').value || '',
+    pesoG1: document.getElementById('pesoG1') ? document.getElementById('pesoG1').value || '' : '',
+    pesoG2: document.getElementById('pesoG2') ? document.getElementById('pesoG2').value || '' : '',
     potreroReporte: document.getElementById('potreroReporte') ? document.getElementById('potreroReporte').value || '' : '',
     estadoPasto: S['pasto'] || '',
     salMineral: S['sal'] || '',
     agua: S['agua'] || '',
     cercas: S['cercas'] || '',
-    cercaDetalle: document.getElementById('cercaDet').value || '',
+    cercaDetalle: document.getElementById('cercaDet') ? document.getElementById('cercaDet').value || '' : '',
     foto: S['foto'] || '',
     motivoTarde: S['motivo'] || '',
     insumosAgotan: ins,
     observaciones: obs,
     decisionRequerida: S['decision'] || '',
-    decisionDetalle: document.getElementById('decisionTxt').value || '',
+    decisionDetalle: document.getElementById('decisionTxt') ? document.getElementById('decisionTxt').value || '' : '',
     trabajoHoy: S['trabajo'] || 'SI',
     suplementoHoy: S['suplemento'] || '',
     cantSalMineral:   (document.getElementById('cantSalMineral') ? document.getElementById('cantSalMineral').value : '') || '',
