@@ -214,7 +214,7 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <input type="date" id="fechaManual">
     </div>
     <div class="fld">
-      <label class="lbl">Trabajador</label>
+      <label class="lbl">Trabajador <span style="color:var(--r);font-weight:900">*</span></label>
       <select id="trabajador">
         <option value="">Seleccionar...</option>
         <option value="Héctor Zambrano">Héctor Zambrano</option>
@@ -244,11 +244,11 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
     </div>
     <div class="g2">
       <div class="fld">
-        <label class="lbl">Inicio de actividades</label>
+        <label class="lbl">Inicio de actividades <span style="color:var(--r);font-weight:900">*</span></label>
         <input type="time" lang="es-EC" id="horaLlegada" value="06:30">
       </div>
       <div class="fld">
-        <label class="lbl">Fin de actividades</label>
+        <label class="lbl">Fin de actividades <span style="color:var(--r);font-weight:900">*</span></label>
         <input type="time" lang="es-EC" id="horaSalida">
       </div>
     </div>
@@ -2173,12 +2173,42 @@ function validarActividades() {
 }
 
 window.enviar = function() {
-  // Validar ANTES de cualquier otra cosa
+  // ── VALIDACIONES OBLIGATORIAS BASE ──────────────────────────────────────
+  var erroresBase = [];
+
+  // 1. Trabajador
+  var trabEl = document.getElementById('trabajador');
+  var trabVal = trabEl ? trabEl.value : '';
+  if (!trabVal) {
+    erroresBase.push('Selecciona el nombre del trabajador');
+  } else if (trabVal === '__otro__') {
+    var otroEl = document.getElementById('otroNombre');
+    if (!otroEl || !otroEl.value.trim()) {
+      erroresBase.push('Escribe el nombre del trabajador temporal');
+    }
+  }
+
+  // 2. Horas de jornada
+  var llEl = document.getElementById('horaLlegada');
+  var slEl = document.getElementById('horaSalida');
+  if (!llEl || !llEl.value) erroresBase.push('Falta la hora de inicio de actividades');
+  if (!slEl || !slEl.value) erroresBase.push('Falta la hora de fin de actividades');
+
+  // 3. Estado de trabajo (¿trabajó hoy?)
+  if (!S['trabajo']) erroresBase.push('Indica si trabajaste hoy o no');
+
+  if (erroresBase.length > 0) {
+    alert('⚠️ Faltan datos obligatorios:\n\n' +
+      erroresBase.map(function(e){ return '• ' + e; }).join('\n'));
+    return;
+  }
+
+  // ── VALIDACIONES DE ACTIVIDADES ─────────────────────────────────────────
   var errores = validarActividades();
   if (errores.length > 0) {
     var msg = '⚠️ Faltan datos obligatorios:\n\n' + errores.map(function(e){return '• '+e;}).join('\n');
     alert(msg);
-    return; // detener el envío
+    return;
   }
 
   var btn = document.getElementById('btnSub');
