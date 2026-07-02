@@ -2035,7 +2035,8 @@ function recalc() {
     pago.textContent='—';
   }
   var nActs = Object.keys(actsData).length;
-  det.textContent = nActs > 0 ? nActs + ' actividades · ' + totalHrs.toFixed(1) + ' hrs totales' : 'Completa el reporte para sumar puntos';
+  var totalHrsDisplay = getTotalActHrs();
+  det.textContent = nActs > 0 ? nActs + ' actividades · ' + totalHrsDisplay.toFixed(1) + ' hrs totales' : 'Completa el reporte para sumar puntos';
 
   var cpId = document.getElementById('cp_id'); if(cpId) cpId.textContent = pts.id + ' pts';
   var cpGan = document.getElementById('cp_gan'); if(cpGan) cpGan.textContent = pts.pesaje + ' pts';
