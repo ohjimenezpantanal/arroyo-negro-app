@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Pesaje — Arroyo Negro</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #1a2332;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #1a5276;
+      color: white;
+      padding: 16px 20px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .header h1 { font-size: 18px; font-weight: 700; }
+    .header p  { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+
+    .container { padding: 16px; max-width: 520px; margin: 0 auto; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a5276;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Grupos de ubicación ── */
+    .grupo-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 14px 0 8px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .grupo-ar  { background: #d5f5e3; color: #1e8449; }
+    .grupo-mj  { background: #fde8d8; color: #ca6f1e; }
+    .grupo-co  { background: #fef9e7; color: #b7950b; }
+    .grupo-ch  { background: #d6eaf8; color: #1a5276; }
+
+    .lote-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .lote-btn {
+      padding: 12px 10px;
+      border: 2px solid #e8ecf0;
+      border-radius: 10px;
+      background: #f8fbff;
+      cursor: pointer;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a2332;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lote-btn .lote-finca {
+      font-size: 10px;
+      font-weight: 400;
+      color: #7f8c8d;
+      margin-top: 2px;
+    }
+    .lote-btn .lote-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: #2e86c1;
+      margin-top: 4px;
+    }
+    .lote-btn.activo {
+      background: #1a5276;
+      border-color: #1a5276;
+      color: white;
+    }
+    .lote-btn.activo .lote-finca { color: rgba(255,255,255,0.7); }
+    .lote-btn.activo .lote-count { color: #7fb3d3; }
+
+    /* urgente */
+    .lote-btn.urgente { border-color: #f39c12; }
+    .lote-btn.urgente .lote-code { color: #f39c12; }
+
+    .fecha-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .fecha-row label { font-size: 13px; font-weight: 600; color: #555; white-space: nowrap; }
+    .fecha-row input {
+      flex: 1; padding: 10px;
+      border: 1.5px solid #d6eaf8;
+      border-radius: 8px; font-size: 14px; color: #1a2332;
+    }
+
+    #tabla-pesos { display: none; }
+
+    .contador {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+    }
+    .contador-lote { font-size: 15px; font-weight: 700; color: #1a5276; }
+    .contador-num  { font-size: 20px; font-weight: 700; color: #2e86c1; }
+
+    .pesos-lista {
+      max-height: 52vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .peso-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .peso-item:last-child { border-bottom: none; }
+
+    .arete-label { font-size: 14px; font-weight: 600; color: #1a2332; }
+    .arete-sub   { font-size: 11px; color: #7f8c8d; margin-top: 1px; }
+
+    .peso-input {
+      width: 88px; padding: 10px 6px;
+      border: 1.5px solid #d6eaf8; border-radius: 8px;
+      font-size: 16px; font-weight: 600; text-align: center; color: #1a2332;
+      background: #f8fbff; -webkit-appearance: none;
+    }
+    .peso-input:focus   { border-color: #2e86c1; background: white; outline: none; }
+    .peso-input.ok      { border-color: #1e8449; background: #d5f5e3; color: #1e8449; }
+
+    .stats-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px; margin-top: 14px;
+    }
+    .stat-box { background: #f8fbff; border-radius: 8px; padding: 10px; text-align: center; }
+    .stat-val  { font-size: 18px; font-weight: 700; color: #1a5276; }
+    .stat-lbl  { font-size: 10px; color: #7f8c8d; margin-top: 2px; }
+
+    .obs-input {
+      width: 100%; padding: 10px;
+      border: 1.5px solid #d6eaf8; border-radius: 8px;
+      font-size: 14px; resize: none; font-family: inherit; color: #1a2332;
+    }
+    .obs-input:focus { border-color: #2e86c1; outline: none; }
+
+    .btn {
+      width: 100%; padding: 16px; border: none; border-radius: 10px;
+      font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary   { background: #1a5276; color: white; }
+    .btn-primary:active   { background: #0d2137; }
+    .btn-primary:disabled { background: #bdc3c7; cursor: not-allowed; }
+    .btn-secondary { background: transparent; color: #1a5276; border: 2px solid #1a5276; }
+
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #1e8449; color: white; padding: 14px 24px; border-radius: 30px;
+      font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      z-index: 999; display: none; text-align: center; max-width: 90vw;
+    }
+    .toast.error { background: #c0392b; }
+
+    .spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 3px solid rgba(255,255,255,0.3); border-top-color: white;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #resumen { display: none; }
+    .res-item {
+      display: flex; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid #f0f4f8; font-size: 14px;
+    }
+    .res-val { font-weight: 700; color: #1a5276; }
+
+    .badge-urgente {
+      display: inline-block; background: #f39c12; color: white;
+      font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px;
+      margin-left: 4px; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚖️ Registro de Pesaje</h1>
+  <p>Arroyo Negro · Sistema Ganadero · 210 animales</p>
+</div>
+
+<div class="container">
+
+  <!-- Paso 1: Lote -->
+  <div class="card" id="paso1">
+    <h2>1. Selecciona el lote</h2>
+
+    <div class="grupo-label grupo-ar">🏠 Arroyo Negro</div>
+    <div class="lote-grid">
+      <button class="lote-btn" onclick="seleccionar('F-02-24','F-02-24',27,'Arroyo Negro')">
+        <div class="lote-code">F-02-24</div>
+        <div class="lote-finca">Arroyo Negro</div>
+        <div class="lote-count">27 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('F-04-26','F-04-26',30,'Arroyo Negro')">
+        <div class="lote-code">F-04-26</div>
+        <div class="lote-finca">Arroyo Negro</div>
+        <div class="lote-count">30 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('G3-XIOM','X',10,'Arroyo Negro')">
+        <div class="lote-code">G3-XIOM</div>
+        <div class="lote-finca">Arroyo Negro · Mediería</div>
+        <div class="lote-count">10 animales (X-01…X-10)</div>
+      </button>
+    </div>
+
+    <div class="grupo-label grupo-mj">🌿 Quinindé — Marujita</div>
+    <div class="lote-grid">
+      <button class="lote-btn" onclick="seleccionar('F-MJ-05-26','F-MJ-05-26',20,'Marujita')">
+        <div class="lote-code">F-MJ-05-26</div>
+        <div class="lote-finca">Marujita</div>
+        <div class="lote-count">20 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('PS-MJ-05-26','PS-MJ-05-26',13,'Marujita')">
+        <div class="lote-code">PS-MJ-05-26</div>
+        <div class="lote-finca">Marujita</div>
+        <div class="lote-count">13 animales</div>
+      </button>
+    </div>
+
+    <div class="grupo-label grupo-co">🌿 Quinindé — Los Corrales</div>
+    <div class="lote-grid">
+      <button class="lote-btn urgente" onclick="seleccionar('F-CO-11-24','F-CO-11-24',30,'Los Corrales')">
+        <div class="lote-code">F-CO-11-24 <span class="badge-urgente">TRANSFERIR</span></div>
+        <div class="lote-finca">Los Corrales · ~363 kg</div>
+        <div class="lote-count">30 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('PS-CO-12-24','PS-CO-12-24',8,'Los Corrales')">
+        <div class="lote-code">PS-CO-12-24</div>
+        <div class="lote-finca">Los Corrales</div>
+        <div class="lote-count">8 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('PS-CO-11-24','PS-CO-11-24',12,'Los Corrales')">
+        <div class="lote-code">PS-CO-11-24</div>
+        <div class="lote-finca">Los Corrales · Vaconas</div>
+        <div class="lote-count">12 animales</div>
+      </button>
+    </div>
+
+    <div class="grupo-label grupo-ch">🌿 Quinindé — Chipo</div>
+    <div class="lote-grid">
+      <button class="lote-btn" onclick="seleccionar('CH-2025','CH-2025',40,'Chipo')">
+        <div class="lote-code">CH-2025</div>
+        <div class="lote-finca">Chipo</div>
+        <div class="lote-count">40 animales</div>
+      </button>
+      <button class="lote-btn" onclick="seleccionar('PS-CH-2025','PS-CH-2025',12,'Chipo')">
+        <div class="lote-code">PS-CH-2025</div>
+        <div class="lote-finca">Chipo · Vaconas</div>
+        <div class="lote-count">12 animales</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Paso 2: Fecha -->
+  <div class="card">
+    <h2>2. Fecha del pesaje</h2>
+    <div class="fecha-row">
+      <label>📅</label>
+      <input type="date" id="fecha-pesaje">
+    </div>
+  </div>
+
+  <!-- Paso 3: Pesos -->
+  <div class="card" id="tabla-pesos">
+    <h2>3. Pesos por animal</h2>
+
+    <div class="contador">
+      <div>
+        <div class="contador-lote" id="lote-titulo">—</div>
+        <div style="font-size:11px;color:#7f8c8d;margin-top:2px" id="finca-titulo">—</div>
+      </div>
+      <div class="contador-num">
+        <span id="num-ok">0</span>/<span id="num-tot">0</span>
+      </div>
+    </div>
+
+    <div class="pesos-lista" id="lista-pesos"></div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="s-prom">—</div>
+        <div class="stat-lbl">Prom kg</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-min">—</div>
+        <div class="stat-lbl">Mín kg</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-max">—</div>
+        <div class="stat-lbl">Máx kg</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observaciones -->
+  <div class="card" id="card-obs" style="display:none">
+    <h2>4. Observaciones (opcional)</h2>
+    <textarea class="obs-input" id="obs" rows="3"
+      placeholder="Ej: Animal #05 con cojera, clima lluvioso..."></textarea>
+  </div>
+
+  <!-- Botones -->
+  <div id="card-enviar" style="display:none">
+    <button class="btn btn-primary" id="btn-env" onclick="enviar()">
+      ✅ Registrar pesaje
+    </button>
+    <button class="btn btn-secondary" onclick="reset()">
+      ← Cambiar lote
+    </button>
+  </div>
+
+  <!-- Resumen -->
+  <div class="card" id="resumen">
+    <h2>✅ Pesaje registrado</h2>
+    <div id="res-detalle"></div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="reset()">
+      Registrar otro lote
+    </button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CONFIGURACIÓN ─────────────────────────────────────────
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
+
+  // ── ESTADO ────────────────────────────────────────────────
+  var loteActual  = null;
+  var fincaActual = null;
+  var aretesActuales = [];
+
+  // ── FECHA HOY ─────────────────────────────────────────────
+  (function() {
+    var h = new Date();
+    var d = h.getFullYear() + '-' +
+            ('0'+(h.getMonth()+1)).slice(-2) + '-' +
+            ('0'+h.getDate()).slice(-2);
+    document.getElementById('fecha-pesaje').value = d;
+  })();
+
+  // ── SELECCIONAR LOTE ──────────────────────────────────────
+  function seleccionar(lote, prefijo, total, finca) {
+    loteActual   = lote;
+    fincaActual  = finca;
+
+    // Botones
+    document.querySelectorAll('.lote-btn').forEach(function(b) {
+      b.classList.remove('activo');
+    });
+    event.currentTarget.classList.add('activo');
+
+    // Generar aretes
+    aretesActuales = [];
+    for (var i = 1; i <= total; i++) {
+      aretesActuales.push(prefijo + '-' + (i < 10 ? '0'+i : i));
+    }
+
+    // Construir lista
+    var lista = document.getElementById('lista-pesos');
+    lista.innerHTML = '';
+    aretesActuales.forEach(function(ar, idx) {
+      var d = document.createElement('div');
+      d.className = 'peso-item';
+      d.innerHTML =
+        '<div>' +
+          '<div class="arete-label">' + ar + '</div>' +
+          '<div class="arete-sub">Animal #' + (idx+1) + '</div>' +
+        '</div>' +
+        '<input type="number" class="peso-input" ' +
+               'id="p-' + ar + '" ' +
+               'placeholder="kg" min="80" max="700" step="0.5" ' +
+               'inputmode="decimal" ' +
+               'oninput="onChange(this)">';
+      lista.appendChild(d);
+    });
+
+    document.getElementById('lote-titulo').textContent = lote;
+    document.getElementById('finca-titulo').textContent = finca;
+    document.getElementById('num-tot').textContent = total;
+    document.getElementById('num-ok').textContent  = '0';
+    ['s-prom','s-min','s-max'].forEach(function(id){
+      document.getElementById(id).textContent = '—';
+    });
+
+    document.getElementById('tabla-pesos').style.display  = 'block';
+    document.getElementById('card-obs').style.display     = 'block';
+    document.getElementById('card-enviar').style.display  = 'block';
+    document.getElementById('resumen').style.display      = 'none';
+
+    setTimeout(function(){
+      document.getElementById('tabla-pesos').scrollIntoView({behavior:'smooth'});
+    }, 150);
+  }
+
+  // ── CAMBIO EN INPUT ───────────────────────────────────────
+  function onChange(inp) {
+    var v = parseFloat(inp.value);
+    inp.classList.toggle('ok', !isNaN(v) && v > 0);
+    actualizarStats();
+  }
+
+  function actualizarStats() {
+    var ps = [];
+    aretesActuales.forEach(function(ar) {
+      var inp = document.getElementById('p-'+ar);
+      if (inp) { var v = parseFloat(inp.value); if (!isNaN(v) && v > 0) ps.push(v); }
+    });
+    document.getElementById('num-ok').textContent = ps.length;
+    if (ps.length > 0) {
+      var sum = ps.reduce(function(a,b){return a+b;},0);
+      document.getElementById('s-prom').textContent = (sum/ps.length).toFixed(1);
+      document.getElementById('s-min').textContent  = Math.min.apply(null,ps).toFixed(1);
+      document.getElementById('s-max').textContent  = Math.max.apply(null,ps).toFixed(1);
+    } else {
+      ['s-prom','s-min','s-max'].forEach(function(id){
+        document.getElementById(id).textContent = '—';
+      });
+    }
+  }
+
+  // ── ENVIAR ────────────────────────────────────────────────
+  function enviar() {
+    if (!loteActual) { toast('Selecciona un lote', true); return; }
+    var fecha = document.getElementById('fecha-pesaje').value;
+    if (!fecha) { toast('Ingresa la fecha', true); return; }
+
+    var pesos = [];
+    aretesActuales.forEach(function(ar) {
+      var inp = document.getElementById('p-'+ar);
+      if (inp) { var v = parseFloat(inp.value); if (!isNaN(v) && v > 0) pesos.push({arete:ar, peso:v}); }
+    });
+    if (pesos.length === 0) { toast('Ingresa al menos un peso', true); return; }
+
+    var payload = {
+      tipo: 'pesaje',
+      fecha: fecha,
+      lote: loteActual,
+      finca: fincaActual,
+      pesos: pesos,
+      observaciones: document.getElementById('obs').value
+    };
+
+    var btn = document.getElementById('btn-env');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Registrando ' + pesos.length + ' pesos...';
+
+    fetch(APPS_SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if (d.ok) mostrarResumen(pesos, loteActual, fincaActual, fecha);
+      else { toast('Error: '+(d.error||'desconocido'), true); habilitarBtn(); }
+    })
+    .catch(function(){
+      toast('Sin conexión — verificar red', true);
+      habilitarBtn();
+    });
+  }
+
+  function habilitarBtn() {
+    var btn = document.getElementById('btn-env');
+    btn.disabled = false;
+    btn.innerHTML = '✅ Registrar pesaje';
+  }
+
+  function mostrarResumen(pesos, lote, finca, fecha) {
+    var ps   = pesos.map(function(p){return p.peso;});
+    var prom = ps.reduce(function(a,b){return a+b;},0)/ps.length;
+    var html = '';
+    html += '<div class="res-item"><span>Lote</span><span class="res-val">'+lote+'</span></div>';
+    html += '<div class="res-item"><span>Finca</span><span class="res-val">'+finca+'</span></div>';
+    html += '<div class="res-item"><span>Fecha</span><span class="res-val">'+fecha+'</span></div>';
+    html += '<div class="res-item"><span>Animales pesados</span><span class="res-val">'+pesos.length+'</span></div>';
+    html += '<div class="res-item"><span>Peso promedio</span><span class="res-val">'+prom.toFixed(1)+' kg</span></div>';
+    html += '<div class="res-item"><span>Mínimo</span><span class="res-val">'+Math.min.apply(null,ps).toFixed(1)+' kg</span></div>';
+    html += '<div class="res-item"><span>Máximo</span><span class="res-val">'+Math.max.apply(null,ps).toFixed(1)+' kg</span></div>';
+    html += '<div style="margin-top:12px;padding:10px;background:#d5f5e3;border-radius:8px;font-size:12px;color:#1e8449;font-weight:600;">' +
+            '📌 Al terminar todos los lotes: ejecutar cerrarSesionPesaje() en Apps Script</div>';
+
+    document.getElementById('res-detalle').innerHTML = html;
+    document.getElementById('resumen').style.display      = 'block';
+    document.getElementById('tabla-pesos').style.display  = 'none';
+    document.getElementById('card-obs').style.display     = 'none';
+    document.getElementById('card-enviar').style.display  = 'none';
+    toast('✅ '+pesos.length+' pesos registrados');
+    document.getElementById('resumen').scrollIntoView({behavior:'smooth'});
+  }
+
+  function reset() {
+    loteActual = null; fincaActual = null; aretesActuales = [];
+    document.querySelectorAll('.lote-btn').forEach(function(b){b.classList.remove('activo');});
+    document.getElementById('lista-pesos').innerHTML = '';
+    document.getElementById('obs').value = '';
+    ['tabla-pesos','card-obs','card-enviar','resumen'].forEach(function(id){
+      document.getElementById(id).style.display='none';
+    });
+    habilitarBtn();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function toast(msg, err) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = 'toast'+(err?' error':'');
+    t.style.display = 'block';
+    setTimeout(function(){ t.style.display='none'; }, 3500);
+  }
+</script>
+</body>
+</html>
