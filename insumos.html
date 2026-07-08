@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Insumos — Arroyo Negro</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #1a2332;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #1a5276;
+      color: white;
+      padding: 16px 20px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .header h1 { font-size: 18px; font-weight: 700; }
+    .header p  { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+
+    /* Total flotante en header */
+    .header-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+    .header-total span { font-size: 12px; opacity: 0.9; }
+    .header-total strong { font-size: 16px; font-weight: 700; }
+
+    .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a5276;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Campos del formulario */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #d6eaf8;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #1a2332;
+      background: #f8fbff;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #2e86c1;
+      background: white;
+      outline: none;
+    }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231a5276' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* Fila de dos columnas */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Total auto */
+    .total-box {
+      background: #d5f5e3;
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .total-box span { font-size: 13px; color: #1e8449; font-weight: 600; }
+    .total-box strong { font-size: 22px; color: #1e8449; font-weight: 700; }
+
+    /* Categoría auto */
+    .cat-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .cat-CDSUPL  { background: #d5f5e3; color: #1e8449; }
+    .cat-CDSAN   { background: #d6eaf8; color: #1a5276; }
+    .cat-CDIMP   { background: #e8daef; color: #6c3483; }
+    .cat-CDPAST  { background: #fef9e7; color: #b7950b; }
+    .cat-CIINF   { background: #fde8d8; color: #ca6f1e; }
+    .cat-CIOPE   { background: #f2f3f4; color: #555; }
+    .cat-default { background: #f2f3f4; color: #555; }
+
+    /* Botón agregar */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add     { background: #2e86c1; color: white; margin-bottom: 10px; }
+    .btn-add:active { background: #1a5276; }
+    .btn-send    { background: #1e8449; color: white; }
+    .btn-send:active { background: #0d5c33; }
+    .btn-send:disabled { background: #bdc3c7; cursor: not-allowed; }
+    .btn-clear   { background: transparent; color: #c0392b; border: 2px solid #c0392b; margin-top: 8px; }
+
+    /* Lista de ítems agregados */
+    .items-lista { margin-top: 4px; }
+    .item-card {
+      background: #f8fbff;
+      border: 1px solid #d6eaf8;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .item-nombre {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a2332;
+      margin-bottom: 3px;
+    }
+    .item-detalle {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .item-total {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e8449;
+      float: right;
+      margin-top: -28px;
+    }
+    .item-eliminar {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .empty-msg {
+      text-align: center;
+      color: #bdc3c7;
+      font-size: 13px;
+      padding: 20px 0;
+    }
+
+    /* Proveedor y fecha globales */
+    .global-fields {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e8449;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      z-index: 999;
+      display: none;
+      text-align: center;
+      max-width: 90vw;
+    }
+    .toast.error { background: #c0392b; }
+
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Éxito final */
+    #pantalla-exito { display: none; text-align: center; padding: 40px 20px; }
+    .exito-icon { font-size: 64px; margin-bottom: 16px; }
+    .exito-titulo { font-size: 22px; font-weight: 700; color: #1e8449; margin-bottom: 8px; }
+    .exito-sub { font-size: 14px; color: #7f8c8d; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧪 Registro de Insumos</h1>
+  <p>Arroyo Negro · Sistema Ganadero</p>
+  <div class="header-total">
+    <span>💰 Total sesión</span>
+    <strong id="total-sesion">$0.00</strong>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Pantalla éxito -->
+  <div id="pantalla-exito" class="card">
+    <div class="exito-icon">✅</div>
+    <div class="exito-titulo">¡Insumos registrados!</div>
+    <div class="exito-sub" id="exito-resumen"></div>
+    <button class="btn btn-send" onclick="nuevaSesion()">
+      Registrar otra compra
+    </button>
+  </div>
+
+  <!-- Formulario principal -->
+  <div id="formulario">
+
+    <!-- Datos globales de la compra -->
+    <div class="global-fields">
+      <div class="row-2">
+        <div class="field">
+          <label>📅 Fecha</label>
+          <input type="date" id="fecha">
+        </div>
+        <div class="field">
+          <label>🏪 Proveedor</label>
+          <input type="text" id="proveedor" placeholder="Nombre o factura">
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de ítem -->
+    <div class="card">
+      <h2>➕ Agregar insumo</h2>
+
+      <div class="field">
+        <label>Grupo / Lote</label>
+        <select id="grupo">
+          <option value="">Seleccionar...</option>
+          <option value="G1 — F-04-26">G1 — F-04-26 (Arroyo Negro)</option>
+          <option value="F-02-24">F-02-24 (Arroyo Negro)</option>
+          <option value="G3 XIOM">G3-XIOM (Arroyo Negro)</option>
+          <option value="General">General — toda la finca</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Tipo de Insumo</label>
+        <select id="tipo-insumo" onchange="actualizarCategoria()">
+          <option value="">Seleccionar...</option>
+          <optgroup label="🌿 Suplementación">
+            <option value="Sal mineral">Sal mineral</option>
+            <option value="Melaza">Melaza</option>
+            <option value="Urea">Urea</option>
+            <option value="Azufre">Azufre</option>
+            <option value="Sal en grano">Sal en grano</option>
+          </optgroup>
+          <optgroup label="💉 Sanidad">
+            <option value="Vacunas">Vacunas</option>
+            <option value="Desparasitante">Desparasitante</option>
+            <option value="Antibiótico">Antibiótico</option>
+            <option value="Desinflamatorio">Desinflamatorio</option>
+            <option value="Garrapaticida">Garrapaticida</option>
+            <option value="Cicatrizante">Cicatrizante</option>
+            <option value="Repelente y Cicatrizante">Repelente y Cicatrizante</option>
+            <option value="Pomada desinflamatoria">Pomada desinflamatoria</option>
+            <option value="Diurético">Diurético</option>
+            <option value="Suero Antiofídico">Suero Antiofídico</option>
+            <option value="Medicamentos veterinarios">Medicamentos veterinarios</option>
+            <option value="Vitaminas / Complejo B">Vitaminas / Complejo B</option>
+            <option value="Jeringas">Jeringas</option>
+            <option value="Agujas">Agujas</option>
+          </optgroup>
+          <optgroup label="💊 Implantes">
+            <option value="Implantes (Ralgro/Synovex)">Implantes (Ralgro/Synovex)</option>
+          </optgroup>
+          <optgroup label="🌱 Pastos">
+            <option value="Herbicida">Herbicida</option>
+            <option value="Coadyuvante">Coadyuvante</option>
+            <option value="Semillas pasto">Semillas pasto</option>
+          </optgroup>
+          <optgroup label="🏗️ Infraestructura">
+            <option value="Grapas">Grapas</option>
+            <option value="Alambre">Alambre</option>
+            <option value="Postes">Postes</option>
+          </optgroup>
+          <optgroup label="⚙️ Operación">
+            <option value="Aceite 2 T">Aceite 2 T</option>
+            <option value="Combustible">Combustible</option>
+            <option value="Otros insumos">Otros insumos</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Categoría automática -->
+      <div id="cat-display" style="display:none">
+        <span id="cat-badge" class="cat-badge cat-default">—</span>
+        <small style="color:#7f8c8d;font-size:11px">Categoría asignada automáticamente</small>
+        <br><br>
+      </div>
+
+      <div class="field">
+        <label>Descripción / Marca</label>
+        <input type="text" id="descripcion" placeholder="Ej: Sal mineral Ecuasal 40kg">
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Cantidad</label>
+          <input type="number" id="cantidad" placeholder="0" min="0" step="0.01"
+                 inputmode="decimal" oninput="calcularTotal()">
+        </div>
+        <div class="field">
+          <label>Unidad</label>
+          <select id="unidad">
+            <option value="kg">kg</option>
+            <option value="saco">saco</option>
+            <option value="litro">litro</option>
+            <option value="dosis">dosis</option>
+            <option value="unidad">unidad</option>
+            <option value="frasco">frasco</option>
+            <option value="rollo">rollo</option>
+            <option value="poste">poste</option>
+            <option value="galón">galón</option>
+            <option value="gramo">gramo</option>
+            <option value="ml">ml</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Precio Unitario ($)</label>
+        <input type="number" id="precio" placeholder="0.00" min="0" step="0.01"
+               inputmode="decimal" oninput="calcularTotal()">
+      </div>
+
+      <!-- Total automático -->
+      <div class="total-box">
+        <span>Total este ítem</span>
+        <strong id="total-item">$0.00</strong>
+      </div>
+
+      <button class="btn btn-add" onclick="agregarItem()">
+        ➕ Agregar a la lista
+      </button>
+    </div>
+
+    <!-- Lista de ítems de la sesión -->
+    <div class="card">
+      <h2>🛒 Ítems en esta compra (<span id="num-items">0</span>)</h2>
+      <div class="items-lista" id="items-lista">
+        <div class="empty-msg">Aún no has agregado insumos</div>
+      </div>
+    </div>
+
+    <!-- Botón enviar -->
+    <button class="btn btn-send" id="btn-send" onclick="enviarTodo()" disabled>
+      ✅ Registrar todo en el sistema
+    </button>
+    <button class="btn btn-clear" onclick="limpiarTodo()">
+      🗑 Limpiar todo
+    </button>
+    <div style="height:30px"></div>
+
+  </div><!-- /formulario -->
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
+
+  // ── Mapa Tipo → Categoría ─────────────────────────────────
+  var MAPA_CATEGORIAS = {
+    'Sal mineral': 'CD-SUPL', 'Melaza': 'CD-SUPL', 'Urea': 'CD-SUPL',
+    'Azufre': 'CD-SUPL', 'Sal en grano': 'CD-SUPL',
+    'Vacunas': 'CD-SAN', 'Desparasitante': 'CD-SAN', 'Antibiótico': 'CD-SAN',
+    'Desinflamatorio': 'CD-SAN', 'Garrapaticida': 'CD-SAN', 'Cicatrizante': 'CD-SAN',
+    'Repelente y Cicatrizante': 'CD-SAN', 'Pomada desinflamatoria': 'CD-SAN',
+    'Diurético': 'CD-SAN', 'Suero Antiofídico': 'CD-SAN',
+    'Medicamentos veterinarios': 'CD-SAN', 'Vitaminas / Complejo B': 'CD-SAN',
+    'Jeringas': 'CD-SAN', 'Agujas': 'CD-SAN',
+    'Implantes (Ralgro/Synovex)': 'CD-IMP',
+    'Herbicida': 'CD-PAST', 'Coadyuvante': 'CD-PAST', 'Semillas pasto': 'CD-PAST',
+    'Grapas': 'CI-INF', 'Alambre': 'CI-INF', 'Postes': 'CI-INF',
+    'Aceite 2 T': 'CI-OPE', 'Combustible': 'CI-OPE', 'Otros insumos': 'CI-OPE'
+  };
+
+  var COLORES_CAT = {
+    'CD-SUPL': 'cat-CDSUPL', 'CD-SAN': 'cat-CDSAN', 'CD-IMP': 'cat-CDIMP',
+    'CD-PAST': 'cat-CDPAST', 'CI-INF': 'cat-CIINF', 'CI-OPE': 'cat-CIOPE'
+  };
+
+  // ── Estado ────────────────────────────────────────────────
+  var items = [];
+
+  // ── Fecha hoy ─────────────────────────────────────────────
+  (function() {
+    var h = new Date();
+    document.getElementById('fecha').value =
+      h.getFullYear() + '-' +
+      ('0'+(h.getMonth()+1)).slice(-2) + '-' +
+      ('0'+h.getDate()).slice(-2);
+  })();
+
+  // ── Calcular total del ítem actual ────────────────────────
+  function calcularTotal() {
+    var c = parseFloat(document.getElementById('cantidad').value) || 0;
+    var p = parseFloat(document.getElementById('precio').value)   || 0;
+    var t = c * p;
+    document.getElementById('total-item').textContent = '$' + t.toFixed(2);
+  }
+
+  // ── Actualizar categoría automática ───────────────────────
+  function actualizarCategoria() {
+    var tipo = document.getElementById('tipo-insumo').value;
+    var cat  = MAPA_CATEGORIAS[tipo] || '';
+    var disp = document.getElementById('cat-display');
+    var badge = document.getElementById('cat-badge');
+
+    if (cat) {
+      badge.textContent = cat;
+      badge.className   = 'cat-badge ' + (COLORES_CAT[cat] || 'cat-default');
+      disp.style.display = 'block';
+    } else {
+      disp.style.display = 'none';
+    }
+  }
+
+  // ── Agregar ítem a la lista ───────────────────────────────
+  function agregarItem() {
+    var grupo   = document.getElementById('grupo').value;
+    var tipo    = document.getElementById('tipo-insumo').value;
+    var desc    = document.getElementById('descripcion').value.trim();
+    var cant    = parseFloat(document.getElementById('cantidad').value);
+    var unidad  = document.getElementById('unidad').value;
+    var precio  = parseFloat(document.getElementById('precio').value);
+    var cat     = MAPA_CATEGORIAS[tipo] || '';
+
+    // Validación
+    if (!grupo)        { toast('Selecciona el grupo/lote', true); return; }
+    if (!tipo)         { toast('Selecciona el tipo de insumo', true); return; }
+    if (isNaN(cant) || cant <= 0) { toast('Ingresa una cantidad válida', true); return; }
+    if (isNaN(precio) || precio <= 0) { toast('Ingresa un precio válido', true); return; }
+
+    var total = cant * precio;
+
+    items.push({
+      grupo:    grupo,
+      tipo:     tipo,
+      desc:     desc || tipo,
+      cant:     cant,
+      unidad:   unidad,
+      precio:   precio,
+      total:    total,
+      cat:      cat
+    });
+
+    renderItems();
+    limpiarFormItem();
+    actualizarTotalSesion();
+    toast('✅ ' + (desc || tipo) + ' agregado');
+  }
+
+  // ── Renderizar lista de ítems ─────────────────────────────
+  function renderItems() {
+    var lista = document.getElementById('items-lista');
+    document.getElementById('num-items').textContent = items.length;
+    document.getElementById('btn-send').disabled = items.length === 0;
+
+    if (items.length === 0) {
+      lista.innerHTML = '<div class="empty-msg">Aún no has agregado insumos</div>';
+      return;
+    }
+
+    lista.innerHTML = '';
+    items.forEach(function(item, idx) {
+      var div = document.createElement('div');
+      div.className = 'item-card';
+      div.innerHTML =
+        '<button class="item-eliminar" onclick="eliminarItem(' + idx + ')">✕</button>' +
+        '<div class="item-nombre">' + item.desc + '</div>' +
+        '<div class="item-detalle">' +
+          item.cant + ' ' + item.unidad + ' × $' + item.precio.toFixed(2) +
+          ' · ' + item.grupo +
+          (item.cat ? ' · <strong>' + item.cat + '</strong>' : '') +
+        '</div>' +
+        '<div class="item-total">$' + item.total.toFixed(2) + '</div>';
+      lista.appendChild(div);
+    });
+  }
+
+  // ── Eliminar ítem ─────────────────────────────────────────
+  function eliminarItem(idx) {
+    items.splice(idx, 1);
+    renderItems();
+    actualizarTotalSesion();
+  }
+
+  // ── Total de la sesión ────────────────────────────────────
+  function actualizarTotalSesion() {
+    var total = items.reduce(function(s, i) { return s + i.total; }, 0);
+    document.getElementById('total-sesion').textContent = '$' + total.toFixed(2);
+  }
+
+  // ── Limpiar formulario del ítem (no la lista) ────────────
+  function limpiarFormItem() {
+    document.getElementById('grupo').value         = '';
+    document.getElementById('tipo-insumo').value   = '';
+    document.getElementById('descripcion').value   = '';
+    document.getElementById('cantidad').value      = '';
+    document.getElementById('precio').value        = '';
+    document.getElementById('unidad').value        = 'kg';
+    document.getElementById('total-item').textContent = '$0.00';
+    document.getElementById('cat-display').style.display = 'none';
+  }
+
+  // ── Limpiar todo ─────────────────────────────────────────
+  function limpiarTodo() {
+    if (items.length > 0 && !confirm('¿Limpiar todos los ítems?')) return;
+    items = [];
+    renderItems();
+    actualizarTotalSesion();
+    limpiarFormItem();
+  }
+
+  // ── Enviar todo al sistema ────────────────────────────────
+  function enviarTodo() {
+    if (items.length === 0) { toast('Agrega al menos un insumo', true); return; }
+
+    var fecha     = document.getElementById('fecha').value;
+    var proveedor = document.getElementById('proveedor').value.trim();
+
+    if (!fecha) { toast('Selecciona la fecha', true); return; }
+
+    var payload = {
+      tipo:       'insumo',
+      fecha:      fecha,
+      proveedor:  proveedor,
+      registros:  items
+    };
+
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Registrando ' + items.length + ' insumos...';
+
+    fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        mostrarExito(items.length, payload);
+      } else {
+        toast('Error: ' + (d.error || 'desconocido'), true);
+        btn.disabled = false;
+        btn.innerHTML = '✅ Registrar todo en el sistema';
+      }
+    })
+    .catch(function() {
+      toast('Sin conexión — verifica el internet', true);
+      btn.disabled = false;
+      btn.innerHTML = '✅ Registrar todo en el sistema';
+    });
+  }
+
+  // ── Mostrar pantalla de éxito ─────────────────────────────
+  function mostrarExito(count, payload) {
+    var total = payload.registros.reduce(function(s,i){return s+i.total;},0);
+    document.getElementById('exito-resumen').textContent =
+      count + ' insumos registrados · Total: $' + total.toFixed(2) +
+      (payload.proveedor ? ' · ' + payload.proveedor : '');
+
+    document.getElementById('formulario').style.display      = 'none';
+    document.getElementById('pantalla-exito').style.display  = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Nueva sesión ──────────────────────────────────────────
+  function nuevaSesion() {
+    items = [];
+    renderItems();
+    actualizarTotalSesion();
+    limpiarFormItem();
+    document.getElementById('proveedor').value = '';
+    document.getElementById('formulario').style.display     = 'block';
+    document.getElementById('pantalla-exito').style.display = 'none';
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    btn.innerHTML = '✅ Registrar todo en el sistema';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Toast ─────────────────────────────────────────────────
+  function toast(msg, err) {
+    var t = document.getElementById('toast');
+    t.textContent   = msg;
+    t.className     = 'toast' + (err ? ' error' : '');
+    t.style.display = 'block';
+    setTimeout(function() { t.style.display = 'none'; }, 3000);
+  }
+</script>
+</body>
+</html>
