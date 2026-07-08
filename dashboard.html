@@ -258,7 +258,36 @@
     .fin-neg { color: var(--rojo); }
     .fin-pos { color: var(--verde); }
 
-    /* ── Bottom nav ── */
+    /* ── Inventario por finca ── */
+  .inv-table {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .inv-row {
+    display: grid;
+    grid-template-columns: 1fr 70px 70px 70px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f4f8;
+    align-items: center;
+  }
+  .inv-row:last-child { border-bottom: none; }
+  .inv-header {
+    background: var(--azul);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .inv-finca  { font-size: 14px; font-weight: 600; color: var(--texto); }
+  .inv-num    { font-size: 15px; font-weight: 700; text-align: center; }
+  .inv-macho  { color: #2e86c1; }
+  .inv-hembra { color: #8e44ad; }
+  .inv-total  { color: var(--verde); }
+  .inv-total-row { background: #f8fbff; font-weight: 700; }
+  .inv-total-row .inv-finca { color: var(--azul); font-size: 13px; }
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -365,6 +394,19 @@
   <div class="seccion">🚨 Alertas ejecutivas</div>
   <div id="alertas-section">
     <div class="alerta alerta-amarillo"><div class="skeleton" style="width:100%;height:40px"></div></div>
+  </div>
+
+  <!-- Inventario por finca -->
+  <div class="seccion">🐄 Inventario por finca — machos y hembras</div>
+  <div class="inv-table" id="inv-finca-section">
+    <div class="inv-row inv-header">
+      <span>Finca</span>
+      <span style="text-align:center">🐂 M</span>
+      <span style="text-align:center">🐄 H</span>
+      <span style="text-align:center">Total</span>
+    </div>
+    <div class="skeleton" style="height:48px;margin:8px;border-radius:8px"></div>
+    <div class="skeleton" style="height:48px;margin:8px;border-radius:8px"></div>
   </div>
 
   <!-- Pipeline -->
@@ -515,6 +557,39 @@
     });
     document.getElementById('alertas-section').innerHTML =
       alertasHTML || '<div class="alerta alerta-verde"><div class="alerta-icon">✅</div><div><div class="alerta-texto">Sin alertas urgentes</div></div></div>';
+
+    // ── Inventario por finca ──────────────────────────────
+    var inv = d.inventarioFinca || [];
+    var invHTML =
+      '<div class="inv-row inv-header">' +
+        '<span>Finca</span>' +
+        '<span style="text-align:center">🐂 Machos</span>' +
+        '<span style="text-align:center">🐄 Hembras</span>' +
+        '<span style="text-align:center">Total</span>' +
+      '</div>';
+
+    var totM = 0, totH = 0, totT = 0;
+    inv.forEach(function(f) {
+      totM += f.toretes; totH += f.vaconas; totT += f.total;
+      invHTML +=
+        '<div class="inv-row">' +
+          '<span class="inv-finca">' + f.finca + '</span>' +
+          '<span class="inv-num inv-macho">' + f.toretes + '</span>' +
+          '<span class="inv-num inv-hembra">' + (f.vaconas || '—') + '</span>' +
+          '<span class="inv-num inv-total">' + f.total + '</span>' +
+        '</div>';
+    });
+
+    // Fila de totales
+    invHTML +=
+      '<div class="inv-row inv-total-row">' +
+        '<span class="inv-finca">TOTAL SISTEMA</span>' +
+        '<span class="inv-num inv-macho">' + totM + '</span>' +
+        '<span class="inv-num inv-hembra">' + (totH || '—') + '</span>' +
+        '<span class="inv-num inv-total">' + totT + '</span>' +
+      '</div>';
+
+    document.getElementById('inv-finca-section').innerHTML = invHTML;
 
     // ── Pipeline ──────────────────────────────────────────
     var pipeHTML =
