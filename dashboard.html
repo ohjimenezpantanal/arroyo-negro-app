@@ -288,6 +288,46 @@
   .inv-total  { color: var(--verde); }
   .inv-total-row { background: #f8fbff; font-weight: 700; }
   .inv-total-row .inv-finca { color: var(--azul); font-size: 13px; }
+
+  /* ── Panel ejecutivo ── */
+  .exec-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .exec-card {
+    background: white; border-radius: 14px; padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .exec-card.full { grid-column: 1/-1; }
+  .exec-card .ec-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--gris2); margin-bottom: 6px;
+  }
+  .exec-card .ec-val {
+    font-size: 22px; font-weight: 800; line-height: 1; margin-bottom: 3px;
+  }
+  .exec-card .ec-sub { font-size: 11px; color: var(--gris2); line-height: 1.3; }
+  .ec-rojo  { color: var(--rojo); }
+  .ec-verde { color: var(--verde); }
+  .ec-azul  { color: var(--azul); }
+  .ec-amar  { color: var(--amar); }
+  .ec-alert { border-left: 4px solid var(--rojo); }
+  .ec-ok    { border-left: 4px solid var(--verde); }
+  .ec-warn  { border-left: 4px solid var(--amar); }
+
+  /* Decisiones */
+  .decision-item {
+    display: grid; grid-template-columns: 28px auto 1fr; gap: 8px;
+    align-items: start; padding: 10px 0; border-bottom: 1px solid #f0f4f8;
+  }
+  .decision-item:last-child { border-bottom: none; }
+  .dec-icono { font-size: 18px; }
+  .dec-accion {
+    font-size: 10px; font-weight: 700; padding: 2px 6px;
+    border-radius: 4px; white-space: nowrap; margin-top: 2px;
+  }
+  .dec-rojo     .dec-accion { background: var(--rojo2);  color: var(--rojo); }
+  .dec-amarillo .dec-accion { background: var(--amar2);  color: var(--amar); }
+  .dec-verde    .dec-accion { background: var(--verde2);  color: var(--verde); }
+  .dec-texto { font-size: 13px; color: var(--texto); line-height: 1.4; }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -374,6 +414,13 @@
 </div>
 
 <div class="container">
+
+  <!-- Panel de decisión ejecutiva -->
+  <div class="seccion">⚡ Decisiones — lee esto primero</div>
+  <div id="exec-section">
+    <div class="skeleton" style="height:80px;border-radius:14px;margin-bottom:10px"></div>
+    <div class="skeleton" style="height:120px;border-radius:14px"></div>
+  </div>
 
   <!-- KPIs -->
   <div class="seccion">📊 Indicadores clave</div>
@@ -502,6 +549,68 @@
   function renderDashboard(d) {
     document.getElementById('ultima-act').textContent =
       'Actualizado: ' + d.ultimaActualizacion;
+
+    // ── Panel ejecutivo ───────────────────────────────────
+    var ef  = d.eficiencia    || {};
+    var inv = d.inversionManga || {};
+    var dec = d.decisiones    || [];
+
+    var roiColor  = inv.roi > 200 ? 'ec-verde' : inv.roi > 100 ? 'ec-amar' : 'ec-rojo';
+    var recColor  = inv.recomendacion === 'INVERTIR' ? 'ec-ok' :
+                    inv.recomendacion === 'EVALUAR'  ? 'ec-warn' : 'ec-alert';
+    var gdpColor  = ef.gdpMinimo > 0 ? 'ec-rojo' : '';
+
+    var execHTML =
+      // Fila 1: Costo AR + GDP mínimo + Manga ROI
+      '<div class="exec-panel">' +
+
+        '<div class="exec-card ec-alert">' +
+          '<div class="ec-label">Costo/animal/día AR</div>' +
+          '<div class="ec-val ec-rojo">$' + (ef.costoDiario || 0).toFixed(2) + '</div>' +
+          '<div class="ec-sub">$' + (ef.costoMensual || 21) + '/mes · ' + (d.kpis.animalesAR||67) + ' animales</div>' +
+        '</div>' +
+
+        '<div class="exec-card ec-alert">' +
+          '<div class="ec-label">GDP mínimo rentable</div>' +
+          '<div class="ec-val ec-rojo">' + (ef.gdpMinimo || 0.26).toFixed(2) + ' kg/d</div>' +
+          '<div class="ec-sub">Si GDP baja de esto → pierdes dinero</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      // Fila 2: Manga Quinindé
+      '<div class="exec-card ' + recColor + '" style="margin-bottom:10px">' +
+        '<div class="ec-label">📐 Manga Quinindé — ¿Invertir?</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px">' +
+          '<div><div class="ec-val ' + roiColor + '">' + (inv.roi||0) + '%</div><div class="ec-sub">ROI</div></div>' +
+          '<div><div class="ec-val ' + roiColor + '">' + (inv.payback||0) + 'm</div><div class="ec-sub">Payback</div></div>' +
+          '<div><div class="ec-val ' + roiColor + '">' + fmt$(inv.ahorroTotal||0) + '</div><div class="ec-sub">Ahorro/ciclo</div></div>' +
+        '</div>' +
+        '<div style="margin-top:8px;padding:6px 10px;background:' +
+          (inv.recomendacion==='INVERTIR'?'#d5f5e3':'#fef9e7') +
+          ';border-radius:8px;font-size:12px;font-weight:700;color:' +
+          (inv.recomendacion==='INVERTIR'?'#1e8449':'#b7950b') + '">' +
+          (inv.recomendacion==='INVERTIR' ? '✅ ' : '⚠️ ') + inv.recomendacion +
+          (inv.recomendacion==='INVERTIR' ? ' — se paga en el primer ciclo' : '') +
+        '</div>' +
+      '</div>' +
+
+      // Decisiones ordenadas
+      '<div class="exec-card full">' +
+        '<div class="ec-label">🎯 Acciones esta semana</div>';
+
+    dec.forEach(function(dec_item) {
+      execHTML +=
+        '<div class="decision-item dec-' + dec_item.nivel + '">' +
+          '<span class="dec-icono">' + dec_item.icono + '</span>' +
+          '<span class="dec-accion">' + dec_item.accion + '</span>' +
+          '<span class="dec-texto">' + dec_item.texto + '</span>' +
+        '</div>';
+    });
+
+    execHTML += '</div>';
+
+    document.getElementById('exec-section').innerHTML = execHTML;
 
     // ── KPIs ──────────────────────────────────────────────
     var kpis = d.kpis;
