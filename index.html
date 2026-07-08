@@ -37,42 +37,77 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .btn-ambar:active{background:#FFF8EE;}
 .btn-azul{border-color:var(--azul);}
 .btn-azul:active{background:var(--azul-bg);}
+.btn-morado{border-color:#6C3483;}
+.btn-morado:active{background:#F5EEF8;}
 .btn-full{grid-column:1/-1;}
 .footer{text-align:center;margin-top:20px;font-family:'Courier New',monospace;
   font-size:10px;color:#446644;letter-spacing:.06em;}
 .fecha{text-align:center;font-family:'Courier New',monospace;font-size:11px;
   color:#668866;margin-bottom:20px;}
+.seccion-label{grid-column:1/-1;font-family:'Courier New',monospace;
+  font-size:10px;color:#4A8A34;letter-spacing:.15em;text-transform:uppercase;
+  padding-top:8px;border-top:1px solid #2E5C1E;}
 </style>
 </head>
 <body>
+
 <div class="logo">
   <div class="logo-txt">▲ ARROYO NEGRO</div>
   <div class="logo-sub">SISTEMA DE CONTROL GANADERO · VÍA CHONE KM 15</div>
 </div>
+
 <div class="fecha" id="fechaHoy"></div>
+
 <div class="btn-grid">
+
+  <!-- Dashboard nuevo — destaca arriba -->
+  <a href="dashboard.html" class="btn-card btn-azul btn-full">
+    <div class="btn-icon">📊</div>
+    <div class="btn-title">Dashboard Ejecutivo</div>
+    <div class="btn-sub">KPIs · GDP · Alertas · Pipeline · Financiero en tiempo real</div>
+  </a>
+
+  <!-- Separador -->
+  <div class="seccion-label">── Registro de campo ──</div>
+
   <a href="reporte-diario.html" class="btn-card btn-verde btn-full">
     <div class="btn-icon">📋</div>
     <div class="btn-title">Reporte Diario</div>
     <div class="btn-sub">Registrar actividades y estado del día</div>
   </a>
+
   <a href="pesaje.html" class="btn-card btn-ambar">
     <div class="btn-icon">⚖️</div>
     <div class="btn-title">Registrar Pesaje</div>
-    <div class="btn-sub">GDP automática por grupo</div>
+    <div class="btn-sub">GDP automática por lote</div>
   </a>
+
+  <a href="insumos.html" class="btn-card btn-verde">
+    <div class="btn-icon">🧪</div>
+    <div class="btn-title">Compra Insumos</div>
+    <div class="btn-sub">Sal, herbicida, sanidad y más</div>
+  </a>
+
   <a href="potrero.html" class="btn-card btn-verde">
     <div class="btn-icon">🌿</div>
-    <div class="btn-title">Cambio de Potrero</div>
+    <div class="btn-title">Cambio Potrero</div>
     <div class="btn-sub">Registrar movimiento de ganado</div>
   </a>
-  <a href="https://docs.google.com/spreadsheets/d/15drNerKwx8xNvSUG3-P0k6wFiarEhgSYQh5aQ4M7F04" class="btn-card btn-azul" target="_blank">
-    <div class="btn-icon">📊</div>
-    <div class="btn-title">Ver Dashboard</div>
-    <div class="btn-sub">Google Sheets · Solo Oscar</div>
+
+  <!-- Separador -->
+  <div class="seccion-label">── Sistema de gestión ──</div>
+
+  <a href="https://docs.google.com/spreadsheets/d/15drNerKwx8xNvSUG3-P0k6wFiarEhgSYQh5aQ4M7F04"
+     class="btn-card btn-morado btn-full" target="_blank">
+    <div class="btn-icon">🗂</div>
+    <div class="btn-title">Sistema Completo · Google Sheets</div>
+    <div class="btn-sub">Lotes · P&L · Ventas · Descargos · Inventario · Solo Oscar</div>
   </a>
+
 </div>
+
 <div class="footer" style="margin-top:30px">ARROYO NEGRO · AGROINVERPAC · 2026</div>
+
 <script>
 const d=new Date();
 const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];

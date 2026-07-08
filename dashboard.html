@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Dashboard — Arroyo Negro</title>
+  <style>
+    :root {
+      --azul:    #1a5276;
+      --azul2:   #2e86c1;
+      --verde:   #1e8449;
+      --verde2:  #d5f5e3;
+      --rojo:    #c0392b;
+      --rojo2:   #fadbd8;
+      --amar:    #d4ac0d;
+      --amar2:   #fef9e7;
+      --gris:    #f0f4f8;
+      --gris2:   #95a5a6;
+      --texto:   #1a2332;
+      --blanco:  #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gris);
+      color: var(--texto);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--azul);
+      padding: 20px 20px 16px;
+      color: white;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .header h1 { font-size: 20px; font-weight: 800; }
+    .header h1 span { opacity: 0.7; font-weight: 400; font-size: 14px; display: block; margin-top: 2px; }
+    .refresh-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 50%;
+      width: 38px; height: 38px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.3s;
+    }
+    .refresh-btn.girando { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .ultima-act {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 8px;
+    }
+
+    /* ── Contenedor ── */
+    .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+
+    /* ── Sección título ── */
+    .seccion {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gris2);
+      margin: 20px 0 10px;
+    }
+
+    /* ── KPI Cards horizontales ── */
+    .kpi-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+      margin: 0 -16px;
+      padding: 0 16px 4px;
+    }
+    .kpi-scroll::-webkit-scrollbar { display: none; }
+
+    .kpi-card {
+      min-width: 130px;
+      background: white;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+    .kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gris2);
+      margin-bottom: 6px;
+    }
+    .kpi-valor {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--gris2);
+      margin-top: 3px;
+    }
+    .kpi-verde .kpi-valor { color: var(--verde); }
+    .kpi-rojo  .kpi-valor { color: var(--rojo); }
+    .kpi-amar  .kpi-valor { color: var(--amar); }
+
+    /* ── Lotes GDP ── */
+    .lote-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .lote-codigo {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--azul);
+    }
+    .lote-finca {
+      font-size: 11px;
+      color: var(--gris2);
+      margin-top: 1px;
+    }
+    .lote-stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .lote-stat { text-align: center; }
+    .lote-stat .val { font-size: 15px; font-weight: 700; color: var(--texto); }
+    .lote-stat .lbl { font-size: 10px; color: var(--gris2); margin-top: 1px; }
+
+    .semaforo {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .sem-verde   { background: var(--verde2); color: var(--verde); }
+    .sem-amarillo{ background: var(--amar2);  color: var(--amar); }
+    .sem-rojo    { background: var(--rojo2);  color: var(--rojo); }
+    .sem-gris    { background: #ecf0f1;       color: var(--gris2); }
+
+    .dias-badge {
+      font-size: 11px;
+      color: var(--gris2);
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .ingreso-est {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--verde);
+      text-align: center;
+    }
+
+    /* ── Alertas ── */
+    .alerta {
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .alerta-rojo    { background: var(--rojo2); }
+    .alerta-amarillo{ background: var(--amar2); }
+    .alerta-verde   { background: var(--verde2); }
+
+    .alerta-icon { font-size: 18px; margin-top: 1px; }
+    .alerta-texto { font-size: 13px; line-height: 1.4; color: var(--texto); }
+    .alerta-nivel {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .alerta-rojo     .alerta-nivel { color: var(--rojo); }
+    .alerta-amarillo .alerta-nivel { color: var(--amar); }
+    .alerta-verde    .alerta-nivel { color: var(--verde); }
+
+    /* ── Pipeline ── */
+    .pipeline-total {
+      background: var(--azul);
+      color: white;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .pipeline-total .lbl { font-size: 12px; opacity: 0.8; }
+    .pipeline-total .val { font-size: 24px; font-weight: 800; }
+
+    .pipe-item {
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pipe-lote { font-size: 14px; font-weight: 700; color: var(--azul); }
+    .pipe-det  { font-size: 11px; color: var(--gris2); margin-top: 2px; }
+    .pipe-neto { font-size: 18px; font-weight: 800; color: var(--verde); }
+
+    /* ── Financiero ── */
+    .fin-item {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      display: grid;
+      grid-template-columns: 60px 1fr 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .fin-mes { font-size: 13px; font-weight: 700; color: var(--azul); }
+    .fin-num { font-size: 12px; text-align: right; }
+    .fin-hdr {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gris2);
+      letter-spacing: 0.3px;
+    }
+    .fin-neg { color: var(--rojo); }
+    .fin-pos { color: var(--verde); }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e8ecf0;
+      display: flex;
+      z-index: 100;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    }
+    .nav-item {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      text-decoration: none;
+      color: var(--gris2);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; }
+    .nav-item.activo { color: var(--azul); }
+
+    /* ── Skeleton loading ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f4f8 25%, #e8ecf0 50%, #f0f4f8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+      height: 20px;
+      margin-bottom: 8px;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── Estado error ── */
+    .error-box {
+      background: var(--rojo2);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: var(--rojo);
+    }
+    .error-box h3 { font-size: 16px; margin-bottom: 8px; }
+    .error-box p  { font-size: 13px; opacity: 0.8; }
+
+    /* ── Accesos rápidos ── */
+    .accesos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .acceso {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--texto);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s;
+    }
+    .acceso:active { transform: scale(0.97); }
+    .acceso-icon { font-size: 28px; margin-bottom: 8px; }
+    .acceso-label { font-size: 13px; font-weight: 700; color: var(--azul); }
+    .acceso-sub { font-size: 11px; color: var(--gris2); margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>🐄 Arroyo Negro
+        <span>Sistema Ganadero</span>
+      </h1>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" onclick="cargarDatos()">↻</button>
+  </div>
+  <div class="ultima-act" id="ultima-act">Cargando datos...</div>
+</div>
+
+<div class="container">
+
+  <!-- KPIs -->
+  <div class="seccion">📊 Indicadores clave</div>
+  <div class="kpi-scroll" id="kpi-scroll">
+    <div class="kpi-card"><div class="skeleton"></div><div class="skeleton" style="height:30px"></div></div>
+    <div class="kpi-card"><div class="skeleton"></div><div class="skeleton" style="height:30px"></div></div>
+    <div class="kpi-card"><div class="skeleton"></div><div class="skeleton" style="height:30px"></div></div>
+  </div>
+
+  <!-- GDP por lote -->
+  <div class="seccion">⚖️ GDP por lote</div>
+  <div id="lotes-section">
+    <div class="lote-card"><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="lote-card"><div class="skeleton"></div><div class="skeleton"></div></div>
+  </div>
+
+  <!-- Alertas -->
+  <div class="seccion">🚨 Alertas ejecutivas</div>
+  <div id="alertas-section">
+    <div class="alerta alerta-amarillo"><div class="skeleton" style="width:100%;height:40px"></div></div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="seccion">🔮 Pipeline de ventas</div>
+  <div id="pipeline-section">
+    <div class="skeleton" style="height:60px;border-radius:14px"></div>
+  </div>
+
+  <!-- Financiero -->
+  <div class="seccion">💰 Financiero 2026</div>
+  <div class="fin-item">
+    <span class="fin-mes fin-hdr">Mes</span>
+    <span class="fin-num fin-hdr">Costos</span>
+    <span class="fin-num fin-hdr">Ventas</span>
+    <span class="fin-num fin-hdr">Result.</span>
+  </div>
+  <div id="fin-section">
+    <div class="skeleton" style="height:40px;border-radius:10px;margin-bottom:6px"></div>
+    <div class="skeleton" style="height:40px;border-radius:10px;margin-bottom:6px"></div>
+  </div>
+
+  <!-- Accesos rápidos -->
+  <div class="seccion">⚡ Accesos rápidos</div>
+  <div class="accesos">
+    <a href="pesaje.html" class="acceso">
+      <div class="acceso-icon">⚖️</div>
+      <div class="acceso-label">Pesaje</div>
+      <div class="acceso-sub">Registrar pesos</div>
+    </a>
+    <a href="insumos.html" class="acceso">
+      <div class="acceso-icon">🧪</div>
+      <div class="acceso-label">Insumos</div>
+      <div class="acceso-sub">Registrar compras</div>
+    </a>
+    <a href="reporte-diario.html" class="acceso">
+      <div class="acceso-icon">📋</div>
+      <div class="acceso-label">Reporte</div>
+      <div class="acceso-sub">Actividades campo</div>
+    </a>
+    <a href="https://docs.google.com/spreadsheets/d/15drNerKwx8xNvSUG3-P0k6wFiarEhgSYQh5aQ4M7F04" target="_blank" class="acceso">
+      <div class="acceso-icon">📊</div>
+      <div class="acceso-label">Google Sheet</div>
+      <div class="acceso-sub">Ver sistema completo</div>
+    </a>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="nav-item activo">
+    <span class="nav-icon">📊</span>Dashboard
+  </a>
+  <a href="pesaje.html" class="nav-item">
+    <span class="nav-icon">⚖️</span>Pesaje
+  </a>
+  <a href="insumos.html" class="nav-item">
+    <span class="nav-icon">🧪</span>Insumos
+  </a>
+  <a href="reporte-diario.html" class="nav-item">
+    <span class="nav-icon">📋</span>Reporte
+  </a>
+</nav>
+
+<script>
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKrIx_KucLqkBYvrq_4m9ANIhpGc2NJutBXTbqrEqKAACj2zzOIk3TGyVdaTi54YqvLg/exec';
+
+  function fmt$(n) {
+    if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function cargarDatos() {
+    var btn = document.getElementById('refresh-btn');
+    btn.classList.add('girando');
+    document.getElementById('ultima-act').textContent = 'Actualizando...';
+
+    fetch(APPS_SCRIPT_URL + '?action=dashboard')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.ok) throw new Error(d.error);
+        renderDashboard(d);
+        btn.classList.remove('girando');
+      })
+      .catch(function(err) {
+        btn.classList.remove('girando');
+        document.getElementById('ultima-act').textContent = '⚠️ Sin conexión';
+        document.getElementById('lotes-section').innerHTML =
+          '<div class="error-box"><h3>Sin conexión</h3><p>Verifica tu internet y recarga</p></div>';
+      });
+  }
+
+  function renderDashboard(d) {
+    document.getElementById('ultima-act').textContent =
+      'Actualizado: ' + d.ultimaActualizacion;
+
+    // ── KPIs ──────────────────────────────────────────────
+    var kpis = d.kpis;
+    document.getElementById('kpi-scroll').innerHTML =
+      kpiCard('Capital total', fmt$(kpis.capitalTotal), 'Ganado + Quinindé', '') +
+      kpiCard('Ventas 2026', fmt$(kpis.ventas2026), 'Ingreso neto', 'kpi-verde') +
+      kpiCard('Costos 2026', fmt$(kpis.costos2026), 'MO + Insumos', 'kpi-rojo') +
+      kpiCard('Margen 2026', fmt$(kpis.margen2026), 'Ventas − Costos',
+              kpis.margen2026 >= 0 ? 'kpi-verde' : 'kpi-rojo') +
+      kpiCard('En AR', kpis.animalesAR + '', 'animales activos', '') +
+      kpiCard('Quinindé', kpis.animalesQ + '', 'animales palma', '') +
+      kpiCard('Costo/mes', fmt$(kpis.costoMensual), 'promedio AR', 'kpi-rojo');
+
+    // ── GDP por Lote ──────────────────────────────────────
+    var lotesHTML = '';
+    d.lotes.forEach(function(l) {
+      var semClass = 'sem-' + l.semaforoColor;
+      var gdpStr   = l.gdp > 0 ? l.gdp.toFixed(2) + ' kg/d' : '—';
+      var diasStr  = l.diasSacrificio > 0 ? l.diasSacrificio + ' días' : '—';
+      lotesHTML +=
+        '<div class="lote-card">' +
+          '<div>' +
+            '<div class="lote-codigo">' + l.codigo + '</div>' +
+            '<div class="lote-finca">' + l.finca + '</div>' +
+            '<div class="lote-stats">' +
+              '<div class="lote-stat"><div class="val">' + l.cabActivas + '</div><div class="lbl">animales</div></div>' +
+              '<div class="lote-stat"><div class="val">' + (l.pesoKg > 0 ? l.pesoKg + ' kg' : '—') + '</div><div class="lbl">peso prom</div></div>' +
+              '<div class="lote-stat"><div class="val">' + gdpStr + '</div><div class="lbl">GDP</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="text-align:center">' +
+            '<div class="semaforo ' + semClass + '">' + l.semaforo + '</div>' +
+            '<div class="dias-badge">' + diasStr + '</div>' +
+            (l.ingresoEsperado > 0 ? '<div class="ingreso-est">' + fmt$(l.ingresoEsperado) + '</div>' : '') +
+          '</div>' +
+        '</div>';
+    });
+    document.getElementById('lotes-section').innerHTML = lotesHTML || '<p style="color:#95a5a6;font-size:13px">Sin datos de lotes</p>';
+
+    // ── Alertas ───────────────────────────────────────────
+    var alertasHTML = '';
+    d.alertas.forEach(function(a) {
+      var cls  = 'alerta-' + a.nivel;
+      var icon = a.nivel === 'rojo' ? '🔴' : a.nivel === 'amarillo' ? '🟡' : '🟢';
+      alertasHTML +=
+        '<div class="alerta ' + cls + '">' +
+          '<div class="alerta-icon">' + icon + '</div>' +
+          '<div>' +
+            '<div class="alerta-nivel">' + a.urgencia + '</div>' +
+            '<div class="alerta-texto">' + a.texto + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+    document.getElementById('alertas-section').innerHTML =
+      alertasHTML || '<div class="alerta alerta-verde"><div class="alerta-icon">✅</div><div><div class="alerta-texto">Sin alertas urgentes</div></div></div>';
+
+    // ── Pipeline ──────────────────────────────────────────
+    var pipeHTML =
+      '<div class="pipeline-total">' +
+        '<div><div class="lbl">Total pipeline estimado</div><div class="val">' + fmt$(d.totalPipeline) + '</div></div>' +
+        '<div style="font-size:32px;opacity:0.6">🔮</div>' +
+      '</div>';
+    d.pipeline.forEach(function(p) {
+      pipeHTML +=
+        '<div class="pipe-item">' +
+          '<div>' +
+            '<div class="pipe-lote">' + p.lote + '</div>' +
+            '<div class="pipe-det">' + p.animales + ' animales · ' + p.pesoKg + ' kg · ' +
+              (p.dias > 0 ? p.dias + ' días' : '—') + '</div>' +
+          '</div>' +
+          '<div class="pipe-neto">' + fmt$(p.ingresoNeto) + '</div>' +
+        '</div>';
+    });
+    document.getElementById('pipeline-section').innerHTML = pipeHTML;
+
+    // ── Financiero ────────────────────────────────────────
+    var finHTML = '';
+    d.meses.forEach(function(m) {
+      var resClass = m.resultado >= 0 ? 'fin-pos' : 'fin-neg';
+      finHTML +=
+        '<div class="fin-item">' +
+          '<span class="fin-mes">' + m.mes + '</span>' +
+          '<span class="fin-num fin-neg">-$' + (m.costos/1000).toFixed(1) + 'K</span>' +
+          '<span class="fin-num fin-pos">' + (m.ventas > 0 ? '$'+(m.ventas/1000).toFixed(1)+'K' : '—') + '</span>' +
+          '<span class="fin-num ' + resClass + '">' + (m.resultado >= 0 ? '+' : '') + '$' + (m.resultado/1000).toFixed(1) + 'K</span>' +
+        '</div>';
+    });
+    document.getElementById('fin-section').innerHTML = finHTML || '<p style="color:#95a5a6;font-size:13px;padding:10px 0">Sin datos financieros</p>';
+  }
+
+  function kpiCard(label, valor, sub, clase) {
+    return '<div class="kpi-card ' + clase + '">' +
+      '<div class="kpi-label">' + label + '</div>' +
+      '<div class="kpi-valor">' + valor + '</div>' +
+      '<div class="kpi-sub">' + sub + '</div>' +
+    '</div>';
+  }
+
+  // Cargar al abrir
+  cargarDatos();
+
+  // Auto-refresh cada 5 minutos
+  setInterval(cargarDatos, 5 * 60 * 1000);
+</script>
+
+</body>
+</html>
