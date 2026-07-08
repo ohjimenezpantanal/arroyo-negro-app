@@ -594,20 +594,47 @@
     // ── Pipeline ──────────────────────────────────────────
     var pipeHTML =
       '<div class="pipeline-total">' +
-        '<div><div class="lbl">Total pipeline estimado</div><div class="val">' + fmt$(d.totalPipeline) + '</div></div>' +
+        '<div>' +
+          '<div class="lbl">Total sistema estimado</div>' +
+          '<div class="val">' + fmt$(d.totalPipeline) + '</div>' +
+          '<div style="font-size:11px;opacity:0.7;margin-top:4px">' +
+            '🔴 Corto plazo: ' + fmt$(d.totalPipelineCorto) +
+            ' · 🟡 Mediano: ' + fmt$(d.totalPipelineMediano) +
+          '</div>' +
+        '</div>' +
         '<div style="font-size:32px;opacity:0.6">🔮</div>' +
       '</div>';
-    d.pipeline.forEach(function(p) {
-      pipeHTML +=
-        '<div class="pipe-item">' +
-          '<div>' +
-            '<div class="pipe-lote">' + p.lote + '</div>' +
-            '<div class="pipe-det">' + p.animales + ' animales · ' + p.pesoKg + ' kg · ' +
-              (p.dias > 0 ? p.dias + ' días' : '—') + '</div>' +
-          '</div>' +
-          '<div class="pipe-neto">' + fmt$(p.ingresoNeto) + '</div>' +
-        '</div>';
-    });
+
+    // Corto plazo (AR)
+    var cortoPlazo = d.pipeline.filter(function(p){ return p.plazo === 'corto'; });
+    if (cortoPlazo.length > 0) {
+      pipeHTML += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;' +
+        'letter-spacing:0.5px;color:#c0392b;padding:8px 0 4px">🔴 Corto plazo — Arroyo Negro</div>';
+      cortoPlazo.forEach(function(p) {
+        pipeHTML += '<div class="pipe-item">' +
+          '<div><div class="pipe-lote">' + p.lote + '</div>' +
+          '<div class="pipe-det">' + p.animales + ' anim · ' + p.pesoKg + ' kg · ' +
+            (p.dias > 0 ? p.dias + ' días' : 'Sin GDP') + '</div></div>' +
+          '<div class="pipe-neto">' + fmt$(p.ingresoNeto) + '</div></div>';
+      });
+    }
+
+    // Mediano plazo (Quinindé)
+    var medianoPlazo = d.pipeline.filter(function(p){ return p.plazo === 'mediano'; });
+    if (medianoPlazo.length > 0) {
+      pipeHTML += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;' +
+        'letter-spacing:0.5px;color:#d4ac0d;padding:12px 0 4px">🟡 Mediano plazo — Quinindé</div>';
+      medianoPlazo.forEach(function(p) {
+        pipeHTML += '<div class="pipe-item" style="opacity:0.85">' +
+          '<div><div class="pipe-lote">' + p.lote +
+            (p.esVacona ? ' <span style="font-size:10px;color:#8e44ad">Vacona</span>' : '') +
+            '</div>' +
+          '<div class="pipe-det">' + p.animales + ' anim · ' + p.pesoKg + ' kg · ~' +
+            (p.mesesEst || '?') + ' meses est.</div></div>' +
+          '<div class="pipe-neto" style="color:#27ae60">' + fmt$(p.ingresoNeto) + '</div></div>';
+      });
+    }
+
     document.getElementById('pipeline-section').innerHTML = pipeHTML;
 
     // ── Financiero ────────────────────────────────────────
