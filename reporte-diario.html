@@ -298,18 +298,16 @@ textarea{min-height:64px;resize:vertical;line-height:1.5}
       <textarea id="novSan" placeholder="Animal afectado, arete, síntoma, acción tomada..."></textarea>
     </div>
     <div class="fld" style="margin-top:10px">
-      <label class="lbl">¿Pesaje realizado hoy? (+20 pts)</label>
+      <label class="lbl">¿Pesaje realizado hoy? (+10 pts)</label>
       <div class="tg-grp" id="grp_pesaje">
         <button type="button" class="tg" data-grp="pesaje" data-val="NO" data-cls="sv">No se pesó</button>
         <button type="button" class="tg" data-grp="pesaje" data-val="SI" data-cls="sv">✅ Sí se pesó</button>
       </div>
     </div>
     <div id="pesajeDiv" style="display:none;margin-top:8px">
-      <div class="g2">
-        <div class="fld"><label class="lbl">Peso prom. G1 (kg)</label>
-          <input type="number" id="pesoG1" placeholder="165"></div>
-        <div class="fld"><label class="lbl">Peso prom. G2 (kg)</label>
-          <input type="number" id="pesoG2" placeholder="360"></div>
+      <div style="background:#EBF2FF;border:1.5px solid #1A558B;border-radius:8px;padding:10px">
+        <div style="font-size:11px;font-weight:700;color:#0D2B5E;margin-bottom:4px">⚖️ Pesaje registrado como evento del día</div>
+        <div style="font-size:11px;color:#0D2B5E;line-height:1.5">Los pesos por arete se cargan aparte — desde la app de pesaje o pasando la matriz al Sheets. Aquí solo queda constancia de que hoy se pesó.</div>
       </div>
     </div>
 
@@ -1830,6 +1828,16 @@ function updAct(id) {
   recalc();
 }
 
+function getJornadaBrutaHrs() {
+  var ll = document.getElementById('horaLlegada');
+  var sl = document.getElementById('horaSalida');
+  if (!ll || !sl || !ll.value || !sl.value) return 0;
+  var p1 = ll.value.split(':').map(Number);
+  var p2 = sl.value.split(':').map(Number);
+  var h = (p2[0]*60+p2[1] - p1[0]*60-p1[1]) / 60;
+  return h > 0 ? h : 0;
+}
+
 function getJornadaHrs() {
   var ll = document.getElementById('horaLlegada');
   var sl = document.getElementById('horaSalida');
@@ -1850,13 +1858,11 @@ function getTotalActHrs() {
 }
 
 function calcPct(id) {
-  // Denominador = jornada EFECTIVA (jornada bruta - almuerzo), no solo horas reportadas
-  var jornadaBruta = getJornadaHrs();
-  var descAlm = (jornadaBruta >= 6) ? 1 : 0; // defaults — Catálogos define el real en Apps Script
-  var jornadaHrs = Math.max(0, jornadaBruta - descAlm);
-  var denominador = Math.max(jornadaHrs, getTotalActHrs());
+  // getJornadaHrs() YA descuenta el almuerzo — no restarlo otra vez
+  var jornadaEfectiva = getJornadaHrs();
+  var denominador = Math.max(jornadaEfectiva, getTotalActHrs());
   if (denominador === 0) denominador = 1;
-  if (!denominador || !actsData[id]) return 0;
+  if (!actsData[id]) return 0;
   var actHrs = actsData[id].instancias.reduce(function(s,inst){return s+inst.horas;},0);
   return actHrs / denominador;
 }
@@ -1898,13 +1904,24 @@ function renderResumen() {
     '</div>';
   }).join('');
 
-  var jornadaBruta = getJornadaHrs();
-  var HORAS_ALMUERZO = 1;       // mismo default que Apps Script — Catálogos es la fuente real
-  var JORNADA_MIN_ALMUERZO = 6;
-  var descAlmuerzo = (jornadaBruta >= JORNADA_MIN_ALMUERZO) ? HORAS_ALMUERZO : 0;
-  var jornadaHrs = Math.max(0, jornadaBruta - descAlmuerzo);
+  // getJornadaHrs() ya descuenta el almuerzo — usar su resultado directo
+  var jornadaHrs = getJornadaHrs();
+  // Reconstruir la jornada bruta solo para mostrar el descuento en pantalla
+  var elLL = document.getElementById('horaLlegada');
+  var elSL = document.getElementById('horaSalida');
+  var jornadaBruta = 0;
+  if (elLL && elSL && elLL.value && elSL.value) {
+    var q1 = elLL.value.split(':').map(Number);
+    var q2 = elSL.value.split(':').map(Number);
+    jornadaBruta = (q2[0]*60+q2[1] - q1[0]*60-q1[1]) / 60;
+    if (jornadaBruta < 0) jornadaBruta = 0;
+  }
+  var descAlmuerzo = jornadaBruta - jornadaHrs;
+  if (descAlmuerzo < 0) descAlmuerzo = 0;
+
+  var denomRes   = Math.max(jornadaHrs, totalHrs);
   var tiempoNoRep = jornadaHrs > 0 ? jornadaHrs - totalHrs : 0;
-  var costoNoRep  = jornadaHrs > 0 ? (tiempoNoRep / jornadaHrs) * VALOR_DIARIO : 0;
+  var costoNoRep  = (tiempoNoRep > 0 && denomRes > 0) ? (tiempoNoRep / denomRes) * VALOR_DIARIO : 0;
 
   if (tiempoNoRep > 0.25) {
     html += '<div class="res-row" style="background:#FFEBEE">' +
@@ -1958,10 +1975,6 @@ function recalc() {
     }
   }
 
-  // Pesaje
-  pts.pesaje = S['pesaje']==='SI' ? 20 : 0;
-  // Foto
-  pts.foto = S['foto']==='SI' ? 5 : 0;
   // Reporte a tiempo (10 pts)
   var bono = hora < 17 ? 10 : (hora < 21 && S['motivo'] ? 5 : 0);
   pts.tiempo = bono;
@@ -2261,7 +2274,10 @@ window.enviar = function() {
 
   var ll    = document.getElementById('horaLlegada') ? document.getElementById('horaLlegada').value || '' : '';
   var sl    = document.getElementById('horaSalida') ? document.getElementById('horaSalida').value || '' : '';
-  var jornadaHrsPay = getJornadaHrs();
+  // El Apps Script espera la jornada BRUTA — él descuenta el almuerzo
+  // usando los parámetros reales de ⚙️ Catálogos (fuente única de verdad).
+  var jornadaHrsBruta = getJornadaBrutaHrs();
+  var jornadaHrsPay   = getJornadaHrs(); // efectiva, solo para el prorrateo local en pantalla
 
   // Validar que las horas de actividades sean razonables
   var horasValidas = true;
@@ -2415,7 +2431,7 @@ window.enviar = function() {
     trabajador: trab,
     score: scoreFinal,
     valorDiario: VALOR_DIARIO,
-    jornadaHrs: jornadaHrsPay,
+    jornadaHrs: jornadaHrsBruta,   // bruta — Apps Script resta el almuerzo
     horaLlegada: ll,
     horaSalida: sl,
     horaEnvio: hora + ':' + String(ahora.getMinutes()).padStart(2,'0'),
@@ -2427,8 +2443,6 @@ window.enviar = function() {
     sanidad: S['sanidad'] || '',
     novSanidad: document.getElementById('novSan') ? document.getElementById('novSan').value || '' : '',
     pesaje: S['pesaje'] || '',
-    pesoG1: document.getElementById('pesoG1') ? document.getElementById('pesoG1').value || '' : '',
-    pesoG2: document.getElementById('pesoG2') ? document.getElementById('pesoG2').value || '' : '',
     potreroReporte: document.getElementById('potreroReporte') ? document.getElementById('potreroReporte').value || '' : '',
     estadoPasto: S['pasto'] || '',
     salMineral: S['sal'] || '',
