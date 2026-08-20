@@ -131,6 +131,8 @@
     .cat-CDPAST  { background: #fef9e7; color: #b7950b; }
     .cat-CIINF   { background: #fde8d8; color: #ca6f1e; }
     .cat-CIOPE   { background: #f2f3f4; color: #555; }
+    .cat-CIMANT  { background: #fce4ec; color: #880e4f; }
+    .cat-CITRANS { background: #e3f2fd; color: #0d47a1; }
     .cat-default { background: #f2f3f4; color: #555; }
 
     /* Botón agregar */
@@ -346,6 +348,19 @@
             <option value="Combustible">Combustible</option>
             <option value="Otros insumos">Otros insumos</option>
           </optgroup>
+          <optgroup label="🔧 Mantenimiento maquinaria">
+            <option value="Repuesto picadora">Repuesto picadora</option>
+            <option value="Mantenimiento motor picadora">Mantenimiento motor picadora</option>
+            <option value="Bomba fumigadora (repuesto/reparación)">Bomba fumigadora (repuesto/reparación)</option>
+            <option value="Guadaña (afilado/repuesto)">Guadaña (afilado/repuesto)</option>
+            <option value="Motosierra (cadena/mantenimiento)">Motosierra (cadena/mantenimiento)</option>
+            <option value="Combustible equipos">Combustible equipos</option>
+            <option value="Mano de obra mecánico">Mano de obra mecánico</option>
+            <option value="Mantenimiento general maquinaria">Mantenimiento general maquinaria</option>
+          </optgroup>
+          <optgroup label="🚛 Transporte ganado">
+            <option value="Transporte Quinindé → AR">Transporte Quinindé → AR</option>
+          </optgroup>
         </select>
       </div>
 
@@ -443,12 +458,20 @@
     'Implantes (Ralgro/Synovex)': 'CD-IMP',
     'Herbicida': 'CD-PAST', 'Coadyuvante': 'CD-PAST', 'Semillas pasto': 'CD-PAST',
     'Grapas': 'CI-INF', 'Alambre': 'CI-INF', 'Postes': 'CI-INF',
-    'Aceite 2 T': 'CI-OPE', 'Combustible': 'CI-OPE', 'Otros insumos': 'CI-OPE'
+    'Aceite 2 T': 'CI-OPE', 'Combustible': 'CI-OPE', 'Otros insumos': 'CI-OPE',
+    'Repuesto picadora': 'CI-MANT', 'Mantenimiento motor picadora': 'CI-MANT',
+    'Bomba fumigadora (repuesto/reparación)': 'CI-MANT',
+    'Guadaña (afilado/repuesto)': 'CI-MANT',
+    'Motosierra (cadena/mantenimiento)': 'CI-MANT',
+    'Combustible equipos': 'CI-MANT', 'Mano de obra mecánico': 'CI-MANT',
+    'Mantenimiento general maquinaria': 'CI-MANT',
+    'Transporte Quinindé → AR': 'CI-TRANS'
   };
 
   var COLORES_CAT = {
     'CD-SUPL': 'cat-CDSUPL', 'CD-SAN': 'cat-CDSAN', 'CD-IMP': 'cat-CDIMP',
-    'CD-PAST': 'cat-CDPAST', 'CI-INF': 'cat-CIINF', 'CI-OPE': 'cat-CIOPE'
+    'CD-PAST': 'cat-CDPAST', 'CI-INF': 'cat-CIINF', 'CI-OPE': 'cat-CIOPE',
+    'CI-MANT': 'cat-CIMANT', 'CI-TRANS': 'cat-CITRANS'
   };
 
   // ── Estado ────────────────────────────────────────────────
