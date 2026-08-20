@@ -133,6 +133,7 @@
     .cat-CIOPE   { background: #f2f3f4; color: #555; }
     .cat-CIMANT  { background: #fce4ec; color: #880e4f; }
     .cat-CITRANS { background: #e3f2fd; color: #0d47a1; }
+    .cat-CIADM   { background: #fff3e0; color: #e65100; }
     .cat-default { background: #f2f3f4; color: #555; }
 
     /* Botón agregar */
@@ -296,10 +297,31 @@
         <label>Grupo / Lote</label>
         <select id="grupo">
           <option value="">Seleccionar...</option>
-          <option value="G1 — F-04-26">G1 — F-04-26 (Arroyo Negro)</option>
-          <option value="F-02-24">F-02-24 (Arroyo Negro)</option>
-          <option value="G3 XIOM">G3-XIOM (Arroyo Negro)</option>
-          <option value="General">General — toda la finca</option>
+          <optgroup label="🏠 Arroyo Negro">
+            <option value="G1 — F-04-26">G1 — F-04-26</option>
+            <option value="F-02-24">F-02-24</option>
+            <option value="G3 XIOM">G3-XIOM</option>
+            <option value="General AR">General — toda la finca AR</option>
+          </optgroup>
+          <optgroup label="🌴 Quinindé — Marujita">
+            <option value="F-MJ-05-26">F-MJ-05-26</option>
+            <option value="PS-MJ-05-26">PS-MJ-05-26</option>
+            <option value="General Marujita">General — Marujita</option>
+          </optgroup>
+          <optgroup label="🌴 Quinindé — Los Corrales">
+            <option value="F-CO-11-24">F-CO-11-24</option>
+            <option value="PS-CO-12-24">PS-CO-12-24</option>
+            <option value="PS-CO-11-24">PS-CO-11-24</option>
+            <option value="General Los Corrales">General — Los Corrales</option>
+          </optgroup>
+          <optgroup label="🌴 Quinindé — Chipo">
+            <option value="CH-2025">CH-2025</option>
+            <option value="PS-CH-2025">PS-CH-2025</option>
+            <option value="General Chipo">General — Chipo</option>
+          </optgroup>
+          <optgroup label="📋 Transversal">
+            <option value="General">General — varias fincas</option>
+          </optgroup>
         </select>
       </div>
 
@@ -358,8 +380,12 @@
             <option value="Mano de obra mecánico">Mano de obra mecánico</option>
             <option value="Mantenimiento general maquinaria">Mantenimiento general maquinaria</option>
           </optgroup>
-          <optgroup label="🚛 Transporte ganado">
-            <option value="Transporte Quinindé → AR">Transporte Quinindé → AR</option>
+          <optgroup label="🚛 Transporte y movilización">
+            <option value="Flete de ganado">Flete de ganado</option>
+            <option value="Flete de insumos / materiales">Flete de insumos / materiales</option>
+            <option value="Combustible vehículo">Combustible vehículo</option>
+            <option value="Peajes y viáticos">Peajes y viáticos</option>
+            <option value="Movilización general">Movilización general</option>
           </optgroup>
         </select>
       </div>
@@ -465,13 +491,18 @@
     'Motosierra (cadena/mantenimiento)': 'CI-MANT',
     'Combustible equipos': 'CI-MANT', 'Mano de obra mecánico': 'CI-MANT',
     'Mantenimiento general maquinaria': 'CI-MANT',
-    'Transporte Quinindé → AR': 'CI-TRANS'
+    'Flete de ganado': 'CI-TRANS',
+    'Flete de insumos / materiales': 'CI-TRANS',
+    'Combustible vehículo': 'CI-ADM',
+    'Peajes y viáticos': 'CI-ADM',
+    'Movilización general': 'CI-ADM'
   };
 
   var COLORES_CAT = {
     'CD-SUPL': 'cat-CDSUPL', 'CD-SAN': 'cat-CDSAN', 'CD-IMP': 'cat-CDIMP',
     'CD-PAST': 'cat-CDPAST', 'CI-INF': 'cat-CIINF', 'CI-OPE': 'cat-CIOPE',
-    'CI-MANT': 'cat-CIMANT', 'CI-TRANS': 'cat-CITRANS'
+    'CI-MANT': 'cat-CIMANT', 'CI-TRANS': 'cat-CITRANS',
+    'CI-ADM': 'cat-CIADM'
   };
 
   // ── Estado ────────────────────────────────────────────────
